@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>KiaMenuBar</class>
+ <widget class="QMenuBar" name="KiaMenuBar">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>942</width>
+    <height>20</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="font">
+   <font>
+    <family>Monospace</family>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>MenuBar</string>
+  </property>
+  <property name="defaultUp">
+   <bool>false</bool>
+  </property>
+  <widget class="QMenu" name="menu_bi">
+   <property name="title">
+    <string>БИ</string>
+   </property>
+   <widget class="QMenu" name="menu_power">
+    <property name="title">
+     <string>Питание</string>
+    </property>
+    <addaction name="power_on"/>
+    <addaction name="power_off"/>
+    <addaction name="separator"/>
+    <addaction name="set_power_main"/>
+    <addaction name="set_power_rezerv"/>
+   </widget>
+   <widget class="QMenu" name="menu_1s">
+    <property name="title">
+     <string>Генерация секундной метки</string>
+    </property>
+    <addaction name="second_mark_on"/>
+    <addaction name="second_mark_off"/>
+    <addaction name="separator"/>
+    <addaction name="set_1s_main"/>
+    <addaction name="set_1s_rezerv"/>
+   </widget>
+   <widget class="QMenu" name="menu_imitator">
+    <property name="title">
+     <string>Имитатор</string>
+    </property>
+    <addaction name="imitator_on"/>
+    <addaction name="imitator_off"/>
+   </widget>
+   <widget class="QMenu" name="menu_13">
+    <property name="title">
+     <string>Команды управления</string>
+    </property>
+    <addaction name="control_power_on"/>
+    <addaction name="control_power_off"/>
+   </widget>
+   <addaction name="menu_power"/>
+   <addaction name="menu_1s"/>
+   <addaction name="menu_imitator"/>
+   <addaction name="menu_13"/>
+  </widget>
+  <widget class="QMenu" name="menu_4">
+   <property name="title">
+    <string>Питание</string>
+   </property>
+   <addaction name="state_on"/>
+   <addaction name="state_off"/>
+  </widget>
+  <widget class="QMenu" name="menu_5">
+   <property name="title">
+    <string>Штатная работа</string>
+   </property>
+   <addaction name="set_no"/>
+   <addaction name="set_to"/>
+   <addaction name="set_loc"/>
+  </widget>
+  <widget class="QMenu" name="menu_7">
+   <property name="title">
+    <string>Испытание</string>
+   </property>
+   <widget class="QMenu" name="menu_pci">
+    <property name="title">
+     <string>Приемо-сдаточные испытания (ПСИ)</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_9">
+    <property name="title">
+     <string>Ресурсные испытания</string>
+    </property>
+    <addaction name="set_cycl_zkr"/>
+    <addaction name="set_tech_run"/>
+    <addaction name="set_cycl_dark_frames"/>
+   </widget>
+   <addaction name="set_auto_exp"/>
+   <addaction name="menu_pci"/>
+   <addaction name="menu_9"/>
+  </widget>
+  <widget class="QMenu" name="menu_8">
+   <property name="title">
+    <string>Команды</string>
+   </property>
+   <addaction name="set_shtmi1"/>
+   <addaction name="set_shtmi2"/>
+   <addaction name="set_mshior"/>
+   <addaction name="set_dtmi"/>
+   <addaction name="set_smti"/>
+   <addaction name="set_vmti"/>
+   <addaction name="separator"/>
+   <addaction name="set_synchro"/>
+   <addaction name="set_skor"/>
+   <addaction name="command_no"/>
+   <addaction name="command_to"/>
+   <addaction name="command_loc"/>
+   <addaction name="command_otclp"/>
+   <addaction name="separator"/>
+   <addaction name="command_os"/>
+   <addaction name="command_vsk"/>
+   <addaction name="separator"/>
+   <addaction name="full_exp"/>
+  </widget>
+  <widget class="QMenu" name="menu_windows">
+   <property name="title">
+    <string>Просмотр</string>
+   </property>
+  </widget>
+  <widget class="QMenu" name="menu_tables">
+   <property name="title">
+    <string>Таблицы</string>
+   </property>
+  </widget>
+  <widget class="QMenu" name="menu_settings">
+   <property name="title">
+    <string>Опции</string>
+   </property>
+   <addaction name="set_to_define_address_dev"/>
+  </widget>
+  <widget class="QMenu" name="menu_6">
+   <property name="title">
+    <string>Прием кадров</string>
+   </property>
+   <addaction name="set_ful_frame"/>
+  </widget>
+  <widget class="QMenu" name="menu_plots">
+   <property name="title">
+    <string>Графики</string>
+   </property>
+  </widget>
+  <widget class="QMenu" name="menu_file">
+   <property name="title">
+    <string>Файл</string>
+   </property>
+   <widget class="QMenu" name="menu_profile">
+    <property name="title">
+     <string>Профиль</string>
+    </property>
+    <addaction name="add_profile"/>
+   </widget>
+   <addaction name="menu_profile"/>
+  </widget>
+  <action name="power_on">
+   <property name="text">
+    <string>Включить</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="power_off">
+   <property name="text">
+    <string>Отключить</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+P</string>
+   </property>
+  </action>
+  <action name="second_mark_on">
+   <property name="text">
+    <string>Включить</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="second_mark_off">
+   <property name="text">
+    <string>Отключить</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+S</string>
+   </property>
+  </action>
+  <action name="state_on">
+   <property name="text">
+    <string>Участок включения</string>
+   </property>
+  </action>
+  <action name="state_off">
+   <property name="text">
+    <string>Участок выключения</string>
+   </property>
+  </action>
+  <action name="set_no">
+   <property name="text">
+    <string>Начальная ориентация (НО)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="set_to">
+   <property name="text">
+    <string>Текущая ориентация (ТО)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="set_loc">
+   <property name="text">
+    <string>Локализация (ЛОК)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="set_auto_exp">
+   <property name="text">
+    <string>Автономные испытания (АИ)</string>
+   </property>
+  </action>
+  <action name="set_shtmi1">
+   <property name="text">
+    <string>ШТМИ1</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="set_shtmi2">
+   <property name="text">
+    <string>ШТМИ2</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
+  </action>
+  <action name="set_mshior">
+   <property name="text">
+    <string>МШИ ОР</string>
+   </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="set_dtmi">
+   <property name="text">
+    <string>ДТМИ</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="set_smti">
+   <property name="text">
+    <string>СМТИ</string>
+   </property>
+  </action>
+  <action name="set_vmti">
+   <property name="text">
+    <string>ВМТИ</string>
+   </property>
+  </action>
+  <action name="set_synchro">
+   <property name="text">
+    <string>Команда СИНХРО</string>
+   </property>
+   <property name="shortcut">
+    <string>F7</string>
+   </property>
+  </action>
+  <action name="set_skor">
+   <property name="text">
+    <string>Команда СКОР</string>
+   </property>
+  </action>
+  <action name="command_no">
+   <property name="text">
+    <string>Команда НО</string>
+   </property>
+  </action>
+  <action name="command_to">
+   <property name="text">
+    <string>Команда ТО</string>
+   </property>
+  </action>
+  <action name="command_loc">
+   <property name="text">
+    <string>Команда ЛОК</string>
+   </property>
+  </action>
+  <action name="command_otclp">
+   <property name="text">
+    <string>Команда ОТКЛ Р</string>
+   </property>
+  </action>
+  <action name="set_to_define_address_dev">
+   <property name="text">
+    <string>Определить адрес устройств</string>
+   </property>
+  </action>
+  <action name="command_os">
+   <property name="text">
+    <string>Команда ОС</string>
+   </property>
+  </action>
+  <action name="command_vsk">
+   <property name="text">
+    <string>Команда ВСК ОУ</string>
+   </property>
+  </action>
+  <action name="full_exp">
+   <property name="text">
+    <string>Полная экспозиция</string>
+   </property>
+  </action>
+  <action name="set_tech_run">
+   <property name="text">
+    <string>Технологический прогон</string>
+   </property>
+  </action>
+  <action name="set_cycl_zkr">
+   <property name="text">
+    <string>Испытание крышки</string>
+   </property>
+  </action>
+  <action name="set_cycl_dark_frames">
+   <property name="text">
+    <string>Получение темновых кадров</string>
+   </property>
+  </action>
+  <action name="set_ful_frame">
+   <property name="text">
+    <string>Полный кадр</string>
+   </property>
+  </action>
+  <action name="imitator_on">
+   <property name="text">
+    <string>Включить</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="control_power_on">
+   <property name="text">
+    <string>Включить питание</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+K</string>
+   </property>
+  </action>
+  <action name="control_power_off">
+   <property name="text">
+    <string>Выключить питание</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+K</string>
+   </property>
+  </action>
+  <action name="imitator_off">
+   <property name="text">
+    <string>Выключить</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+I</string>
+   </property>
+  </action>
+  <action name="set_power_main">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Режим опроса КП основной</string>
+   </property>
+  </action>
+  <action name="set_power_rezerv">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Режим опроса КП резервный</string>
+   </property>
+  </action>
+  <action name="set_1s_main">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Основной канал</string>
+   </property>
+  </action>
+  <action name="set_1s_rezerv">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Резервный канал</string>
+   </property>
+  </action>
+  <action name="set_profile">
+   <property name="text">
+    <string>Текущий профиль</string>
+   </property>
+  </action>
+  <action name="add_profile">
+   <property name="text">
+    <string>Настройки профиля</string>
+   </property>
+  </action>
+  <addaction name="menu_file"/>
+  <addaction name="menu_bi"/>
+  <addaction name="menu_4"/>
+  <addaction name="menu_5"/>
+  <addaction name="menu_7"/>
+  <addaction name="menu_8"/>
+  <addaction name="menu_6"/>
+  <addaction name="menu_windows"/>
+  <addaction name="menu_plots"/>
+  <addaction name="menu_tables"/>
+  <addaction name="menu_settings"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

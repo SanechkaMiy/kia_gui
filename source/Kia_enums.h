@@ -1,0 +1,347 @@
+#ifndef KIA_ENUMS_H
+#define KIA_ENUMS_H
+enum  CHECK_STATUS
+{
+    CS_IS_OFF = 0,
+    CS_IS_ON = 1
+};
+
+enum Kia_command
+{
+    SHTMI_1 = 0,
+    SHTMI_2 = 1,
+    MSHI_OR = 2,
+    DTMI_ONE = 3,
+    SMTI = 4,
+    VMTI = 5,
+    SYNCHRO = 6,
+    SKOR = 7,
+    CYCLOGRAM_NO = 8,
+    CYCLOGRAM_TO = 9,
+    CYCLOGRAM_LOC = 10,
+    CYCLOGRAM_STATE_ON = 11,
+    CYCLOGRAM_STATE_OFF = 12,
+    CYCLOGRAM_DO_EXPOSURE = 13,
+    POWER_ON = 14,
+    POWER_OFF = 15,
+    ON_1S = 16,
+    OFF_1S = 17,
+    COMMAND_NO = 18,
+    COMMAND_TO = 19,
+    COMMAND_LOC = 20,
+    COMMAND_OTCLP = 21,
+    CYCLOGRAM_OFFLINE_TEST = 22,
+    CYCLOGRAM_STOP = 23,
+    CYCLOGRAM_DEFINE_ADDRESS = 24,
+    COMMAND_OS = 25,
+    COMMAND_VSKOU = 26,
+    SET_USED_BOKZ = 27,
+    SET_USED_ADDRESS = 28,
+    SET_TD = 29,
+    SET_NUM_MPI = 30,
+    SET_QA = 31,
+    SET_W = 32,
+    SET_BSHV = 33,
+    CYCLOGRAM_OPERATION = 34,
+    CYCLOGRAM_1S_MARK = 35,
+    CYCLOGRAM_TEST_MKO = 36,
+    CYCLOGRAM_TECH_RUN = 37,
+    SET_CURRENT_LPI = 38,
+    SET_USED_MPI_COMMAND_IN_CYCLOGRAM = 41,
+    SET_ZKR_SETTINGS = 42,
+    SET_EXC_FREQ = 43,
+    SET_INTERVAL_1S_MARK = 44,
+    CYCLOGRAM_ZKR = 45,
+    DO_FULL_FRAME = 46,
+    CYCL_FULL_FRAMES = 47,
+    SET_FULL_FRAMES_SETTINGS = 48,
+    SET_RELAY_PULSE = 49,
+    SET_RELAY_PULSE_TIME = 50,
+    SET_RELAY_POLAR = 51,
+    SET_SEC_MARK_PERIOD = 52,
+    SET_TR_SETTINGS = 53,
+    SET_NUM_BI = 54,
+    IMITATOR_ON = 55,
+    IMITATOR_OFF = 56,
+    CONROL_COMMAND_ON = 57,
+    CONROL_COMMAND_OFF = 58,
+    SET_USED_CHANNEL = 59,
+    SET_EPSILON = 60,
+    GET_EPSILON = 61,
+    SET_FOCUS = 62,
+    GET_FOCUS = 63,
+    SET_TEXP = 64,
+    GET_TEXP = 65,
+    SET_CORD_X = 66,
+    SET_CORD_Y = 67,
+    SET_MATRIX_PSK = 68,
+    CYCLOGRAM_SYNCHRO = 69,
+    CYCLOGRAM_TEST_ADRESS = 70
+};
+
+enum KIA_GUI_COMMAND
+{
+    SET_KIA_GUI_SETTINGS = 0,
+    CONNECT_TO_CORE = 1,
+    CONNECT_TO_DB = 2,
+    SEND_DATA_TO_STATE_WINDOW = 3,
+    SEND_DATA_TO_SETTINGS_WINDOW = 4,
+    SET_INFO_TO_WINDOW_INFO = 5,
+    SET_WINDOW_INFO_MPI = 6,
+    SET_WINDOW_INFO_DEVICE_PROTOCOL = 7,
+    SET_STATUS_1S_MARK = 8,
+    SET_INFO_TO_ERROR_WINDOW = 9,
+    SET_INFO_TO_AI_WINDOW = 10,
+    SEND_COMMAND = 11,
+    SEND_STATUS_INFO = 12,
+    LOAD_PROFILE = 13
+};
+
+enum NUM_MPI_COMMAND
+{
+    NMC_SHTMI1 = 0,
+    NMC_SHTMI2 = 1,
+    NMC_MSHIOR = 2,
+    NMC_DTMI = 3,
+    NMC_DTMI_LOC = 4,
+    NMC_SMTI = 5,
+    NMC_VMTI = 6,
+    NMC_SYNCHRO = 7,
+    NMC_SKOR = 8,
+    NMC_COMMAND_NO = 9,
+    NMC_COMMAND_TO = 10,
+    NMC_COMMAND_FULL_EXP = 11,
+    NMC_COMMAND_LOC = 12,
+    NMC_COMMAND_OTCLP = 13,
+    NMC_COMMAND_OPENKR = 14,
+    NMC_COMMAND_ZKR = 15,
+    NMC_COMMAND_KVAOR = 16,
+    NMC_COMMAND_OS = 17,
+    NMC_COMMAND_VSKOU = 18,
+    NMC_INITIAL_STATE = 19,
+    NMC_BLOCK_OU = 20,
+    NMC_UNBLOCK_OU = 21,
+};
+
+enum TYPE_BOKZ
+{
+    TYPE_BOKZ_BOKZM60 = 0,
+    TYPE_BOKZ_BOKZM60_1000 = 1,
+    TYPE_BOKZ_BOKZMR= 2,
+    TYPE_BOKZ_AIS2k = 3,
+    TYPE_BOKZ_NK = 4,
+};
+
+enum TYPE_BI
+{
+    TYPE_BI_BKPIK= 0,
+    TYPE_BI_BIU = 1
+};
+
+enum TYPE_KLED
+{
+    CHECK_CON_CORE = 0,
+    CHECK_CON_DB = 1
+};
+
+enum KIA_STATUS
+{
+    KiaS_SUCCESS = 0x0000,
+    KiaS_FAIL = 0x0001,
+};
+
+enum DO_IT
+{
+    EP_NOEXCHANGE = 0x0001,
+    EP_NOPROTECTEDEXCHANGE = 0x0002,
+    EP_NOFULLEXCHANGE = 0x0004,
+    EP_NODATACONVERTION = 0x0008,
+    EP_NOTEXTCONVERTION = 0x0010,
+    EP_NOSQLCONVERTION = 0x0020,
+    EP_NOOUTTOWINDOW = 0x0040,
+
+    EP_NOSQLPROTOCOL = 0x2000,
+    EP_NOCHARTPROTOCOL = 0x4000,
+    EP_NOTEXTPROTOCOL = 0x8000,
+    EP_DOALL = 0x0000,
+};
+
+enum KIA_NAME_CYCLOGRAMS
+{
+    KNCycl_REGULAR = 0,
+    KNCycl_TR = 1,
+    KNCycl_ZKR = 2,
+    KNCycl_FRAMES = 3
+};
+
+enum SET_PARAM_CYCLOGRAM
+{
+    SPC_COUNT = 0,
+    SPC_PERIOD = 1,
+    SPC_DURATION = 2,
+};
+
+enum DO_SAVE_TO_PROTOCOL
+{
+    SP_DO_MKO = 0,
+    SP_DO_DEV = 1,
+    SP_DO_SYSTEM = 2,
+    SP_DO_AI = 3,
+    SP_DO_ERROR  = 4
+};
+
+enum TABLE_SETTINGS
+{
+    TS_USED_BOKZ = 0,
+    TS_ADDRESS = 1,
+    TS_MPI = 2,
+    TS_LPI = 3,
+    TS_TYPE_BI = 4,
+    TS_NUM_CH = 5,
+    TS_TD = 6
+};
+
+enum BIU_STATE_TABLE
+{
+    Biu_Num_bi = 0,
+    Biu_ST_KS = 1,
+    Biu_KRR = 2,
+    Biu_BRTUZ = 3,
+    Biu_KP = 4,
+    Biu_BTVK = 5,
+    Biu_DEV_V = 6,
+    Biu_VIP_V = 7,
+    Biu_dev_fid_1 = 8,
+    Biu_dev_fid_2 = 9,
+    Biu_im_fid_1 = 10,
+    Biu_im_fid_2 = 11,
+    Biu_td = 12,
+    Biu_1C = 13
+};
+
+enum BINARY_PROTOCOL
+{
+    DO_BINARY_FALSE = 0,
+    DO_BINARY_TRUE = 1
+};
+
+enum BI_STATUS_1S_MARK
+{
+    BIS1SM_BOTH_ON = 0,
+    BIS1SM_REZERV_ON= 1,
+    BIS1SM_MAIN_ON = 2,
+    BIS1M_BOTH_OFF = 3
+};
+
+enum BI_TURN_MAIN_OR_REZ_CH
+{
+    BI_MAIN_REZ_ON = 0,
+    BI_MAIN_ON = 1,
+    BI_REZERV_ON = 2,
+    BI_ALL_OFF = 3
+};
+enum TYPE_RELAY_COM
+{
+    TRC_PULSE = 0,
+    TRC_TIME_PULSE = 1,
+    TRC_POLAR = 2
+};
+
+enum TYPE_BI_SETTINGS
+{
+    TBS_SEC_MARK = 0,
+    TBS_RELAY_COMMAND = 1
+};
+
+enum QUERY_PARM
+{
+    QP_X = 0,
+    QP_Y = 1,
+    QP_TYPE_DEV = 2,
+    QP_TYPE_ARR = 3,
+    QP_X_DESC = 4,
+    QP_Y_DESC = 5,
+    QP_NUM_BOKZ = 6,
+    QP_NUM_WIDGET = 7,
+    QP_TYPE_WIDGET = 8
+};
+
+enum TYPE_COMMAND
+{
+    IS_MPI_COMMAND = 0,
+    IS_CYCLOGRAM = 1,
+};
+
+enum COMMAND_PARAM
+{
+    IS_PARAM = 0,
+    IS_TABLE = 1,
+};
+
+enum TYPE_PARAM
+{
+    TP_EPS = 0,
+    TP_FOCUS = 1,
+    TP_TEXP = 2,
+    TP_CORD_X = 3,
+    TP_CORD_Y = 4,
+
+};
+
+enum TYPE_TABLE
+{
+    TT_MATRIX_PSK = 0,
+    TT_Qo = 1,
+    TT_Wo = 2
+};
+
+enum STATUS_PARAM
+{
+    IS_DEFAULT = 0,
+    IS_CHANGED = 1,
+
+};
+
+
+enum PROFILE_DATA
+{
+    NAME_PROFILE = 0,
+    NUM_PROFILE = 1,
+
+};
+
+enum STATUS_TABLE
+{
+    ST_BSHV = 0,
+    ST_ST1= 1,
+    ST_ST2= 2
+
+};
+
+enum TABLE_STATE_COL_VALUE
+{
+    IS_VISIBILYTY = 0,
+    IS_COLOR = 1
+
+};
+
+enum TYPE_CONNECTION
+{
+    TYPE_RAW = 0,
+    TYPE_DATA = 1
+};
+
+enum TYPE_DATA_FOCUS
+{
+    FOCUS = 0,
+    CORD_X = 1,
+    CORD_Y = 2
+};
+
+enum TYPE_DATA_FOR_GRAPH
+{
+    NOTHING = 0,
+    DEGREEZ = 1,
+    SECOND = 2
+};
+#endif // KIA_ENUMS_H
