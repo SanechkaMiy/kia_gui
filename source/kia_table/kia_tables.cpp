@@ -11,6 +11,8 @@ Kia_tables::Kia_tables(std::shared_ptr<Kia_db> kia_db,
 {
     connect(this, SIGNAL(get_data_from_db(QString, QString)), m_kia_db.get(), SLOT(get_data_from_db_for_table_slot(QString, QString)));
     connect(this, SIGNAL(send_data_on_table()), this, SLOT(set_data_on_table_slot()));
+    setMouseTracking(true);
+    setContentsMargins(20,20,20,20);
 }
 
 void Kia_tables::get_data_from_db_slot()
@@ -34,4 +36,10 @@ void Kia_tables::set_data_on_table_slot()
     setModel(m_kias_graph_data->m_model.front());
     m_kias_graph_data->m_model.pop();
 
+}
+
+void Kia_tables::mouseMoveEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+    emit set_default_pos();
 }

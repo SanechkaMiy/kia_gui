@@ -9,6 +9,7 @@
 #include "Kia_main_struct.h"
 #include "kia_constructor.h"
 #include <QSqlQueryModel>
+#include "kia_custom_dialog.h"
 #include "kia_table/kia_tables.h"
 #include <QTimer>
 class Kia_table_manager : public QObject
@@ -32,6 +33,7 @@ private:
     int32_t m_num_table = -1;
     QWidget* m_parent;
     QVector<QVBoxLayout*> m_l_for_tables;
+    QVector<Kia_custom_dialog*> m_kia_custom_dialog;
     QVector<QDialog*> m_dialog;
     QVector<Kia_tables*> m_kia_tables;
     std::vector<std::shared_ptr<Kias_data_from_db>> m_kias_data_from_db;

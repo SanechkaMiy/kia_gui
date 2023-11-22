@@ -39,6 +39,7 @@ const static uint16_t max_count_param = 3;
 const static uint16_t max_count_relay_command = 3;
 const static uint16_t max_count_bi_settings = 2;
 const static uint16_t max_count_name_command = 3;
+const static uint16_t max_grid_size = 25;
 }
 
 #pragma pack(push, 1)
@@ -104,9 +105,11 @@ struct Kia_gui_settings
     QStringList m_mpi_command_name = {"ШТМИ1", "ШТМИ2", "МШИОР", "ДТМИ", "ДТМИ-ЛОК"};
     std::vector<QStringList> m_list_profile;
     uint16_t m_count_profile = 0;
+    uint16_t m_current_main_tab_widget = 0;
     std::vector<QStringList> m_status_for_table_state;
     std::vector<QStringList> m_color_for_table_state;
     std::vector<CDockWidget*> m_dock_widget;
+    std::vector<QWidget*> m_main_tabs_widgets;
 };
 #pragma pack(pop)
 

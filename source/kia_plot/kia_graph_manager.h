@@ -6,6 +6,7 @@
 #include "kia_graph.h"
 #include "Kia_main_struct.h"
 #include "kia_constructor.h"
+#include "kia_custom_dialog.h"
 class Kia_graph_manager : public QObject
 {
     Q_OBJECT
@@ -21,6 +22,7 @@ public slots:
 signals:
     void create_action(QString, int32_t);
     void remove_action(int32_t);
+    void set_default_pos();
 private slots:
     void create_plot_slot(QStringList query_param);
     void remove_plot_slot(qint16 num_graph);
@@ -35,6 +37,7 @@ private:
     void create_main_graph();
     QVector<QVBoxLayout*>m_l_for_plots;
     QVector<QDialog*> m_dialog;
+    QVector<Kia_custom_dialog*> m_kia_custom_dialog;
     QDialog* m_main_dialog;
     std::vector<std::shared_ptr<Kias_data_from_db>> m_kias_data_from_db;
     QVector<Kia_graph*> m_kia_graph;

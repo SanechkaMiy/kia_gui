@@ -263,7 +263,8 @@ enum QUERY_PARM
     QP_Y_DESC = 5,
     QP_NUM_BOKZ = 6,
     QP_NUM_WIDGET = 7,
-    QP_TYPE_WIDGET = 8
+    QP_TYPE_WIDGET = 8,
+    QP_NUM_MAIN_TAB_WIDGET = 9,
 };
 
 enum TYPE_COMMAND

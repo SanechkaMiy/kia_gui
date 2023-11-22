@@ -11,17 +11,40 @@ Kia_main_window::Kia_main_window(std::shared_ptr<Kia_settings> kia_settings, QWi
     CDockManager::setConfigFlag(CDockManager::OpaqueSplitterResize, true);
     CDockManager::setConfigFlag(CDockManager::XmlCompressionEnabled, false);
     CDockManager::setConfigFlag(CDockManager::FocusHighlighting, true);
-
+    m_main_tab_widget = new QTabWidget(this);
+    m_main_tab_widget->setTabPosition(QTabWidget::South);
+    m_main_tab_widget->setMovable(true);
+    m_main_tab_widget->setTabsClosable(true);
     m_main_widget = new QWidget();
     m_main_layout = new QGridLayout(m_main_widget);
+    connect(m_main_tab_widget, &QTabWidget::currentChanged, this, [this](int index)
+    {
+        m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget = index;
+    });
+    m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets.push_back(new QWidget(this));
+    m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets.push_back(new QWidget(this));
 
+    m_add_tab = new QPushButton("+", this);
+    m_add_tab->setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
+    m_add_tab->resize(2, 2);
+    m_main_tab_widget->setCornerWidget(m_add_tab, Qt::Corner::TopLeftCorner);
+    m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets.push_back(new QWidget(this));
+    m_main_tab_widget->addTab(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_count_tab_widget], "Лист №" + QString::number(m_count_tab_widget + 1));
+    m_count_tab_widget++;
+    connect(m_add_tab, &QPushButton::clicked, this, [this]()
+    {
+        m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets.push_back(new QWidget(this));
+        m_main_tab_widget->addTab(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_count_tab_widget], "Лист №" + QString::number(m_count_tab_widget + 1));
+        m_count_tab_widget++;
+    });
+//    m_main_tab_widget->addTab(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[0], "1");
+//    m_main_tab_widget->addTab(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[1], "2");
     create_main_graph_manager();
 }
 
 
 void Kia_main_window::set_widget_on_bottom(QWidget* wgt)
 {
-
     m_main_layout->setSpacing(0);
     m_main_layout->setContentsMargins(0,0,0,0);
     auto* spacer = new QSpacerItem(20, 40, QSizePolicy::Fixed, QSizePolicy::Expanding);
@@ -39,9 +62,10 @@ CDockManager* Kia_main_window::create_dock_widget(QWidget *parent)
 {
     m_dock_manager = new CDockManager(parent);
     auto widget = new QWidget(this);
-    CDockWidget* central_dock_widget = new CDockWidget("CentralWidget");
-    central_dock_widget->setWidget(widget);
-    auto* central_dock_area = m_dock_manager->setCentralWidget(central_dock_widget);
+    m_central_dock_widget = new CDockWidget("CentralWidget");
+    m_central_dock_widget->setWidget(m_main_tab_widget);
+    //m_main_tab_widget->addTab(m_central_dock_widget, "centr");
+    auto* central_dock_area = m_dock_manager->setCentralWidget(m_central_dock_widget);
     central_dock_area->setAllowedAreas(DockWidgetArea::OuterDockAreas);
 
     m_window_areas = nullptr;
@@ -99,6 +123,21 @@ void Kia_main_window::remove_dock_widget(uint16_t num_widget)
 Kia_main_window::~Kia_main_window()
 {
     delete ui;
+}
+
+QWidget* Kia_main_window::get_central_dock_widget()
+{
+    return m_main_tab_widget;
+}
+
+QWidget *Kia_main_window::get_current_tab_widget()
+{
+    return m_main_tab_widget->currentWidget();
+}
+
+void Kia_main_window::set_current_index_tab_widget(uint16_t index)
+{
+    m_main_tab_widget->setCurrentIndex(index);
 }
 
 void Kia_main_window::create_main_graph_manager()

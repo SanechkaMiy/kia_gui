@@ -14,6 +14,7 @@ KiaCore::KiaCore(QWidget *wgt, QObject *parent)
         load_profile_settings();
     });
     connect(m_kia_menubar, SIGNAL(show_kia_profile()), this, SLOT(show_kia_profile_slot()));
+    connect(m_save_read_settings.get(), SIGNAL(send_current_main_tab_widget(uint16_t)), m_kia_main_window, SLOT(set_current_index_tab_widget(uint16_t)));
     m_dock_manager = m_kia_main_window->create_dock_widget(m_kia_main_window);
     m_kia_main_window->set_menu_bar(m_kia_menubar);
 }
@@ -52,7 +53,7 @@ KiaCore::~KiaCore()
         for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
         {
             m_save_read_settings->save_pos_and_size_widgets("mpi_command_wnd_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz), m_kia_window_info_mpi_command[num_mpi_command][num_bokz]);
-            m_save_read_settings->save_state_widgets("mpi_command_wnd_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz), m_kia_window_info_mpi_command[num_mpi_command][num_bokz]);
+            //m_save_read_settings->save_state_widgets("mpi_command_wnd_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz), m_kia_window_info_mpi_command[num_mpi_command][num_bokz]);
         }
     }
     auto graph_widget_list = m_kia_graph_manager->get_graph_widget();
@@ -203,6 +204,7 @@ void KiaCore::set_kia_gui_settings_slot()
 
 
     m_kia_constructor.reset(new Kia_constructor(m_kia_settings, m_kia_main_window));
+    m_kia_constructor->setWindowTitle("Коструктор");
     m_kia_constructor->set_type_dev(m_kia_settings->m_type_bokz, m_kia_settings->m_type_bi);
 
     create_kia_graph_manager();
@@ -316,7 +318,8 @@ void KiaCore::create_kia_options_for_interface()
 
 void KiaCore::create_kia_graph_manager()
 {
-    m_kia_graph_manager.reset(new Kia_graph_manager(m_kia_settings, m_kia_constructor, m_kia_main_window));
+    auto parent = m_kia_main_window->get_central_dock_widget();
+    m_kia_graph_manager.reset(new Kia_graph_manager(m_kia_settings, m_kia_constructor, parent));
     m_kia_menubar->get_menu_plots()->addAction("Добавить график", m_kia_menubar, [this]()
     {
         m_kia_constructor->show();
@@ -350,7 +353,8 @@ void KiaCore::remove_action_from_graph(int32_t num_graph)
 
 void KiaCore::create_kia_table_manager()
 {
-    m_kia_table_manager.reset(new Kia_table_manager(m_kia_settings, m_kia_constructor, m_kia_main_window));
+    auto parent = m_kia_main_window->get_central_dock_widget();
+    m_kia_table_manager.reset(new Kia_table_manager(m_kia_settings, m_kia_constructor, parent));
     m_kia_menubar->get_menu_tables()->addAction("Добавить таблицу", m_kia_menubar, [this]()
     {
         m_kia_constructor->show();

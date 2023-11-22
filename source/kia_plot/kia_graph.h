@@ -34,6 +34,7 @@ signals:
     void get_data_from_db(QString, QString);
     void send_data_on_plot();
     void change_range();
+    void change_range_default();
 
 private slots:
     void get_data_from_db_slot();

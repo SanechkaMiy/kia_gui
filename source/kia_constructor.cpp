@@ -139,10 +139,11 @@ void Kia_constructor::add_graph()
             query_param.push_back(QString::number(num_bokz));
             query_param.push_back(QString::number(m_kia_settings->m_kias_view_data->m_graph_count));
             query_param.push_back(m_type_widget);
+            query_param.push_back(QString::number(m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget));
             m_kia_settings->m_kias_view_data->m_graph_count++;
             m_kia_settings->m_kias_view_data->m_data_graph.push_back(query_param);
             emit add_graph(query_param);
-            emit set_window_initial_settings(query_param[QP_NUM_WIDGET].toInt(), 500, 300);
+            emit set_window_initial_settings(query_param[QP_NUM_WIDGET].toInt(), 800, 500);
             emit show_graph(query_param[QP_NUM_WIDGET].toInt());
         }
     }
@@ -175,6 +176,7 @@ void Kia_constructor::add_table()
                 query_param.push_back(QString::number(num_bokz));
             query_param.push_back(QString::number(m_kia_settings->m_kias_view_data->m_table_count));
             query_param.push_back(m_type_widget);
+            query_param.push_back(QString::number(m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget));
             QStringList data;
             data.push_back(QString::number(m_kia_settings->m_kias_view_data->m_table_count));
             for (auto el : m_data_table)

@@ -15,7 +15,8 @@
 #include "FloatingDockContainer.h"
 #include "DockComponentsFactory.h"
 #include "AutoHideTab.h"
-
+#include <QTabWidget>
+#include <QTabBar>
 using namespace ads;
 
 namespace Ui {
@@ -37,10 +38,14 @@ public:
     void create_action_graph_dock_widget(QMenu* menu);
     void remove_dock_widget(uint16_t num_widget);
     ~Kia_main_window();
+    QWidget* get_central_dock_widget();
+    QWidget* get_current_tab_widget();
+public slots:
+    void set_current_index_tab_widget(uint16_t index);
 private:
+    QTabWidget* m_main_tab_widget;
     CDockAreaWidget* m_window_areas = nullptr;
-    CDockAreaWidget* m_graph_areas = nullptr;
-
+    CDockWidget* m_central_dock_widget;
     uint32_t m_count_doc_widget = -1;
     Ui::Kia_main_window *ui;
     CDockManager* m_dock_manager;
@@ -51,7 +56,9 @@ private:
     QVBoxLayout* m_layout;
     QPushButton* m_start_or_stop;
     QPushButton* m_now;
+    QPushButton* m_add_tab;
     uint16_t m_is_start_or_stop = 0;
+    uint16_t m_count_tab_widget = 0;
     void create_main_graph_manager();
 protected:
     void closeEvent(QCloseEvent *event) override;

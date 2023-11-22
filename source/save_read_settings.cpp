@@ -62,6 +62,10 @@ void Save_read_settings::save_settings()
 
     for (uint16_t num_table = 0; num_table < m_kia_settings->m_kia_gui_settings->m_color_for_table_state.size(); ++num_table)
         m_settings.setValue("/color_for_table_state_" + QString::number(num_table), QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_color_for_table_state[num_table]));
+
+
+    m_settings.setValue("/current_main_tab_index" , QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget));
+
     m_settings.endGroup();
 
     save_graph_settings();
@@ -156,6 +160,9 @@ void Save_read_settings::load_settings()
             auto list_color = m_settings.value("/color_for_table_state_" + QString::number(num_table)).value<QStringList>();
             emit send_list_for_check_box_color_table_state(num_table, list_color);
         }
+
+        auto current_main_tab_index = m_settings.value("/current_main_tab_index").value<quint16>();
+        emit send_current_main_tab_widget(current_main_tab_index);
     }
     else
         std::cout <<"empty ini gui settings" << std::endl;
@@ -288,6 +295,9 @@ void Save_read_settings::load_pos_and_size_widgets(const QString save_name, QWid
 
     m_settings.beginGroup("/Window_save_geometry_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
     wgt->restoreGeometry(m_settings.value("/geometry_" + save_name).toByteArray());
+    auto curr_pos = QPoint((int)(wgt->pos().x() / constants::max_grid_size) * constants::max_grid_size,
+                           (int)(wgt->pos().y() / constants::max_grid_size) * constants::max_grid_size);
+    wgt->move(curr_pos);
     m_settings.endGroup();
 }
 
@@ -306,6 +316,7 @@ void Save_read_settings::load_state_widgets(const QString save_name, QWidget *wg
     m_kia_settings->m_kia_gui_settings->m_widget_is_hide[wgt] = m_settings.value("/is_hide_" + save_name).value<bool>();
     if (m_kia_settings->m_kia_gui_settings->m_widget_is_hide.value(wgt))
     {
+
         wgt->show();
     }
     else

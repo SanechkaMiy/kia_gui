@@ -16,6 +16,7 @@ public:
 signals:
     void get_data_from_db(QString, QString);
     void send_data_on_table();
+    void set_default_pos();
 private slots:
     void get_data_from_db_slot();
     void set_data_on_table_slot();
@@ -26,6 +27,8 @@ private:
     std::shared_ptr<Kias_data_from_db> m_kias_graph_data;
     std::future<void> start_get_data;
     double last_point_key = 0;
+protected:
+    void mouseMoveEvent(QMouseEvent *event);
 };
 
 #endif // KIA_TABLES_H

@@ -10,6 +10,8 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 SOURCES += \
     client.cpp \
+    kia_custom_dialog.cpp \
+    kia_custom_title_bar.cpp \
     kia_main_window.cpp \
     kia_options.cpp \
     kia_constructor.cpp \
@@ -37,6 +39,8 @@ HEADERS += \
     Kia_enums.h \
     Kia_main_struct.h \
     client.h \
+    kia_custom_dialog.h \
+    kia_custom_title_bar.h \
     kia_main_window.h \
     kia_options.h \
     kia_constructor.h \

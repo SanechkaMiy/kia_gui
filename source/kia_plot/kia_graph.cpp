@@ -63,10 +63,9 @@ void Kia_graph::init_timestamp_plot()
 
 void Kia_graph::init_default_plot()
 {
-
     connect(this, SIGNAL(get_data_from_db(QString, QString)), m_kia_db.get(), SLOT(get_data_from_db_for_graph_slot(QString, QString)));
     connect(this, SIGNAL(send_data_on_plot()), this, SLOT(set_data_on_plot_slot()));
-    connect(this, SIGNAL(change_range()), this, SLOT(change_range_slot()));
+    connect(this, SIGNAL(change_range_default()), this, SLOT(change_range_default_slot()));
     set_style();
     setAttribute(Qt::WA_OpaquePaintEvent);
     setNoAntialiasingOnDrag(true);
@@ -150,7 +149,7 @@ void Kia_graph::get_data_from_db_slot()
             emit change_range();
         }
         else
-            emit change_range_default_slot();
+            emit change_range_default();
     });
 
 }

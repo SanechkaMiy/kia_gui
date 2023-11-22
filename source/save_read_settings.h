@@ -41,6 +41,7 @@ signals:
     void send_to_kia_profile(QStringList);
     void send_list_for_check_box_table_state(qint16, QStringList);
     void send_list_for_check_box_color_table_state(qint16, QStringList);
+    void send_current_main_tab_widget(uint16_t);
 private:
     std::shared_ptr<Kia_settings> m_kia_settings;
     QSettings m_settings;
