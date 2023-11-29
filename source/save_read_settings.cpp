@@ -64,10 +64,15 @@ void Save_read_settings::save_settings()
         m_settings.setValue("/color_for_table_state_" + QString::number(num_table), QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_color_for_table_state[num_table]));
 
 
-    m_settings.setValue("/current_main_tab_index" , QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget));
+
+    //for (uint16_t num_tab_bar = 0; num_tab_bar < m_kia_settings->m_kia_gui_settings->m_count_tab_bar; ++num_tab_bar)
+    //    m_settings.setValue("/data_graph_on_tabs_" + QString::number(num_tab_bar), QVariant::fromValue(m_kia_settings->m_kias_view_data->m_data_graph_on_tabs[num_tab_bar]));
+
+
 
     m_settings.endGroup();
 
+    save_tabs_settings();
     save_graph_settings();
     save_table_settings();
     save_profile_settings();
@@ -161,8 +166,6 @@ void Save_read_settings::load_settings()
             emit send_list_for_check_box_color_table_state(num_table, list_color);
         }
 
-        auto current_main_tab_index = m_settings.value("/current_main_tab_index").value<quint16>();
-        emit send_current_main_tab_widget(current_main_tab_index);
     }
     else
         std::cout <<"empty ini gui settings" << std::endl;
@@ -242,6 +245,46 @@ void Save_read_settings::save_table_settings()
     m_settings.setValue("/table_index" , QVariant::fromValue(used_table));
     m_settings.setValue("/count_tables" , QVariant::fromValue(m_kia_settings->m_kias_view_data->m_table_count));
     m_settings.endGroup();
+}
+
+void Save_read_settings::load_tabs_settings()
+{
+    m_settings.beginGroup("/Tabs_settings" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    if (m_settings.allKeys().size() != 0)
+    {
+        m_kia_settings->m_kia_gui_settings->m_count_tab_bar = m_settings.value("/count_tabs").value<uint16_t>();
+        QStringList  used_tabs;
+        used_tabs = m_settings.value("/tab_index").value<QStringList>();
+        for (auto el : used_tabs)
+        {
+            auto tab_set = m_settings.value("/tab_" + el).value<QStringList>();
+            m_kia_settings->m_kia_gui_settings->m_data_tabs.push_back(tab_set);
+            emit send_list_to_add_tab(tab_set);
+        }
+
+        auto current_main_tab_index = m_settings.value("/current_main_tab_index").value<quint16>();
+        emit send_current_main_tab_widget(current_main_tab_index);
+    }
+    else
+        std::cout <<"empty ini settings_tabs" << std::endl;
+    m_settings.endGroup();
+}
+
+void Save_read_settings::save_tabs_settings()
+{
+    m_settings.beginGroup("/Tabs_settings" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.setValue("/current_main_tab_index" , QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget));
+    QStringList  used_tab;
+    for (uint16_t num_tab = 0; num_tab < m_kia_settings->m_kia_gui_settings->m_data_tabs.size(); num_tab++)
+    {
+        m_settings.setValue("/tab_" + m_kia_settings->m_kia_gui_settings->m_data_tabs[num_tab][NUM_TAB], QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_data_tabs[num_tab]));
+        used_tab.push_back(m_kia_settings->m_kia_gui_settings->m_data_tabs[num_tab][NUM_TAB]);
+    }
+    m_settings.setValue("/tab_index" , QVariant::fromValue(used_tab));
+    m_settings.setValue("/count_tabs" , QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_count_tab_bar));
+
+    m_settings.endGroup();
+
 }
 
 void Save_read_settings::load_profile_settings()

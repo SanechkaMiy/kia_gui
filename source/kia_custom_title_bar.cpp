@@ -14,11 +14,17 @@ Kia_custom_title_bar::Kia_custom_title_bar(QWidget *parent) :
     m_close_button->setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
     m_close_button->setIcon(QIcon(":/icon/Icon/close.png"));
     m_close_button->setIconSize(QSize(16, 16));
+    connect(m_close_button, &QPushButton::clicked, this, [this]()
+    {
+        emit hide_window();
+    });
     m_title_layout = new QBoxLayout(QBoxLayout::Direction::LeftToRight);
+    m_name_window = new QLabel(this);
+    m_title_layout->addWidget(m_name_window);
     m_title_layout->addItem(spacer);
     m_title_layout->addWidget(m_close_button);
     l->addLayout(m_title_layout);
-
+    setMouseTracking(true);
     //
 }
 
@@ -26,6 +32,11 @@ Kia_custom_title_bar::Kia_custom_title_bar(QWidget *parent) :
 void Kia_custom_title_bar::set_movable(bool flag)
 {
     m_is_movable = flag;
+}
+
+void Kia_custom_title_bar::set_window_title(const QString &title)
+{
+    m_name_window->setText(title);
 }
 
 void Kia_custom_title_bar::mousePressEvent(QMouseEvent *event)
@@ -45,6 +56,7 @@ void Kia_custom_title_bar::mouseMoveEvent(QMouseEvent *event)
         m_curr_pos = event->globalPos() - m_last_pos;
         emit moved(m_curr_pos);
         m_last_pos = event->globalPos();
+        emit set_default_pos();
     }
     else event->ignore();
 }

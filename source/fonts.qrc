@@ -1,0 +1,37 @@
+<RCC>
+    <qresource prefix="/font">
+        <file>fonts/JetBrainsMono-Bold.ttf</file>
+        <file>fonts/JetBrainsMono-BoldItalic.ttf</file>
+        <file>fonts/JetBrainsMono-ExtraBold.ttf</file>
+        <file>fonts/JetBrainsMono-ExtraBoldItalic.ttf</file>
+        <file>fonts/JetBrainsMono-ExtraLight.ttf</file>
+        <file>fonts/JetBrainsMono-ExtraLightItalic.ttf</file>
+        <file>fonts/JetBrainsMono-Italic.ttf</file>
+        <file>fonts/JetBrainsMono-Light.ttf</file>
+        <file>fonts/JetBrainsMono-LightItalic.ttf</file>
+        <file>fonts/JetBrainsMono-Medium.ttf</file>
+        <file>fonts/JetBrainsMono-MediumItalic.ttf</file>
+        <file>fonts/JetBrainsMono-Regular.ttf</file>
+        <file>fonts/JetBrainsMono-SemiBold.ttf</file>
+        <file>fonts/JetBrainsMono-SemiBoldItalic.ttf</file>
+        <file>fonts/JetBrainsMonoNL-Bold.ttf</file>
+        <file>fonts/JetBrainsMonoNL-BoldItalic.ttf</file>
+        <file>fonts/JetBrainsMonoNL-ExtraBold.ttf</file>
+        <file>fonts/JetBrainsMonoNL-ExtraBoldItalic.ttf</file>
+        <file>fonts/JetBrainsMonoNL-ExtraLight.ttf</file>
+        <file>fonts/JetBrainsMonoNL-ExtraLightItalic.ttf</file>
+        <file>fonts/JetBrainsMonoNL-Italic.ttf</file>
+        <file>fonts/JetBrainsMonoNL-Light.ttf</file>
+        <file>fonts/JetBrainsMonoNL-LightItalic.ttf</file>
+        <file>fonts/JetBrainsMonoNL-Medium.ttf</file>
+        <file>fonts/JetBrainsMonoNL-MediumItalic.ttf</file>
+        <file>fonts/JetBrainsMonoNL-Regular.ttf</file>
+        <file>fonts/JetBrainsMonoNL-SemiBold.ttf</file>
+        <file>fonts/JetBrainsMonoNL-SemiBoldItalic.ttf</file>
+        <file>fonts/JetBrainsMonoNL-Thin.ttf</file>
+        <file>fonts/JetBrainsMonoNL-ThinItalic.ttf</file>
+        <file>fonts/MonospaceBold.ttf</file>
+        <file>fonts/MonospaceRegular.ttf</file>
+        <file>fonts/Monotone.ttf</file>
+    </qresource>
+</RCC>

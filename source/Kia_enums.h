@@ -345,4 +345,10 @@ enum TYPE_DATA_FOR_GRAPH
     DEGREEZ = 1,
     SECOND = 2
 };
+
+enum TABS_PARAM
+{
+    NUM_TAB = 0,
+    NAME_TAB = 1
+};
 #endif // KIA_ENUMS_H

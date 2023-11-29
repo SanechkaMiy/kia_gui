@@ -75,7 +75,6 @@ void KiaWindowState::set_color_row(qint16 index_row, bool state)
 
 void KiaWindowState::set_width_for_vertical_header(qint16 width_header, qint16 width_col)
 {
-    const uint16_t shift_for_corrert_widht = 9;
     m_set_table->verticalHeader()->setFixedWidth(width_header);
     for (int coll = 0; coll < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++coll)
     {

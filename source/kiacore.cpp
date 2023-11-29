@@ -15,6 +15,8 @@ KiaCore::KiaCore(QWidget *wgt, QObject *parent)
     });
     connect(m_kia_menubar, SIGNAL(show_kia_profile()), this, SLOT(show_kia_profile_slot()));
     connect(m_save_read_settings.get(), SIGNAL(send_current_main_tab_widget(uint16_t)), m_kia_main_window, SLOT(set_current_index_tab_widget(uint16_t)));
+    connect(m_save_read_settings.get(), SIGNAL(send_list_to_add_tab(QStringList)), m_kia_main_window, SLOT(add_tab_bar_slot(QStringList)));
+
     m_dock_manager = m_kia_main_window->create_dock_widget(m_kia_main_window);
     m_kia_main_window->set_menu_bar(m_kia_menubar);
 }
@@ -206,7 +208,8 @@ void KiaCore::set_kia_gui_settings_slot()
     m_kia_constructor.reset(new Kia_constructor(m_kia_settings, m_kia_main_window));
     m_kia_constructor->setWindowTitle("Коструктор");
     m_kia_constructor->set_type_dev(m_kia_settings->m_type_bokz, m_kia_settings->m_type_bi);
-
+    connect(m_kia_main_window, SIGNAL(remove_graph(uint16_t)), m_kia_constructor.get(), SLOT(remove_graph_slot(uint16_t)));
+    connect(m_kia_main_window, SIGNAL(remove_table(uint16_t)), m_kia_constructor.get(), SLOT(remove_table_slot(uint16_t)));
     create_kia_graph_manager();
     create_kia_table_manager();
 
@@ -255,8 +258,8 @@ void KiaCore::set_kia_gui_settings_slot()
         {
             m_kia_window_info_mpi_command[num_mpi_command][num_bokz] = new KiaWindowInfo(m_kia_main_window);
             m_keys_for_dock_widget["window_mpi_command_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_mpi_command[num_mpi_command][num_bokz], m_kia_settings->m_kia_gui_settings->m_mpi_command_name[num_mpi_command]
-                                                                                                                                              + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-                                                                                            + " " + QString::number(num_bokz + 1)));
+                                                                                                                                                                                           + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+                                                                                                                                         + " " + QString::number(num_bokz + 1)));
             correct_save_state_window(m_kia_window_info_mpi_command[num_mpi_command][num_bokz]);
         }
     }
@@ -303,17 +306,21 @@ void KiaCore::create_kia_options_for_interface()
     QVector<QStringList> list_rows;
     list_name_table.push_back(m_kia_window_state_for_all_dev->windowTitle());
     list_rows.push_back(m_kia_window_state_for_all_dev->get_row());
-    connect(m_kia_options_interface, &Kia_options_interface::send_state_and_num_row, this, [this](qint16 num_row, bool is_active)
+    connect(m_kia_options_interface, &Kia_options_interface::send_state_and_num_row, this, [this](qint16 num_table, qint16 num_row, bool is_active)
     {
+        Q_UNUSED(num_table)
         m_kia_window_state_for_all_dev->hide_or_show_row(num_row, is_active);
     });
-    connect(m_kia_options_interface, &Kia_options_interface::send_color_and_num_row, this, [this](qint16 num_row, bool is_active)
+    connect(m_kia_options_interface, &Kia_options_interface::send_color_and_num_row, this, [this](qint16 num_table, qint16 num_row, bool is_active)
     {
+        Q_UNUSED(num_table)
         m_kia_window_state_for_all_dev->set_color_row(num_row, is_active);
     });
     m_kia_options_interface->create_window_state_settings(list_name_table, list_rows);
     connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_table_state(qint16, QStringList)), m_kia_options_interface, SLOT(set_check_box_for_table_state(qint16, QStringList)));
     connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_color_table_state(qint16, QStringList)), m_kia_options_interface, SLOT(set_check_box_for_table_state_color(qint16, QStringList)));
+    connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_color_table_state(qint16, QStringList)), m_kia_options_interface, SLOT(set_check_box_for_table_state_color(qint16, QStringList)));
+
 }
 
 void KiaCore::create_kia_graph_manager()
@@ -409,9 +416,9 @@ void KiaCore::create_window_settings(qint16 type_bokz)
     m_kia_settings->m_kia_bokz_settings->m_bokz_row_name[type_bokz] << "Используется" << "Адрес МПИ" << "МПИ" << "ЛПИ" << "БИ"
                                                                     << "Номер канала" << "Группа ТД";
     m_kia_window_settings_for_all_dev = new KiaWindowSettings(m_kia_settings, m_kia_main_window);
-    m_kia_window_settings_for_all_dev->setWindowTitle(m_kia_settings->m_kia_bokz_settings->m_bokz_type[type_bokz]);
+    m_kia_window_settings_for_all_dev->setWindowTitle("Окно параметров прибора");
     m_kia_window_settings_for_all_dev->show();
-    m_keys_for_dock_widget["window_param_dev"].push_back(m_kia_main_window->set_to_dock_widget_status_info(m_kia_window_settings_for_all_dev, m_kia_settings->m_kia_bokz_settings->m_bokz_type[type_bokz]));
+    m_keys_for_dock_widget["window_param_dev"].push_back(m_kia_main_window->set_to_dock_widget_status_info(m_kia_window_settings_for_all_dev, "Окно параметров прибора"));
 
     connect(m_kia_window_settings_for_all_dev, SIGNAL(send_value_width_for_state_table(qint16, qint16)), m_kia_window_state_for_all_dev, SLOT(set_width_for_vertical_header(qint16, qint16)));
 
@@ -606,12 +613,7 @@ void KiaCore::set_otclp_stop(qint16 is_otclp)
 
 void KiaCore::reset_before_load_profile()
 {
-    for (auto& el : m_table_action)
-        m_kia_menubar->get_menu_tables()->removeAction(el);
-    for (auto& el : m_plot_action)
-        m_kia_menubar->get_menu_plots()->removeAction(el);
-    m_plot_action.clear();
-    m_table_action.clear();
+    m_kia_main_window->remove_tab_settings();
     m_kia_constructor->remove_list();
 }
 
@@ -655,6 +657,7 @@ void KiaCore::load_profile_settings()
             m_save_read_settings->load_pos_and_size_widgets("mpi_command_wnd_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz), m_kia_window_info_mpi_command[num_mpi_command][num_bokz]);
         }
     }
+    m_save_read_settings->load_tabs_settings();
 
     m_save_read_settings->load_graph_settings();
     auto graph_widget_list = m_kia_graph_manager->get_graph_widget();
@@ -664,7 +667,6 @@ void KiaCore::load_profile_settings()
         m_save_read_settings->load_state_widgets("graph_" + QString::number(num_widget), graph_widget_list[num_widget]);
         m_save_read_settings->load_pos_and_size_widgets("graph_" + QString::number(num_widget), graph_widget_list[num_widget]);
     }
-
     m_save_read_settings->load_table_settings();
     auto table_widget_list = m_kia_table_manager->get_table_widget();
     for (uint16_t num_widget = 0; num_widget < table_widget_list.size(); ++num_widget)
@@ -673,6 +675,7 @@ void KiaCore::load_profile_settings()
         m_save_read_settings->load_state_widgets("table_" + QString::number(num_widget), table_widget_list[num_widget]);
         m_save_read_settings->load_pos_and_size_widgets("table_" + QString::number(num_widget), table_widget_list[num_widget]);
     }
+    std::cout << "here12321" << std::endl;
     m_save_read_settings->load_state_dock_manager(m_dock_manager);
 }
 

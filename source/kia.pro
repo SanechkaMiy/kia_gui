@@ -90,6 +90,7 @@ INCLUDEPATH += $$PWD/../../kia_gui/source/kia_table
 DEPENDPATH += $$PWD/../../kia_gui/source/kia_table
 
 RESOURCES += \
+    fonts.qrc \
     image.qrc
 
 unix:!macx: LIBS += -L$$PWD/../../QtAdvancedDocking/lib/ -lqtadvanceddocking

@@ -78,13 +78,10 @@
    <addaction name="state_on"/>
    <addaction name="state_off"/>
   </widget>
-  <widget class="QMenu" name="menu_5">
+  <widget class="QMenu" name="menu_stated_work">
    <property name="title">
     <string>Штатная работа</string>
    </property>
-   <addaction name="set_no"/>
-   <addaction name="set_to"/>
-   <addaction name="set_loc"/>
   </widget>
   <widget class="QMenu" name="menu_7">
    <property name="title">
@@ -209,30 +206,6 @@
   <action name="state_off">
    <property name="text">
     <string>Участок выключения</string>
-   </property>
-  </action>
-  <action name="set_no">
-   <property name="text">
-    <string>Начальная ориентация (НО)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
-   </property>
-  </action>
-  <action name="set_to">
-   <property name="text">
-    <string>Текущая ориентация (ТО)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+T</string>
-   </property>
-  </action>
-  <action name="set_loc">
-   <property name="text">
-    <string>Локализация (ЛОК)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+L</string>
    </property>
   </action>
   <action name="set_auto_exp">
@@ -432,7 +405,7 @@
   <addaction name="menu_file"/>
   <addaction name="menu_bi"/>
   <addaction name="menu_4"/>
-  <addaction name="menu_5"/>
+  <addaction name="menu_stated_work"/>
   <addaction name="menu_7"/>
   <addaction name="menu_8"/>
   <addaction name="menu_6"/>

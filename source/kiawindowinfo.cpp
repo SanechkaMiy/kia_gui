@@ -26,7 +26,7 @@ void KiaWindowInfo::set_info_to_window(QString info)
 void KiaWindowInfo::append_info_to_window(QString info)
 {
         info = info.left(info.lastIndexOf('\n'));
-        uint16_t max_count_out_to_window = 100;
+        uint16_t max_count_out_to_window = 50;
         m_count_out_to_window++;
         if (m_count_out_to_window == max_count_out_to_window)
         {
@@ -60,15 +60,11 @@ void KiaWindowInfo::create_context_menu()
     m_layout_for_window_options = new QVBoxLayout(m_window_options);
     m_layout_for_window_options->addWidget(m_label_for_window_options);
     m_layout_for_window_options->addWidget(m_edit_for_window_options);
-    connect(m_edit_for_window_options, &QLineEdit::textEdited, [this](const QString & is_changed)
-    {
-        m_font_size.push_back(is_changed);
-    });
     connect(m_edit_for_window_options, &QLineEdit::returnPressed, [this]()
     {
-        auto font_window_info = this->font();
-        font_window_info.setPointSize(m_font_size.last().toInt());
-        this->setFont(font_window_info);
+        auto font_window_info = m_text_browser_window_for_info->font();
+        font_window_info.setPointSize(m_edit_for_window_options->text().toInt());
+        m_text_browser_window_for_info->setFont(font_window_info);
     });
 }
 

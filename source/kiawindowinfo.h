@@ -33,7 +33,6 @@ private:
     QVBoxLayout* m_layout_for_window_options;
     QLabel* m_label_for_window_options;
     QLineEdit* m_edit_for_window_options;
-    QStringList m_font_size;
     QMenu * m_edit_context_menu;
     QHBoxLayout* m_layout_for_place_window_info;
     QTextBrowser* m_text_browser_window_for_info;

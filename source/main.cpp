@@ -10,6 +10,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    QFont font(":/font/fonts/JetBrainsMono-ExtraLight.ttf", 10);
+    QApplication::setFont(font);
     KiaCore core;
     return a.exec();
 }

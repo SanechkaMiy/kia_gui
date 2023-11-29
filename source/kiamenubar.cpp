@@ -10,11 +10,12 @@ KiaMenuBar::KiaMenuBar(std::shared_ptr<Kia_settings> kia_settings,
     , m_client(client)
 {
     ui->setupUi(this);
-    create_action();
+    create_action_state_work();
+    create_action_pci();
 }
 
 
-void KiaMenuBar::create_action()
+void KiaMenuBar::create_action_pci()
 {
     ui->menu_pci->addAction("Тест участка включения", this, [this]()
     {
@@ -53,6 +54,30 @@ void KiaMenuBar::create_action()
         QStringList data_for_server;
         m_client->send_data_to_server(CYCLOGRAM_STATE_OFF, data_for_server);
     });
+}
+
+void KiaMenuBar::create_action_state_work()
+{
+    enum st_work_action
+    {
+        NAME_ACTION = 0,
+        HOT_KEY = 1,
+        NUM_COMMAND = 2,
+    };
+
+    std::vector<std::tuple<QString, QKeySequence, uint16_t>> stated_work_action;
+    stated_work_action.push_back(std::make_tuple("Начальная ориентация (НО)", QKeySequence(Qt::CTRL + Qt::Key_N), CYCLOGRAM_NO));
+    stated_work_action.push_back(std::make_tuple("Текущая ориентация (ТО)", QKeySequence(Qt::CTRL + Qt::Key_T), CYCLOGRAM_TO));
+    stated_work_action.push_back(std::make_tuple("Локализация (ЛОК)", QKeySequence(Qt::CTRL + Qt::Key_L), CYCLOGRAM_LOC));
+    for (auto& el : stated_work_action)
+    {
+        auto action = ui->menu_stated_work->addAction(std::get<NAME_ACTION>(el), this, [this, el]()
+        {
+            QStringList data_for_server;
+            m_client->send_data_to_server(std::get<NUM_COMMAND>(el), data_for_server);
+        });
+        action->setShortcut(std::get<HOT_KEY>(el));
+    }
 }
 
 KiaMenuBar::~KiaMenuBar()
@@ -170,24 +195,6 @@ void KiaMenuBar::on_set_skor_triggered()
 {
     QStringList data_for_server;
     m_client->send_data_to_server(SKOR, data_for_server);
-}
-
-void KiaMenuBar::on_set_no_triggered()
-{
-    QStringList data_for_server;
-    m_client->send_data_to_server(CYCLOGRAM_NO, data_for_server);
-}
-
-void KiaMenuBar::on_set_to_triggered()
-{
-    QStringList data_for_server;
-    m_client->send_data_to_server(CYCLOGRAM_TO, data_for_server);
-}
-
-void KiaMenuBar::on_set_loc_triggered()
-{
-    QStringList data_for_server;
-    m_client->send_data_to_server(CYCLOGRAM_LOC, data_for_server);
 }
 
 void KiaMenuBar::on_state_on_triggered()

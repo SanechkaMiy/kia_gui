@@ -15,7 +15,8 @@
 #include <QSqlQueryModel>
 #include <queue>
 #include "DockWidget.h"
-
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 #define PI    3.141592653589793f
 
 using namespace ads;
@@ -110,6 +111,8 @@ struct Kia_gui_settings
     std::vector<QStringList> m_color_for_table_state;
     std::vector<CDockWidget*> m_dock_widget;
     std::vector<QWidget*> m_main_tabs_widgets;
+    std::vector<QStringList> m_data_tabs;
+    uint16_t m_count_tab_bar;
 };
 #pragma pack(pop)
 
@@ -122,6 +125,8 @@ struct Kias_view_data
     std::vector<QStringList> m_data_graph;
     std::vector<QStringList> m_data_table;
     std::vector<QStringList> m_data_table_cols;
+    QMap<uint16_t, QStringList> m_data_graph_on_tabs;
+    QMap<uint16_t, QStringList> m_data_tables_on_tabs;
     uint16_t m_graph_count = 0;
     uint16_t m_table_count = 0;
 };

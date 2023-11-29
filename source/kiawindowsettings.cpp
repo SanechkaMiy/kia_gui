@@ -107,7 +107,7 @@ void KiaWindowSettings::create_table_settings(qint16 type_bokz)
             if (set_address < constants::max_count_td)
                 m_combo_box_td[coll]->addItem(QString::number(set_address + 1));
         }
-        for (int num_ch = 0; num_ch < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_ch)
+        for (int num_ch = 0; num_ch < m_kia_settings->m_kia_bi_settings->m_bi_count_channel[m_kia_settings->m_type_bi]; ++num_ch)
         {
             m_cob_num_used_channel[coll]->addItem(QString::number(num_ch + 1));
         }

@@ -28,6 +28,7 @@ Kia_table_manager::~Kia_table_manager()
 
 void Kia_table_manager::create_table_slot(QStringList query_param, QStringList data)
 {
+    m_kia_settings->m_kias_view_data->m_data_tables_on_tabs[query_param[QP_NUM_MAIN_TAB_WIDGET].toInt()].push_back(query_param[QP_NUM_WIDGET]);
     m_num_table++;
     m_kia_custom_dialog.push_back(new Kia_custom_dialog(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[query_param[QP_NUM_MAIN_TAB_WIDGET].toInt()]));
     m_dialog.push_back(new QDialog());
@@ -41,18 +42,17 @@ void Kia_table_manager::create_table_slot(QStringList query_param, QStringList d
     m_kia_custom_dialog[m_num_table]->set_wiget_to_layout(m_kia_tables[m_num_table]);
     start_data_timer(m_num_table);
     m_kia_constructor->add_table_to_list(query_param);
-    m_dialog[m_num_table]->setWindowTitle("Таблица " + query_param[QP_TYPE_ARR] +" №" + QString::number(query_param[QP_NUM_WIDGET].toInt() + 1)
-                                          + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-                               + " " + QString::number(query_param[QP_NUM_BOKZ].toInt() + 1));
 
-    emit create_action("Таблица " + query_param[QP_TYPE_ARR] +" №" + QString::number(query_param[QP_NUM_WIDGET].toInt() + 1)
-                       + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-            + " " + QString::number(query_param[QP_NUM_BOKZ].toInt() + 1), m_num_table);
+    QString title = "Таблица " + query_param[QP_TYPE_ARR] +" №" + QString::number(query_param[QP_NUM_WIDGET].toInt() + 1)
+            + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+            + " " + QString::number(query_param[QP_NUM_BOKZ].toInt() + 1);
+    m_kia_custom_dialog[m_num_table]->set_window_title(title);
+    emit create_action(title, m_num_table);
 }
 
 void Kia_table_manager::remove_table_slot(qint16 num_table)
 {
-    disconnect(m_kia_tables[num_table], SIGNAL(set_default_pos()), m_kia_custom_dialog[num_table], SLOT(set_wiget_to_layout()));
+    disconnect(m_kia_tables[num_table], SIGNAL(set_default_pos()), m_kia_custom_dialog[num_table], SLOT(set_default_pos_slot()));
     delete m_kia_tables[num_table];
     m_kia_db[num_table].reset();
     m_kias_data_from_db[num_table].reset();

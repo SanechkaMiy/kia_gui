@@ -96,7 +96,7 @@ Kia_graph_manager::~Kia_graph_manager()
 
 void Kia_graph_manager::create_plot_slot(QStringList query_param)
 {
-
+    m_kia_settings->m_kias_view_data->m_data_graph_on_tabs[query_param[QP_NUM_MAIN_TAB_WIDGET].toInt()].push_back(query_param[QP_NUM_WIDGET]);
     m_num_graph++;
     m_kia_custom_dialog.push_back(new Kia_custom_dialog(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[query_param[QP_NUM_MAIN_TAB_WIDGET].toInt()]));
     connect(this, SIGNAL(set_default_pos()), m_kia_custom_dialog[m_num_graph], SLOT(set_default_pos_slot()));
@@ -129,10 +129,13 @@ void Kia_graph_manager::create_plot_slot(QStringList query_param)
                                           + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
 
             + " " + QString::number(query_param[QP_NUM_BOKZ].toInt() + 1));
-    emit create_action("График " + query_param[QP_Y_DESC]
-                       + " от " + query_param[QP_X_DESC]
-                       + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-            + " " + QString::number(query_param[QP_NUM_BOKZ].toInt() + 1), m_num_graph);
+    QString title = "График " + query_param[QP_Y_DESC]
+            + " от " + query_param[QP_X_DESC]
+            + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+            + " " + QString::number(query_param[QP_NUM_BOKZ].toInt() + 1);
+    m_kia_custom_dialog[m_num_graph]->set_window_title(title);
+
+    emit create_action(title, m_num_graph);
 }
 
 void Kia_graph_manager::remove_plot_slot(qint16 num_graph)
@@ -260,6 +263,30 @@ void Kia_graph_manager::plots_interactions()
                 m_main_graph->xAxis->setRange(range);
                 m_main_graph->replot(QCustomPlot::rpQueuedReplot);
                 m_main_graph->update();
+            });
+        }
+        else
+        {
+            plot->connect(plot, &QCustomPlot::mouseWheel, [=](QWheelEvent* e)
+            {
+                auto orient = (e->modifiers() != Qt::ControlModifier) ? Qt::Horizontal : Qt::Vertical;
+                plot->axisRect()->setRangeZoom(orient);
+//                if (!(e->modifiers() == Qt::ControlModifier))
+//                {
+//                    if((e->angleDelta().y()) > 0)
+//                    {
+//                        if (m_kia_settings->m_kias_view_data->m_x_size > 1)
+//                            m_kia_settings->m_kias_view_data->m_x_size = m_kia_settings->m_kias_view_data->m_x_size - 0.5;
+
+//                    }
+//                    else
+//                    {
+//                        m_kia_settings->m_kias_view_data->m_x_size = m_kia_settings->m_kias_view_data->m_x_size + 0.5;
+//                    }
+//                }
+
+                //plot->wheelEvent(e);
+                e->accept();
             });
         }
     }

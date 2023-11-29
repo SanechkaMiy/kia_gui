@@ -12,11 +12,13 @@ public:
     Kia_custom_title_bar(QWidget* parent = nullptr);
     void set_widget_to_layout(QWidget* wgt);
     void set_movable(bool flag);
+    void set_window_title(const QString& title);
 private:
     QPushButton* m_close_button;
     QBoxLayout* m_title_layout;
     QPoint m_last_pos;
     QPoint m_curr_pos;
+    QLabel* m_name_window;
     bool m_is_movable = true;
     bool m_moving;
 protected:
@@ -26,6 +28,8 @@ protected:
 signals:
     void moved(QPoint);
     void moved_if_release();
+    void set_default_pos();
+    void hide_window();
 };
 
 #endif // KIA_CUSTOM_TITLE_BAR_H

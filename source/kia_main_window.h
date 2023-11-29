@@ -17,6 +17,7 @@
 #include "AutoHideTab.h"
 #include <QTabWidget>
 #include <QTabBar>
+#include <QLineEdit>
 using namespace ads;
 
 namespace Ui {
@@ -37,12 +38,20 @@ public:
     void set_graph_dock_widget();
     void create_action_graph_dock_widget(QMenu* menu);
     void remove_dock_widget(uint16_t num_widget);
+    void load_settings_for_tab_widget(uint16_t count_tab_bar);
     ~Kia_main_window();
     QWidget* get_central_dock_widget();
     QWidget* get_current_tab_widget();
+    void remove_tab_settings();
+signals:
+    void remove_graph(uint16_t);
+    void remove_table(uint16_t);
 public slots:
     void set_current_index_tab_widget(uint16_t index);
+    void add_tab_bar_slot(QStringList data_tabs);
 private:
+    void create_main_tab_bar();
+    QTabBar* m_tabbar;
     QTabWidget* m_main_tab_widget;
     CDockAreaWidget* m_window_areas = nullptr;
     CDockWidget* m_central_dock_widget;
@@ -58,8 +67,8 @@ private:
     QPushButton* m_now;
     QPushButton* m_add_tab;
     uint16_t m_is_start_or_stop = 0;
-    uint16_t m_count_tab_widget = 0;
     void create_main_graph_manager();
+    void add_tab_bar();
 protected:
     void closeEvent(QCloseEvent *event) override;
 };

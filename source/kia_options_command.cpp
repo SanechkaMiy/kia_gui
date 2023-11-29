@@ -42,15 +42,15 @@ Kia_options_command::Kia_options_command(std::shared_ptr<Kia_settings> kia_setti
         m_widgets[num_bokz].push_back(std::make_tuple(m_wgt[num_bokz][IS_TABLE], new QGridLayout(m_wgt[num_bokz][IS_TABLE]), "Таблицы"));
         for (auto& el : m_widgets[num_bokz])
             m_tab_for_type_command[num_bokz]->addTab(std::get<0>(el), std::get<2>(el));
-        add_edit(num_bokz, "Допуск распознования", SET_EPSILON);
-        add_edit(num_bokz, "Фокус", SET_FOCUS);
-        add_edit(num_bokz, "Время эксопонирования", SET_TEXP);
-        add_edit(num_bokz, "Координата X", SET_CORD_X);
-        add_edit(num_bokz, "Координата Y", SET_CORD_Y);
+        add_edit(num_bokz, "Допуск распознования", "epsilon", SET_EPSILON);
+        add_edit(num_bokz, "Фокус", "focus", SET_FOCUS);
+        add_edit(num_bokz, "Время эксопонирования", "texp", SET_TEXP);
+        add_edit(num_bokz, "Координата X", "cord_x", SET_CORD_X);
+        add_edit(num_bokz, "Координата Y", "cord_y", SET_CORD_Y);
 
-        add_table(num_bokz, 3, 3, "Матрица ПСК", SET_MATRIX_PSK);
-        add_table(num_bokz, 4, 1, "Qo", SET_QA);
-        add_table(num_bokz, 3, 1, "Wo", SET_W);
+        add_table(num_bokz, 3, 3, "Матрица ПСК", "mat_psk", SET_MATRIX_PSK);
+        add_table(num_bokz, 4, 1, "Qo", "qo", SET_QA);
+        add_table(num_bokz, 3, 1, "Wo", "wo", SET_W);
         for (uint16_t num_edit = 0; num_edit < m_le_edit_command[num_bokz].size(); ++num_edit)
         {
             connect(m_le_edit_command[num_bokz][num_edit], &QLineEdit::textChanged, [this, num_edit, num_bokz](const QString & is_changed)
@@ -154,18 +154,19 @@ void Kia_options_command::set_read_command(qint16 num_bokz, qint16 type_data, qi
 
 }
 
-void Kia_options_command::add_edit(uint16_t num_bokz, const QString &name_param, const uint16_t &name_to_send)
+void Kia_options_command::add_edit(uint16_t num_bokz, const QString &name_param, const QString &key, const uint16_t &name_to_send)
 {
     auto pair = std::make_pair(IS_DEFAULT, name_to_send);
     m_status_changed_edit[num_bokz].push_back(pair);
     m_lb_name_command[num_bokz].push_back(new QLabel(name_param, this));
     m_le_edit_command[num_bokz].push_back(new QLineEdit(this));
+    m_dict_type_command_for_load[key + "_" + QString::number(num_bokz)] = m_edit_count[num_bokz];
     std::get<1>(m_widgets[num_bokz][IS_PARAM])->addWidget(m_lb_name_command[num_bokz][m_edit_count[num_bokz]], m_edit_count[num_bokz], 0);
     std::get<1>(m_widgets[num_bokz][IS_PARAM])->addWidget(m_le_edit_command[num_bokz][m_edit_count[num_bokz]], m_edit_count[num_bokz], 1);
     m_edit_count[num_bokz]++;
 }
 
-void Kia_options_command::add_table(uint16_t num_bokz, uint16_t row, uint16_t collumn, const QString &name_param, const uint16_t &name_to_send)
+void Kia_options_command::add_table(uint16_t num_bokz, uint16_t row, uint16_t collumn, const QString &name_param, const QString &key, const uint16_t &name_to_send)
 {
     auto pair = std::make_pair(IS_DEFAULT, name_to_send);
     m_status_changed_table[num_bokz].push_back(pair);
@@ -178,6 +179,7 @@ void Kia_options_command::add_table(uint16_t num_bokz, uint16_t row, uint16_t co
     m_tables[num_bokz][m_table_count[num_bokz]]->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_tables[num_bokz][m_table_count[num_bokz]]->verticalHeader()->setStretchLastSection(true);
     //m_tables[num_bokz][m_table_count[num_bokz]]->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+    m_dict_type_command_for_load[key + "_" + QString::number(num_bokz)] = m_table_count[num_bokz];
     for (uint16_t row = 0; row < m_tables[num_bokz][m_table_count[num_bokz]]->rowCount(); ++row)
         for (uint16_t col = 0; col < m_tables[num_bokz][m_table_count[num_bokz]]->columnCount(); ++col)
         {
@@ -187,5 +189,37 @@ void Kia_options_command::add_table(uint16_t num_bokz, uint16_t row, uint16_t co
     std::get<1>(m_widgets[num_bokz][IS_TABLE])->addWidget(m_tables[num_bokz][m_table_count[num_bokz]], m_table_count[num_bokz], 1);
     m_edit_count[num_bokz]++;
     m_table_count[num_bokz]++;
+}
+
+
+void Kia_options_command::on_load_param_clicked()
+{
+    std::ifstream f("kia_load_command_param.json", std::ifstream::in);
+    json j;
+    f >> j;
+    uint16_t counter = 0;
+    for (auto& el : j["params"].items())
+    {
+        m_le_edit_command[m_command_settings->currentIndex()][m_dict_type_command_for_load[QString::fromStdString(el.key())
+                + "_" + QString::number(m_command_settings->currentIndex())]]->setText(QString::fromStdString(el.value().dump()));
+    }
+    for (auto& el : j["tables"].items())
+    {
+        if (!el.value().empty())
+            std::cout << el.value()[2] << std::endl;
+    }
+    //    for (auto el : j["params"])
+    //    {
+    ////        std::string str = el;
+    ////        std::cout << str << std::endl;
+    //        std::cout <<  << std::endl;
+    //        //std::cout << m_dict_type_command_for_load[QString::fromStdString(el) + "_" + QString::number(m_command_settings->currentIndex())] << std::endl;
+    //        counter++;
+    //    }
+    counter = 0;
+    for (auto el : j["tables"])
+    {
+        counter++;
+    }
 }
 

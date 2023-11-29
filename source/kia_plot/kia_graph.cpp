@@ -190,6 +190,11 @@ void Kia_graph::set_data_on_plot_slot()
                 x_value = get_seconds(m_kias_graph_data->m_x_value[ind]);
                 y_value = get_seconds(m_kias_graph_data->m_y_value[ind]);
             }
+            else
+            {
+                x_value = m_kias_graph_data->m_x_value[ind].toDouble();
+                y_value = m_kias_graph_data->m_y_value[ind].toDouble();
+            }
             m_xData.push_back(x_value);
             m_yData.push_back(y_value);
         }

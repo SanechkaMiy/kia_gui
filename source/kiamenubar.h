@@ -38,9 +38,6 @@ private slots:
     void on_second_mark_off_triggered();
     void on_state_on_triggered();
     void on_state_off_triggered();
-    void on_set_no_triggered();
-    void on_set_to_triggered();
-    void on_set_loc_triggered();
     void on_set_auto_exp_triggered();
     void on_set_shtmi1_triggered();
     void on_set_shtmi2_triggered();
@@ -85,7 +82,8 @@ private slots:
 
 private:
     void set_mode_menu_bi(QAction* main, QAction* rezerv, uint16_t mode);
-    void create_action();
+    void create_action_pci();
+    void create_action_state_work();
     Ui::KiaMenuBar *ui;
     std::shared_ptr<Kia_settings> m_kia_settings;
     std::shared_ptr<Client> m_client;

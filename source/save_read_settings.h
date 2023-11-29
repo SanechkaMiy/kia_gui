@@ -23,6 +23,9 @@ public:
     void load_table_settings();
     void save_table_settings();
 
+    void load_tabs_settings();
+    void save_tabs_settings();
+
     void load_profile_settings();
     void save_profile_settings();
 
@@ -42,6 +45,7 @@ signals:
     void send_list_for_check_box_table_state(qint16, QStringList);
     void send_list_for_check_box_color_table_state(qint16, QStringList);
     void send_current_main_tab_widget(uint16_t);
+    void send_list_to_add_tab(QStringList);
 private:
     std::shared_ptr<Kia_settings> m_kia_settings;
     QSettings m_settings;

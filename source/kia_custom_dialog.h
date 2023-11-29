@@ -15,10 +15,12 @@ class Kia_custom_dialog : public QDialog
 public:
     Kia_custom_dialog(QWidget* parent = nullptr);
     void set_wiget_to_layout(QWidget *wgt);
+    void set_window_title(const QString& title);
 public slots:
     void moved(QPoint pos_cur);
     void moved_if_release();
     void set_default_pos_slot();
+    void hide_widget();
 private:
     QBoxLayout* m_main_layout;
     Kia_custom_title_bar* m_custom_title_bar;
