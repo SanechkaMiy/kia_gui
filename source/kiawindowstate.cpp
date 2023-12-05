@@ -11,6 +11,7 @@ KiaWindowState::KiaWindowState(std::shared_ptr<Kia_settings> kia_settings, QWidg
     m_layout_for_place_table_state = new QHBoxLayout(this);
     m_set_table = new QTableWidget(this);
     m_layout_for_place_table_state->addWidget(m_set_table);
+    installEventFilter(parent);
 
 }
 

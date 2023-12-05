@@ -7,7 +7,7 @@ Kia_main_window::Kia_main_window(std::shared_ptr<Kia_settings> kia_settings, QWi
     m_kia_settings(kia_settings)
 {
     ui->setupUi(this);
-
+    qApp->installEventFilter( this );
     CDockManager::setConfigFlag(CDockManager::OpaqueSplitterResize, true);
     CDockManager::setConfigFlag(CDockManager::XmlCompressionEnabled, false);
     CDockManager::setConfigFlag(CDockManager::FocusHighlighting, true);
@@ -59,7 +59,6 @@ Kia_main_window::Kia_main_window(std::shared_ptr<Kia_settings> kia_settings, QWi
         }
 
     });
-
 
     m_add_tab = new QPushButton("+", this);
     m_add_tab->setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
@@ -286,3 +285,18 @@ void Kia_main_window::closeEvent(QCloseEvent *event)
     Q_UNUSED(event);
     m_kia_settings->m_kia_gui_settings->m_widget_is_closed = true;
 }
+
+bool Kia_main_window::eventFilter(QObject *object, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress )
+    {
+        QKeyEvent *ke = static_cast<QKeyEvent *>(event);
+        if (ke->key() == Qt::Key_Space)
+        {
+            emit set_stop();
+            return true;
+        }
+    }
+    return QMainWindow::eventFilter(object, event);
+}
+

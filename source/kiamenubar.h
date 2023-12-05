@@ -16,6 +16,12 @@ class KiaMenuBar;
 class KiaMenuBar : public QMenuBar
 {
     Q_OBJECT
+    enum st_work_action
+    {
+        NAME_ACTION = 0,
+        HOT_KEY = 1,
+        NUM_COMMAND = 2,
+    };
 
 public:
     explicit KiaMenuBar(std::shared_ptr<Kia_settings> kia_settings,
@@ -29,6 +35,9 @@ public:
     QMenu* get_menu_profile();
 
     void load_mode_menu_bi();
+    std::vector<std::pair<QString, QList<QAction*>>> get_menu_actions();
+public slots:
+    void hide_or_show_actions(qint16 type_actions, qint16 num_actions, bool state);
 signals:
     void show_kia_profile();
 private slots:
@@ -39,28 +48,7 @@ private slots:
     void on_state_on_triggered();
     void on_state_off_triggered();
     void on_set_auto_exp_triggered();
-    void on_set_shtmi1_triggered();
-    void on_set_shtmi2_triggered();
-    void on_set_mshior_triggered();
-    void on_set_dtmi_triggered();
-    void on_set_smti_triggered();
-    void on_set_vmti_triggered();
-    void on_set_synchro_triggered();
-    void on_set_skor_triggered();
-    void on_command_no_triggered();
-    void on_command_to_triggered();
-    void on_command_loc_triggered();
-    void on_command_otclp_triggered();
     void on_set_to_define_address_dev_triggered();
-    void on_command_os_triggered();
-    void on_command_vsk_triggered();
-    void on_full_exp_triggered();
-
-    void on_set_tech_run_triggered();
-
-    void on_set_cycl_zkr_triggered();
-
-    void on_set_ful_frame_triggered();
 
     void on_imitator_on_triggered();
 
@@ -80,10 +68,14 @@ private slots:
 
     void on_add_profile_triggered();
 
+
 private:
     void set_mode_menu_bi(QAction* main, QAction* rezerv, uint16_t mode);
-    void create_action_pci();
     void create_action_state_work();
+    void create_action_pci();
+    void create_action_res();
+    void create_action_commands();
+    void create_action_get_frames();
     Ui::KiaMenuBar *ui;
     std::shared_ptr<Kia_settings> m_kia_settings;
     std::shared_ptr<Client> m_client;
@@ -91,6 +83,7 @@ private:
     QMenu * m_edit_context_menu;
     QPushButton* m_pb_for_delete_plots;
     bool load_mods = false;
+    std::vector<std::pair<QString, QList<QAction*>>> m_actions;
 };
 
 #endif // KIAMENUBAR_H

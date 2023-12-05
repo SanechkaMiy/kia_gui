@@ -197,7 +197,7 @@ void Kia_options_command::on_load_param_clicked()
     std::ifstream f("kia_load_command_param.json", std::ifstream::in);
     json j;
     f >> j;
-    uint16_t counter = 0;
+    uint16_t ind = 0;
     for (auto& el : j["params"].items())
     {
         m_le_edit_command[m_command_settings->currentIndex()][m_dict_type_command_for_load[QString::fromStdString(el.key())
@@ -206,20 +206,28 @@ void Kia_options_command::on_load_param_clicked()
     for (auto& el : j["tables"].items())
     {
         if (!el.value().empty())
-            std::cout << el.value()[2] << std::endl;
-    }
-    //    for (auto el : j["params"])
-    //    {
-    ////        std::string str = el;
-    ////        std::cout << str << std::endl;
-    //        std::cout <<  << std::endl;
-    //        //std::cout << m_dict_type_command_for_load[QString::fromStdString(el) + "_" + QString::number(m_command_settings->currentIndex())] << std::endl;
-    //        counter++;
-    //    }
-    counter = 0;
-    for (auto el : j["tables"])
-    {
-        counter++;
+        {
+            for (uint16_t num_el = 0; num_el < el.value().size(); ++num_el)
+            {
+                if (el.value()[num_el].size() == 1)
+                {
+                    m_tables[m_command_settings->currentIndex()][m_dict_type_command_for_load[QString::fromStdString(el.key())
+                            + "_" + QString::number(m_command_settings->currentIndex())]]->setItem(num_el, el.value()[num_el].size() - 1,
+                                                                                                   new QTableWidgetItem(QString::fromStdString(el.value()[num_el].dump())));
+                }
+                else
+                {
+                    for (uint16_t num = 0; num < el.value()[num_el].size(); ++num)
+                    {
+                        m_tables[m_command_settings->currentIndex()][m_dict_type_command_for_load[QString::fromStdString(el.key())
+                                + "_" + QString::number(m_command_settings->currentIndex())]]->setItem(num_el, num,
+                                                                                                       new QTableWidgetItem(QString::fromStdString(el.value()[num_el][num].dump())));
+                    }
+                }
+            }
+
+        }
+        ind++;
     }
 }
 

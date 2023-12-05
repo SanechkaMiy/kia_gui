@@ -317,6 +317,13 @@ void KiaCore::create_kia_options_for_interface()
         m_kia_window_state_for_all_dev->set_color_row(num_row, is_active);
     });
     m_kia_options_interface->create_window_state_settings(list_name_table, list_rows);
+    auto actions = m_kia_menubar->get_menu_actions();
+    m_kia_options_interface->create_actions_menu_settings(actions);
+
+    connect(m_kia_options_interface, &Kia_options_interface::send_num_actions, this, [this](qint16 type_actions, qint16 num_actions, bool is_active)
+    {
+        m_kia_menubar->hide_or_show_actions(type_actions, num_actions, is_active);
+    });
     connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_table_state(qint16, QStringList)), m_kia_options_interface, SLOT(set_check_box_for_table_state(qint16, QStringList)));
     connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_color_table_state(qint16, QStringList)), m_kia_options_interface, SLOT(set_check_box_for_table_state_color(qint16, QStringList)));
     connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_color_table_state(qint16, QStringList)), m_kia_options_interface, SLOT(set_check_box_for_table_state_color(qint16, QStringList)));
@@ -506,6 +513,8 @@ void KiaCore::create_window_is_work()
     m_kia_settings->m_kia_bokz_settings->m_bokz_status_row_name[m_kia_settings->m_type_bokz]  << "БШВ" << "КС 1" << "КС 2";
     m_kia_window_is_work->create_table_status_bokz();
     connect(m_client.get(), SIGNAL(send_status_info(QStringList)), m_kia_window_is_work, SLOT(set_data_to_table(QStringList)));
+    connect(m_kia_main_window, SIGNAL(set_stop()), m_kia_window_is_work, SLOT(set_stop_slot()));
+
 }
 
 void KiaCore::create_mpi_command_action()

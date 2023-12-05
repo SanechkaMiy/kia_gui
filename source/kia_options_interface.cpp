@@ -9,7 +9,6 @@ Kia_options_interface::Kia_options_interface(std::shared_ptr<Kia_settings> kia_s
     m_client(client)
 {
     ui->setupUi(this);
-
 }
 
 Kia_options_interface::~Kia_options_interface()
@@ -77,6 +76,41 @@ void Kia_options_interface::create_window_state_settings(QStringList name_tables
         ui->gridLayout_3->addWidget(m_table[ui->lw_name_table->currentRow()], 1, 1);
     });
 
+}
+
+void Kia_options_interface::create_actions_menu_settings(std::vector<std::pair<QString, QList<QAction *> > > actions)
+{
+    m_cb_for_actions.resize(actions.size());
+    m_actions_settings = new QTabWidget(this);
+    m_actions_settings->setTabPosition(QTabWidget::South);
+    ui->gridLayout_2->addWidget(m_actions_settings);
+    std::vector<QWidget*> widgets;
+    std::vector<QHBoxLayout*> layouts;
+    for (uint16_t num_menu = 0; num_menu < actions.size(); ++num_menu)
+    {
+        widgets.push_back(new QWidget(this));
+        layouts.push_back(new QHBoxLayout(widgets[num_menu]));
+        m_lw_for_actions.push_back(new QListWidget(this));
+        layouts[num_menu]->addWidget(m_lw_for_actions[num_menu]);
+        for (uint16_t num_action = 0; num_action < actions[num_menu].second.size(); num_action++)
+        {
+            m_cb_for_actions[num_menu].push_back(new QCheckBox(actions[num_menu].second[num_action]->text(), this));
+            m_cb_for_actions[num_menu][num_action]->setChecked(true);
+            if (!actions[num_menu].second[num_action]->text().isEmpty())
+            {
+                m_lw_for_actions[num_menu]->setItemWidget(new QListWidgetItem(m_lw_for_actions[num_menu]), m_cb_for_actions[num_menu][num_action]);
+                connect(m_cb_for_actions[num_menu][num_action], &QCheckBox::toggled,  ([this, num_menu, num_action](bool is_toggled)
+                {
+                    emit send_num_actions(num_menu, num_action, is_toggled);
+                }));
+            }
+            else
+            {
+                m_cb_for_actions[num_menu][num_action]->setVisible(false);
+            }
+        }
+        m_actions_settings->addTab(widgets[num_menu], actions[num_menu].first);
+    }
 }
 
 void Kia_options_interface::set_check_box_for_table_state(qint16 num_table, QStringList active_rows)

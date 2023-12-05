@@ -25,7 +25,6 @@ Kia_custom_title_bar::Kia_custom_title_bar(QWidget *parent) :
     m_title_layout->addWidget(m_close_button);
     l->addLayout(m_title_layout);
     setMouseTracking(true);
-    //
 }
 
 

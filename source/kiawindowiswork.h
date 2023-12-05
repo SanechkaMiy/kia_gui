@@ -34,6 +34,7 @@ public slots:
     void create_status_bi();
     void check_connect(qint16 type_kled, qint16 is_con_to_core);
     void set_data_to_table(QStringList data);
+    void set_stop_slot();
 signals:
     void set_stop(qint16);
     void send_widget(QWidget*);

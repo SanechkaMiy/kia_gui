@@ -14,7 +14,7 @@ KiaWindowIsWork::KiaWindowIsWork(std::shared_ptr<Kia_settings> kia_settings,
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), m_pb_stop);
     connect(shortcut, &QShortcut::activated, this, [this]()
     {
-        emit set_stop(m_is_otclp);
+        set_stop_slot();
     });
 
     m_label_db = new QLabel("БД", this);
@@ -30,7 +30,7 @@ KiaWindowIsWork::KiaWindowIsWork(std::shared_ptr<Kia_settings> kia_settings,
 
     connect(m_pb_stop, &QPushButton::clicked, this, [this]()
     {
-        emit set_stop(m_is_otclp);
+        set_stop_slot();
     });
     m_cb_is_otclp = new QCheckBox("ОТКЛР", this);
     connect(m_cb_is_otclp, &QCheckBox::stateChanged, this, [this](int state)
@@ -163,6 +163,11 @@ void KiaWindowIsWork::set_data_to_table(QStringList data)
     {
         m_line_edit_st2[data[1].toInt()]->setText(data[2]);
     }
+}
+
+void KiaWindowIsWork::set_stop_slot()
+{
+    emit set_stop(m_is_otclp);
 }
 
 void KiaWindowIsWork::set_width_for_vertical_header(qint16 width_header, qint16 width_col)

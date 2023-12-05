@@ -46,6 +46,7 @@ public:
 signals:
     void remove_graph(uint16_t);
     void remove_table(uint16_t);
+    void set_stop();
 public slots:
     void set_current_index_tab_widget(uint16_t index);
     void add_tab_bar_slot(QStringList data_tabs);
@@ -71,6 +72,8 @@ private:
     void add_tab_bar();
 protected:
     void closeEvent(QCloseEvent *event) override;
+    //void keyPressEvent(QKeyEvent *event) override;
+    bool eventFilter(QObject *object, QEvent *event) override;
 };
 
 #endif // KIA_MAIN_WINDOW_H

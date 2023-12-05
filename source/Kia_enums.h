@@ -126,10 +126,7 @@ enum NUM_MPI_COMMAND
 enum TYPE_BOKZ
 {
     TYPE_BOKZ_BOKZM60 = 0,
-    TYPE_BOKZ_BOKZM60_1000 = 1,
-    TYPE_BOKZ_BOKZMR= 2,
-    TYPE_BOKZ_AIS2k = 3,
-    TYPE_BOKZ_NK = 4,
+    TYPE_BOKZ_BOKZMR= 1,
 };
 
 enum TYPE_BI
@@ -350,5 +347,14 @@ enum TABS_PARAM
 {
     NUM_TAB = 0,
     NAME_TAB = 1
+};
+
+enum TYPE_MENU_ACTIONS
+{
+    STATE_WORK = 0,
+    PCI = 1,
+    RES = 2,
+    COMMANDS = 3,
+    GET_FRAMES = 4
 };
 #endif // KIA_ENUMS_H

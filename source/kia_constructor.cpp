@@ -77,6 +77,7 @@ void Kia_constructor::set_type_dev(uint16_t type_bokz, uint16_t type_bi)
 
     connect(ui->lw_list_graph, &QListWidget::itemDoubleClicked, this, [this](QListWidgetItem *item)
     {
+        Q_UNUSED(item)
         emit show_graph(ui->lw_list_graph->currentRow());
     });
 
