@@ -39,7 +39,7 @@ void KiaWindowState::table_setup(qint16 type_bi)
     for (int coll = 0; coll <  m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++coll)
     {
         auto num_dev = QString::number((coll % 2) + 1);
-        m_set_table->setHorizontalHeaderItem(coll, new QTableWidgetItem("Канал " + num_dev));
+        m_set_table->setHorizontalHeaderItem(coll, new QTableWidgetItem("Прибор " + num_dev));
         for (int row = 0; row < m_kia_settings->m_kia_bi_settings->m_bi_row_name[type_bi].size(); ++row)
         {
             m_line_edit_data_into_table[coll].push_back(new QLineEdit());
