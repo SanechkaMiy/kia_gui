@@ -15,6 +15,7 @@ Kia_custom_dialog::Kia_custom_dialog(QWidget *parent) :
     setMouseTracking(true);
     setWindowFlags(Qt::FramelessWindowHint);
     move(0, 0);
+    resize(500, 500);
     setStyleSheet("Kia_custom_dialog{border:1px solid gray}");
 }
 
@@ -27,7 +28,6 @@ void Kia_custom_dialog::set_window_title(const QString &title)
 {
     m_custom_title_bar->set_window_title(title);
 }
-
 
 void Kia_custom_dialog::moved(QPoint pos_cur)
 {
@@ -53,6 +53,7 @@ void Kia_custom_dialog::set_default_pos_slot()
 void Kia_custom_dialog::hide_widget()
 {
     hide();
+    emit set_new_parent();
 }
 
 void Kia_custom_dialog::mousePressEvent(QMouseEvent *event)

@@ -16,6 +16,8 @@ public:
     Kia_custom_dialog(QWidget* parent = nullptr);
     void set_wiget_to_layout(QWidget *wgt);
     void set_window_title(const QString& title);
+signals:
+    void set_new_parent();
 public slots:
     void moved(QPoint pos_cur);
     void moved_if_release();

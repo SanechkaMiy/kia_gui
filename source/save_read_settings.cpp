@@ -73,7 +73,6 @@ void Save_read_settings::save_settings()
         m_settings.setValue("/status_for_menu_action_" + QString::number(num_menu), QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_status_for_menu_action[num_menu]));
 
     m_settings.endGroup();
-
     save_tabs_settings();
     save_graph_settings();
     save_table_settings();
@@ -172,7 +171,6 @@ void Save_read_settings::load_settings()
             emit send_list_for_check_box_color_table_state(num_table, list_color);
         }
         auto count_menu = m_settings.value("/count_status_for_menu_action").value<quint16>();
-        std::cout << count_menu << std::endl;
         for (uint16_t num_menu = 0; num_menu < count_menu; num_menu++)
         {
             auto list_actions = m_settings.value("/status_for_menu_action_" + QString::number(num_menu)).value<QStringList>();
@@ -297,7 +295,6 @@ void Save_read_settings::save_tabs_settings()
     m_settings.setValue("/count_tabs" , QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_count_tab_bar));
 
     m_settings.endGroup();
-
 }
 
 void Save_read_settings::load_profile_settings()
@@ -361,6 +358,7 @@ void Save_read_settings::save_state_widgets(const QString save_name, QWidget *wg
 {
     m_settings.beginGroup("/Window_save_state_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
     m_settings.setValue("/title_" + save_name, wgt->windowTitle());
+    m_settings.setValue("/num_parent_" + save_name, m_kia_settings->m_kia_gui_settings->m_current_num_parent.value(wgt));
     m_settings.setValue("/is_hide_" + save_name, m_kia_settings->m_kia_gui_settings->m_widget_is_hide.value(wgt));
     m_settings.endGroup();
 }
@@ -370,6 +368,14 @@ void Save_read_settings::load_state_widgets(const QString save_name, QWidget *wg
     m_settings.beginGroup("/Window_save_state_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
     wgt->setWindowTitle(m_settings.value("/title_" + save_name).value<QString>());
     m_kia_settings->m_kia_gui_settings->m_widget_is_hide[wgt] = m_settings.value("/is_hide_" + save_name).value<bool>();
+    m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt] = m_settings.value("/num_parent_" + save_name).value<int16_t>();
+    if (m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt] == -1)
+    {
+        emit set_default_parent(wgt);
+
+    }
+    else
+        wgt->setParent(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt]]);
     if (m_kia_settings->m_kia_gui_settings->m_widget_is_hide.value(wgt))
     {
 
@@ -379,6 +385,7 @@ void Save_read_settings::load_state_widgets(const QString save_name, QWidget *wg
     {
         wgt->hide();
     }
+
     m_settings.endGroup();
 }
 

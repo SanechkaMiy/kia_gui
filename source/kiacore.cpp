@@ -16,6 +16,21 @@ KiaCore::KiaCore(QWidget *wgt, QObject *parent)
     connect(m_kia_menubar, SIGNAL(show_kia_profile()), this, SLOT(show_kia_profile_slot()));
     connect(m_save_read_settings.get(), SIGNAL(send_current_main_tab_widget(uint16_t)), m_kia_main_window, SLOT(set_current_index_tab_widget(uint16_t)));
     connect(m_save_read_settings.get(), SIGNAL(send_list_to_add_tab(QStringList)), m_kia_main_window, SLOT(add_tab_bar_slot(QStringList)));
+    connect(m_save_read_settings.get(), &Save_read_settings::set_default_parent, this, [this](QWidget* wgt)
+    {
+        wgt->hide();
+        wgt->setParent(m_kia_main_window);
+        m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt] = -1;
+        m_kia_settings->m_kia_gui_settings->m_widget_is_hide[wgt] = wgt->isVisible();
+    });
+
+    connect(m_kia_main_window, &Kia_main_window::send_to_change_parent, this, [this](QWidget* wgt)
+    {
+        wgt->hide();
+        wgt->setParent(m_kia_main_window);
+        m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt] = -1;
+        m_kia_settings->m_kia_gui_settings->m_widget_is_hide[wgt] = wgt->isVisible();
+    });
     m_kia_main_window->setWindowTitle("КИА");
     m_dock_manager = m_kia_main_window->create_dock_widget(m_kia_main_window);
     m_kia_main_window->set_menu_bar(m_kia_menubar);
@@ -33,30 +48,34 @@ KiaCore::~KiaCore()
 
     m_save_read_settings->save_pos_and_size_widgets("window_is_work", m_kia_window_is_work);
 
-    m_save_read_settings->save_pos_and_size_widgets("mpi_all_dev", m_kia_window_info_mpi);
-    //    m_save_read_settings->save_state_widgets("mpi_all_dev", m_kia_window_info_mpi);
     m_save_read_settings->save_pos_and_size_widgets("kia_debug_commands", m_kia_debug_commands);
+
+    m_save_read_settings->save_pos_and_size_widgets("mpi_all_dev", m_kia_custom_dialog[WINDOW_MPI][0]);
+    m_save_read_settings->save_state_widgets("mpi_all_dev", m_kia_custom_dialog[WINDOW_MPI][0]);
+
     for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
     {
-        m_save_read_settings->save_pos_and_size_widgets("mpi_for_dev_" + QString::number(num_bokz), m_kia_window_info_mpi_for_dev[num_bokz]);
-        m_save_read_settings->save_pos_and_size_widgets("device_info_" + QString::number(num_bokz), m_kia_window_info_device_protocol[num_bokz]);
-        m_save_read_settings->save_pos_and_size_widgets("system_info_" + QString::number(num_bokz), m_kia_window_info_system_info[num_bokz]);
-        m_save_read_settings->save_pos_and_size_widgets("error_info_" + QString::number(num_bokz), m_kia_window_info_error_info[num_bokz]);
-        m_save_read_settings->save_pos_and_size_widgets("ai_protocol_" + QString::number(num_bokz), m_kia_window_info_ai_protocol[num_bokz]);
+        m_save_read_settings->save_state_widgets("mpi_for_dev_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]);
+        m_save_read_settings->save_state_widgets("device_info_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]);
+        m_save_read_settings->save_state_widgets("system_info_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]);
+        m_save_read_settings->save_state_widgets("error_info_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]);
+        m_save_read_settings->save_state_widgets("ai_protocol_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]);
 
-        //        m_save_read_settings->save_state_widgets("mpi_for_dev_" + QString::number(num_bokz), m_kia_window_info_mpi_for_dev[num_bokz]);
-        //        m_save_read_settings->save_state_widgets("device_info_" + QString::number(num_bokz), m_kia_window_info_device_protocol[num_bokz]);
-        //        m_save_read_settings->save_state_widgets("system_info_" + QString::number(num_bokz), m_kia_window_info_system_info[num_bokz]);
-        //        m_save_read_settings->save_state_widgets("error_info_" + QString::number(num_bokz), m_kia_window_info_error_info[num_bokz]);
-        //        m_save_read_settings->save_state_widgets("ai_protocol_" + QString::number(num_bokz), m_kia_window_info_ai_protocol[num_bokz]);
+        m_save_read_settings->save_pos_and_size_widgets("mpi_for_dev_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]);
+        m_save_read_settings->save_pos_and_size_widgets("device_info_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]);
+        m_save_read_settings->save_pos_and_size_widgets("system_info_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]);
+        m_save_read_settings->save_pos_and_size_widgets("error_info_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]);
+        m_save_read_settings->save_pos_and_size_widgets("ai_protocol_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]);
     }
 
     for (uint16_t num_mpi_command = 0; num_mpi_command < constants::max_mpi_command; ++num_mpi_command)
     {
         for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
         {
-            m_save_read_settings->save_pos_and_size_widgets("mpi_command_wnd_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz), m_kia_window_info_mpi_command[num_mpi_command][num_bokz]);
-            //m_save_read_settings->save_state_widgets("mpi_command_wnd_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz), m_kia_window_info_mpi_command[num_mpi_command][num_bokz]);
+            m_save_read_settings->save_state_widgets("mpi_command_wnd_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz),
+                                                     m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]);
+            m_save_read_settings->save_pos_and_size_widgets("mpi_command_wnd_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz),
+                                                            m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]);
         }
     }
     auto graph_widget_list = m_kia_graph_manager->get_graph_widget();
@@ -225,37 +244,96 @@ void KiaCore::set_kia_gui_settings_slot()
     for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
     {
         m_kia_window_info_mpi_for_dev[num_bokz] = new KiaWindowInfo(m_kia_main_window);
-        m_keys_for_dock_widget["window_mko_dev_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_mpi_for_dev[num_bokz], "МКО прибора "
-                                                                                                                                          + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-                                                                                        + " " + QString::number(num_bokz + 1)));
+        m_kia_custom_dialog[WINDOW_MPI_DEV].push_back(new Kia_custom_dialog(m_kia_main_window));
+        m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]->set_wiget_to_layout(m_kia_window_info_mpi_for_dev[num_bokz]);
+        m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]->set_window_title("МКО прибора " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+                + " " + QString::number(num_bokz + 1));
+        connect(m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz], &Kia_custom_dialog::set_new_parent, this, [this, num_bokz]()
+        {
+            m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]->hide();
+            m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]->setParent(m_kia_main_window);
+            m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]] = -1;
+            m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]] = m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]->isVisible();
+        });
+        correct_save_state_window(m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]);
+
+        //        m_keys_for_dock_widget["window_mko_dev_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_mpi_for_dev[num_bokz], "МКО прибора "
+        //                                                                                                                                          + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+        //                                                                                        + " " + QString::number(num_bokz + 1)));
 
         m_kia_window_info_device_protocol[num_bokz] = new KiaWindowInfo(m_kia_main_window);
-        m_keys_for_dock_widget["window_info_dev_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_device_protocol[num_bokz], "Информация прибора "
-                                                                                                                                           + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-                                                                                         + " " + QString::number(num_bokz + 1)));
+        m_kia_custom_dialog[WINDOW_DEV_PROTOCOL].push_back(new Kia_custom_dialog(m_kia_main_window));
+        m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]->set_wiget_to_layout(m_kia_window_info_device_protocol[num_bokz]);
+        m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]->set_window_title("Информация прибора "
+                                                                             + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+                + " " + QString::number(num_bokz + 1));
+        connect(m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz], &Kia_custom_dialog::set_new_parent, this, [this, num_bokz]()
+        {
+            m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]->hide();
+            m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]->setParent(m_kia_main_window);
+            m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]] = -1;
+            m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]] = m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]->isVisible();
+        });
+        correct_save_state_window(m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]);
+        //        m_keys_for_dock_widget["window_info_dev_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_device_protocol[num_bokz], "Информация прибора "
+        //                                                                                                                                           + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+        //                                                                                         + " " + QString::number(num_bokz + 1)));
 
         m_kia_window_info_system_info[num_bokz] = new KiaWindowInfo(m_kia_main_window);
-        m_keys_for_dock_widget["window_system_info_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_system_info[num_bokz], "Системная информация "
-                                                                                                                                              + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-                                                                                            + " " + QString::number(num_bokz + 1)));
+        m_kia_custom_dialog[WINDOW_SYSTEM_INFO].push_back(new Kia_custom_dialog(m_kia_main_window));
+        m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]->set_wiget_to_layout(m_kia_window_info_system_info[num_bokz]);
+        m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]->set_window_title("Системная информация "
+                                                                            + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+                + " " + QString::number(num_bokz + 1));
+        connect(m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz], &Kia_custom_dialog::set_new_parent, this, [this, num_bokz]()
+        {
+            m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]->hide();
+            m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]->setParent(m_kia_main_window);
+            m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]] = -1;
+            m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]] = m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]->isVisible();
+        });
+        correct_save_state_window(m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]);
+        //        m_keys_for_dock_widget["window_system_info_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_system_info[num_bokz], "Системная информация "
+        //                                                                                                                                              + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+        //                                                                                            + " " + QString::number(num_bokz + 1)));
 
         m_kia_window_info_error_info[num_bokz] = new KiaWindowInfo(m_kia_main_window);
-        m_keys_for_dock_widget["window_error_info_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_error_info[num_bokz], "Ошибочная информация "
-                                                                                                                                             + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-                                                                                           + " " + QString::number(num_bokz + 1)));
+        m_kia_custom_dialog[WINDOW_ERROR_INFO].push_back(new Kia_custom_dialog(m_kia_main_window));
+        m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]->set_wiget_to_layout(m_kia_window_info_error_info[num_bokz]);
+        m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]->set_window_title("Ошибочная информация "
+                                                                           + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+                + " " + QString::number(num_bokz + 1));
+        connect(m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz], &Kia_custom_dialog::set_new_parent, this, [this, num_bokz]()
+        {
+            m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]->hide();
+            m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]->setParent(m_kia_main_window);
+            m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]] = -1;
+            m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]] = m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]->isVisible();
+        });
+        correct_save_state_window(m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]);
+        //        m_keys_for_dock_widget["window_error_info_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_error_info[num_bokz], "Ошибочная информация "
+        //                                                                                                                                             + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+        //                                                                                           + " " + QString::number(num_bokz + 1)));
 
         m_kia_window_info_ai_protocol[num_bokz] = new KiaWindowInfo(m_kia_main_window);
-        m_keys_for_dock_widget["window_ai_info_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_ai_protocol[num_bokz], "Автономные испытания "
-                                                                                                                                          + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-                                                                                        + " " + QString::number(num_bokz + 1)));
+        m_kia_custom_dialog[WINDOW_AI_PROTOCOL].push_back(new Kia_custom_dialog(m_kia_main_window));
+        m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]->set_wiget_to_layout(m_kia_window_info_ai_protocol[num_bokz]);
+        m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]->set_window_title("Автономные испытания "
+                                                                            + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+                + " " + QString::number(num_bokz + 1));
+        connect(m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz], &Kia_custom_dialog::set_new_parent, this, [this, num_bokz]()
+        {
+            m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]->hide();
+            m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]->setParent(m_kia_main_window);
+            m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]] = -1;
+            m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]] = m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]->isVisible();
+        });
+        correct_save_state_window(m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]);
+        //        m_keys_for_dock_widget["window_ai_info_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_ai_protocol[num_bokz], "Автономные испытания "
+        //                                                                                                                                          + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+        //                                                                                        + " " + QString::number(num_bokz + 1)));
 
 
-        correct_save_state_window(m_kia_window_info_ai_protocol[num_bokz]);
-        correct_save_state_window(m_kia_window_info_mpi_for_dev[num_bokz]);
-        correct_save_state_window(m_kia_window_info_device_protocol[num_bokz]);
-        correct_save_state_window(m_kia_window_info_system_info[num_bokz]);
-        correct_save_state_window(m_kia_window_info_ai_protocol[num_bokz]);
-        correct_save_state_window(m_kia_window_info_error_info[num_bokz]);
 
     }
     for (uint16_t num_mpi_command = 0; num_mpi_command < constants::max_mpi_command; ++num_mpi_command)
@@ -264,10 +342,23 @@ void KiaCore::set_kia_gui_settings_slot()
         for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
         {
             m_kia_window_info_mpi_command[num_mpi_command][num_bokz] = new KiaWindowInfo(m_kia_main_window);
-            m_keys_for_dock_widget["window_mpi_command_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_mpi_command[num_mpi_command][num_bokz], m_kia_settings->m_kia_gui_settings->m_mpi_command_name[num_mpi_command]
-                                                                                                                                                                                           + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-                                                                                                                                         + " " + QString::number(num_bokz + 1)));
-            correct_save_state_window(m_kia_window_info_mpi_command[num_mpi_command][num_bokz]);
+            m_kia_custom_dialog[WINDOW_MPI_COMMAND].push_back(new Kia_custom_dialog(m_kia_main_window));
+            m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]->set_wiget_to_layout(m_kia_window_info_mpi_command[num_mpi_command][num_bokz]);
+            m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]->set_window_title(m_kia_settings->m_kia_gui_settings->m_mpi_command_name[num_mpi_command]
+                                                                                + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+                    + " " + QString::number(num_bokz + 1));
+            connect(m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)], &Kia_custom_dialog::set_new_parent, this, [this, num_mpi_command, num_bokz]()
+            {
+                m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]->hide();
+                m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]->setParent(m_kia_main_window);
+                m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]] = -1;
+                m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]] =
+                        m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]->isVisible();
+            });
+            //            m_keys_for_dock_widget["window_mpi_command_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_mpi_command[num_mpi_command][num_bokz], m_kia_settings->m_kia_gui_settings->m_mpi_command_name[num_mpi_command]
+            //                                                                                                                                                                                           + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+            //                                                                                                                                         + " " + QString::number(num_bokz + 1)));
+            correct_save_state_window(m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]);
         }
     }
 
@@ -424,8 +515,17 @@ void KiaCore::remove_action_from_table(int32_t num_graph)
 void KiaCore::create_window_mpi()
 {
     m_kia_window_info_mpi = new KiaWindowInfo(m_kia_main_window);
-    correct_save_state_window(m_kia_window_info_mpi);
-    m_keys_for_dock_widget["window_mko"].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_mpi, "МКО"));
+    m_kia_custom_dialog[WINDOW_MPI].push_back(new Kia_custom_dialog(m_kia_main_window));
+    m_kia_custom_dialog[WINDOW_MPI][0]->set_wiget_to_layout(m_kia_window_info_mpi);
+    m_kia_custom_dialog[WINDOW_MPI][0]->set_window_title("МКО " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]);
+    connect(m_kia_custom_dialog[WINDOW_MPI][0], &Kia_custom_dialog::set_new_parent, this, [this]()
+    {
+        m_kia_custom_dialog[WINDOW_MPI][0]->hide();
+        m_kia_custom_dialog[WINDOW_MPI][0]->setParent(m_kia_main_window);
+        m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_MPI][0]] = -1;
+        m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_MPI][0]] = m_kia_custom_dialog[WINDOW_MPI][0]->isVisible();
+    });
+    correct_save_state_window(m_kia_custom_dialog[WINDOW_MPI][WINDOW_MPI]);
 }
 
 
@@ -467,8 +567,10 @@ void KiaCore::create_action_info_ai_info()
         {
             if (m_kia_settings->m_kia_data_to_server->m_is_used_bokz[num_bokz] == CS_IS_ON)
             {
-                for (auto& num_window : m_keys_for_dock_widget["window_ai_info_" + QString::number(num_bokz)])
-                    m_kia_settings->m_kia_gui_settings->m_dock_widget[num_window]->toggleView();
+                m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]->setParent(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget]);
+                m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]->show();
+                m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]] = m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget;
+                m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]] = m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]->isVisible();
             }
         }
     });
@@ -483,8 +585,10 @@ void KiaCore::create_action_info_system_info()
         {
             if (m_kia_settings->m_kia_data_to_server->m_is_used_bokz[num_bokz] == CS_IS_ON)
             {
-                for (auto& num_window : m_keys_for_dock_widget["window_system_info_" + QString::number(num_bokz)])
-                    m_kia_settings->m_kia_gui_settings->m_dock_widget[num_window]->toggleView();
+                m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]->setParent(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget]);
+                m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]->show();
+                m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]] = m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget;
+                m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]] = m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]->isVisible();
             }
         }
     });
@@ -499,8 +603,10 @@ void KiaCore::create_action_info_error_info()
         {
             if (m_kia_settings->m_kia_data_to_server->m_is_used_bokz[num_bokz] == CS_IS_ON)
             {
-                for (auto& num_window : m_keys_for_dock_widget["window_error_info_" + QString::number(num_bokz)])
-                    m_kia_settings->m_kia_gui_settings->m_dock_widget[num_window]->toggleView();
+                m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]->setParent(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget]);
+                m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]->show();
+                m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]] = m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget;
+                m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]] = m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]->isVisible();
             }
         }
     });
@@ -515,8 +621,12 @@ void KiaCore::create_action_info_dev()
         {
             if (m_kia_settings->m_kia_data_to_server->m_is_used_bokz[num_bokz] == CS_IS_ON)
             {
-                for (auto& num_window : m_keys_for_dock_widget["window_info_dev_" + QString::number(num_bokz)])
-                    m_kia_settings->m_kia_gui_settings->m_dock_widget[num_window]->toggleView();
+                m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]->setParent(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget]);
+                m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]->show();
+                m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]] = m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget;
+                m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]] = m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]->isVisible();
+                //                for (auto& num_window : m_keys_for_dock_widget["window_info_dev_" + QString::number(num_bokz)])
+                //                    m_kia_settings->m_kia_gui_settings->m_dock_widget[num_window]->toggleView();
             }
         }
     });
@@ -549,8 +659,13 @@ void KiaCore::create_mpi_command_action()
             {
                 if (m_kia_settings->m_kia_data_to_server->m_is_used_bokz[num_bokz] == CS_IS_ON)
                 {
-                    for (auto& num_window : m_keys_for_dock_widget["window_mpi_command_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz)])
-                        m_kia_settings->m_kia_gui_settings->m_dock_widget[num_window]->toggleView();
+                    m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]->setParent(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget]);
+                    m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]->show();
+                    m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]] = m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget;
+                    m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]] =
+                            m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]->isVisible();
+                    //                    for (auto& num_window : m_keys_for_dock_widget["window_mpi_command_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz)])
+                    //                        m_kia_settings->m_kia_gui_settings->m_dock_widget[num_window]->toggleView();
                 }
             }
         });
@@ -560,13 +675,14 @@ void KiaCore::create_mpi_command_action()
 void KiaCore::create_action_info_mpi_info()
 {
 
-    auto action_mpi = m_kia_menubar->get_menu_windows()->addAction("Окно МКО", m_kia_menubar, [this]()
+    m_kia_menubar->get_menu_windows()->addAction("Окно МКО", m_kia_menubar, [this]()
     {
-        m_kia_window_info_mpi->setWindowTitle("МКО");
-        m_kia_window_info_mpi->show();
-        m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_window_info_mpi] = m_kia_window_info_mpi->isVisible();
+        m_kia_custom_dialog[WINDOW_MPI][0]->setParent(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget]);
+        m_kia_custom_dialog[WINDOW_MPI][0]->show();
+        m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_MPI][0]] = m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget;
+        m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_MPI][0]] = m_kia_custom_dialog[WINDOW_MPI][0]->isVisible();
     });
-    set_dock_actions(std::make_pair("window_mko", action_mpi));
+    //set_dock_actions(std::make_pair("window_mko", action_mpi));
     connect(m_client.get(), SIGNAL(set_window_info_mpi(qint16, QString)), this, SLOT(set_window_info_mpi(qint16, QString)));
 }
 
@@ -578,11 +694,10 @@ void KiaCore::create_action_info_mpi_dev_info()
         {
             if (m_kia_settings->m_kia_data_to_server->m_is_used_bokz[num_bokz] == CS_IS_ON)
             {
-                for (auto& num_window : m_keys_for_dock_widget["window_mko_dev_" + QString::number(num_bokz)])
-                    m_kia_settings->m_kia_gui_settings->m_dock_widget[num_window]->toggleView();
-                m_kia_window_info_mpi_for_dev[num_bokz]->setWindowTitle("МКО прибора " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-                        + " " + QString::number(num_bokz + 1));
-                m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_window_info_mpi_for_dev[num_bokz]] = m_kia_window_info_mpi_for_dev[num_bokz]->isVisible();
+                m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]->setParent(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget]);
+                m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]->show();
+                m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]] = m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget;
+                m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]] = m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]->isVisible();
             }
         }
     });
@@ -661,35 +776,40 @@ void KiaCore::load_profile_settings()
 
     m_save_read_settings->load_pos_and_size_widgets("table_settings", m_kia_window_settings_for_all_dev);
     m_save_read_settings->load_pos_and_size_widgets("kia_debug_commands", m_kia_debug_commands);
-    for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
-    {
 
-        //        m_save_read_settings->load_state_widgets("mpi_for_dev_" + QString::number(num_bokz), m_kia_window_info_mpi_for_dev[num_bokz]);
-        //        m_save_read_settings->load_state_widgets("device_info_" + QString::number(num_bokz), m_kia_window_info_device_protocol[num_bokz]);
-        //        m_save_read_settings->load_state_widgets("system_info_" + QString::number(num_bokz), m_kia_window_info_system_info[num_bokz]);
-        //        m_save_read_settings->load_state_widgets("error_info_" + QString::number(num_bokz), m_kia_window_info_error_info[num_bokz]);
-        //        m_save_read_settings->load_state_widgets("ai_protocol_" + QString::number(num_bokz), m_kia_window_info_ai_protocol[num_bokz]);
-
-        m_save_read_settings->load_pos_and_size_widgets("mpi_for_dev_" + QString::number(num_bokz), m_kia_window_info_mpi_for_dev[num_bokz]);
-        m_save_read_settings->load_pos_and_size_widgets("device_info_" + QString::number(num_bokz), m_kia_window_info_device_protocol[num_bokz]);
-        m_save_read_settings->load_pos_and_size_widgets("system_info_" + QString::number(num_bokz), m_kia_window_info_system_info[num_bokz]);
-        m_save_read_settings->load_pos_and_size_widgets("error_info_" + QString::number(num_bokz), m_kia_window_info_error_info[num_bokz]);
-        m_save_read_settings->load_pos_and_size_widgets("ai_protocol_" + QString::number(num_bokz), m_kia_window_info_ai_protocol[num_bokz]);
-    }
+    m_save_read_settings->load_tabs_settings();
 
     m_save_read_settings->load_pos_and_size_widgets("m_kia_options", m_kia_options);
-    //m_save_read_settings->load_state_widgets("mpi_all_dev", m_kia_window_info_mpi);
-    m_save_read_settings->load_pos_and_size_widgets("mpi_all_dev", m_kia_window_info_mpi);
+
+    for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
+    {
+        m_save_read_settings->load_state_widgets("mpi_for_dev_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]);
+        m_save_read_settings->load_state_widgets("device_info_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]);
+        m_save_read_settings->load_state_widgets("system_info_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]);
+        m_save_read_settings->load_state_widgets("error_info_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]);
+        m_save_read_settings->load_state_widgets("ai_protocol_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]);
+
+        m_save_read_settings->load_pos_and_size_widgets("mpi_for_dev_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_MPI_DEV][num_bokz]);
+        m_save_read_settings->load_pos_and_size_widgets("device_info_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_DEV_PROTOCOL][num_bokz]);
+        m_save_read_settings->load_pos_and_size_widgets("system_info_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_SYSTEM_INFO][num_bokz]);
+        m_save_read_settings->load_pos_and_size_widgets("error_info_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_ERROR_INFO][num_bokz]);
+        m_save_read_settings->load_pos_and_size_widgets("ai_protocol_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]);
+    }
+
+    m_save_read_settings->load_pos_and_size_widgets("mpi_all_dev", m_kia_custom_dialog[WINDOW_MPI][0]);
+    m_save_read_settings->load_state_widgets("mpi_all_dev", m_kia_custom_dialog[WINDOW_MPI][0]);
 
     for (uint16_t num_mpi_command = 0; num_mpi_command < constants::max_mpi_command; ++num_mpi_command)
     {
         for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
         {
-            //m_save_read_settings->load_state_widgets("mpi_command_wnd_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz), m_kia_window_info_mpi_command[num_mpi_command][num_bokz]);
-            m_save_read_settings->load_pos_and_size_widgets("mpi_command_wnd_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz), m_kia_window_info_mpi_command[num_mpi_command][num_bokz]);
+            m_save_read_settings->load_state_widgets("mpi_command_wnd_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz),
+                                                     m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]);
+            m_save_read_settings->load_pos_and_size_widgets("mpi_command_wnd_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz),
+                                                            m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]);
         }
     }
-    m_save_read_settings->load_tabs_settings();
+
 
     m_save_read_settings->load_graph_settings();
     auto graph_widget_list = m_kia_graph_manager->get_graph_widget();

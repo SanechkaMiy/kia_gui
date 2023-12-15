@@ -36,6 +36,7 @@ public:
 
     void save_state_dock_manager(CDockManager *manager);
     void load_state_dock_manager(CDockManager *manager);
+
 signals:
     void send_to_table_settings_window(QStringList);
     void send_to_kia_options(qint16, QStringList);
@@ -47,6 +48,7 @@ signals:
     void send_list_for_menu_actions(qint16, QStringList);
     void send_current_main_tab_widget(uint16_t);
     void send_list_to_add_tab(QStringList);
+    void set_default_parent(QWidget*);
 private:
     std::shared_ptr<Kia_settings> m_kia_settings;
     QSettings m_settings;

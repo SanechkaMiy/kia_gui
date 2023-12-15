@@ -68,7 +68,7 @@ private:
     std::array<std::vector<KiaWindowInfo*>, constants::max_mpi_command> m_kia_window_info_mpi_command;
     KiaWindowInfo* m_kia_window_info_mpi;
     KiaWindowIsWork* m_kia_window_is_work;
-
+    std::map<uint16_t, QVector<Kia_custom_dialog*>> m_kia_custom_dialog;
     void set_dock_actions(const std::pair<QString, QAction*>& action);
 
     void create_menu_action();
