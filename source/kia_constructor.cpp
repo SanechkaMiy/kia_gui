@@ -260,7 +260,7 @@ void Kia_constructor::on_pb_remove_graph_clicked()
 
 void Kia_constructor::remove_list()
 {
-    for (uint16_t num_graph = 0; num_graph < ui->lw_list_graph->count(); num_graph++)
+    for (int16_t num_graph = ui->lw_list_graph->count() - 1; num_graph >= 0; num_graph--)
     {
         if (ui->lw_list_graph->count() != 0)
         {
@@ -275,9 +275,22 @@ void Kia_constructor::remove_list()
             delete ui->lw_list_graph->item(num_graph);
         }
     }
-    ui->lw_list_table->clear();
-    m_kia_settings->m_kias_view_data->m_table_count = 0;
-    m_kia_settings->m_kias_view_data->m_data_table.clear();
+    for (int16_t num_table = ui->lw_list_table->count() - 1; num_table >= 0; num_table--)
+    {
+        if (ui->lw_list_table->count() != 0)
+        {
+            if (num_table + 1 < ui->lw_list_table->count())
+            {
+                for (uint16_t ind = num_table; ind < m_kia_settings->m_kias_view_data->m_data_table.size(); ++ind)
+                    m_kia_settings->m_kias_view_data->m_data_table[ind][QP_NUM_WIDGET] = QString::number(m_kia_settings->m_kias_view_data->m_data_table[ind][QP_NUM_WIDGET].toUInt() - 1);
+            }
+            m_kia_settings->m_kias_view_data->m_data_table.erase(m_kia_settings->m_kias_view_data->m_data_table.begin() + num_table);
+            m_kia_settings->m_kias_view_data->m_data_table_cols.erase(m_kia_settings->m_kias_view_data->m_data_table_cols.begin() + num_table);
+            m_kia_settings->m_kias_view_data->m_table_count -= 1;
+            emit remove_table(num_table);
+            delete ui->lw_list_table->item(num_table);
+        }
+    }
 }
 
 void Kia_constructor::on_pb_add_table_clicked()

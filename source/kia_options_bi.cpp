@@ -10,7 +10,7 @@ Kia_options_bi::Kia_options_bi(std::shared_ptr<Kia_settings> kia_settings,
 {
     ui->setupUi(this);
     m_layout_for_place_tab_widget = new QVBoxLayout(this);
-    QStringList name_settings = {"Секундная метка", "Релейные команды"};
+    QStringList name_settings = {"Секундная метка", "Релейные команды", "Каналы"};
     m_bi_settings = new QTabWidget(this);
     m_layout_for_place_tab_widget->addWidget(m_bi_settings);
     for (uint16_t num_bi_settings = 0; num_bi_settings < constants::max_count_bi_settings; ++num_bi_settings)

@@ -16,7 +16,7 @@ KiaCore::KiaCore(QWidget *wgt, QObject *parent)
     connect(m_kia_menubar, SIGNAL(show_kia_profile()), this, SLOT(show_kia_profile_slot()));
     connect(m_save_read_settings.get(), SIGNAL(send_current_main_tab_widget(uint16_t)), m_kia_main_window, SLOT(set_current_index_tab_widget(uint16_t)));
     connect(m_save_read_settings.get(), SIGNAL(send_list_to_add_tab(QStringList)), m_kia_main_window, SLOT(add_tab_bar_slot(QStringList)));
-
+    m_kia_main_window->setWindowTitle("КИА");
     m_dock_manager = m_kia_main_window->create_dock_widget(m_kia_main_window);
     m_kia_main_window->set_menu_bar(m_kia_menubar);
 }
@@ -30,11 +30,12 @@ KiaCore::~KiaCore()
     m_save_read_settings->save_pos_and_size_widgets("table_state", m_kia_window_state_for_all_dev);
 
     m_save_read_settings->save_pos_and_size_widgets("table_settings", m_kia_window_settings_for_all_dev);
+
     m_save_read_settings->save_pos_and_size_widgets("window_is_work", m_kia_window_is_work);
 
     m_save_read_settings->save_pos_and_size_widgets("mpi_all_dev", m_kia_window_info_mpi);
     //    m_save_read_settings->save_state_widgets("mpi_all_dev", m_kia_window_info_mpi);
-
+    m_save_read_settings->save_pos_and_size_widgets("kia_debug_commands", m_kia_debug_commands);
     for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
     {
         m_save_read_settings->save_pos_and_size_widgets("mpi_for_dev_" + QString::number(num_bokz), m_kia_window_info_mpi_for_dev[num_bokz]);
@@ -116,7 +117,6 @@ void KiaCore::create_menu_action()
     });
     set_dock_actions(std::make_pair("window_state_work", action_state_work));
 
-    m_kia_menubar->get_menu_windows()->addSeparator();
 
     create_action_info_system_info();
     create_action_info_dev();
@@ -125,7 +125,7 @@ void KiaCore::create_menu_action()
     create_action_info_error_info();
     create_action_info_ai_info();
     m_kia_main_window->create_action_graph_dock_widget(m_kia_menubar->get_menu_windows());
-
+    m_kia_menubar->get_menu_commands()->addSeparator();
 }
 
 void KiaCore::correct_save_state_window(QDialog *window_info)
@@ -143,6 +143,13 @@ void KiaCore::correct_save_state_window(QDialog *window_info)
 void KiaCore::create_kia_profile()
 {
     m_kia_profile = new Kia_profile(m_kia_settings, m_kia_main_window);
+    QString name_profile = "Основной";
+    m_kia_profile->create_main_profile(name_profile);
+    m_kia_menubar->get_menu_profile()->addAction("Основной", m_kia_menubar, [this]()
+    {
+        m_kia_settings->m_current_profile = 0;
+        load_profile_settings();
+    });
     connect(m_save_read_settings.get(), SIGNAL(send_to_kia_profile(QStringList)), m_kia_profile, SLOT(add_profile_slot(QStringList)));
     connect(m_kia_profile, &Kia_profile::create_action, this, [this](QString name_profile, int32_t num_profile)
     {
@@ -266,6 +273,9 @@ void KiaCore::set_kia_gui_settings_slot()
 
     create_window_state(m_kia_settings->m_type_bi);
     create_window_settings(m_kia_settings->m_type_bokz);
+
+    create_kia_debug_commands();
+
     create_menu_action();
 
     create_kia_options();
@@ -328,6 +338,18 @@ void KiaCore::create_kia_options_for_interface()
     connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_color_table_state(qint16, QStringList)), m_kia_options_interface, SLOT(set_check_box_for_table_state_color(qint16, QStringList)));
     connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_color_table_state(qint16, QStringList)), m_kia_options_interface, SLOT(set_check_box_for_table_state_color(qint16, QStringList)));
 
+    connect(m_save_read_settings.get(), SIGNAL(send_list_for_menu_actions(qint16, QStringList)), m_kia_options_interface, SLOT(set_list_for_menu_actions(qint16, QStringList)));
+
+}
+
+void KiaCore::create_kia_debug_commands()
+{
+    m_kia_debug_commands = new Kia_debug_commands(m_kia_settings, m_client, m_kia_main_window);
+    m_kia_debug_commands->setWindowTitle("Отладочные команды");
+    connect(m_kia_menubar, &KiaMenuBar::show_kia_debug_command, this, [this]()
+    {
+        m_kia_debug_commands->show();
+    });
 }
 
 void KiaCore::create_kia_graph_manager()
@@ -624,6 +646,7 @@ void KiaCore::reset_before_load_profile()
 {
     m_kia_main_window->remove_tab_settings();
     m_kia_constructor->remove_list();
+
 }
 
 void KiaCore::load_profile_settings()
@@ -637,7 +660,7 @@ void KiaCore::load_profile_settings()
     m_save_read_settings->load_pos_and_size_widgets("table_state", m_kia_window_state_for_all_dev);
 
     m_save_read_settings->load_pos_and_size_widgets("table_settings", m_kia_window_settings_for_all_dev);
-
+    m_save_read_settings->load_pos_and_size_widgets("kia_debug_commands", m_kia_debug_commands);
     for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
     {
 
@@ -684,8 +707,8 @@ void KiaCore::load_profile_settings()
         m_save_read_settings->load_state_widgets("table_" + QString::number(num_widget), table_widget_list[num_widget]);
         m_save_read_settings->load_pos_and_size_widgets("table_" + QString::number(num_widget), table_widget_list[num_widget]);
     }
-    std::cout << "here12321" << std::endl;
     m_save_read_settings->load_state_dock_manager(m_dock_manager);
+
 }
 
 void KiaCore::show_kia_profile_slot()

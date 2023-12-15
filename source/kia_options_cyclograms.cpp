@@ -3,9 +3,9 @@
 
 Kia_options_cyclograms::Kia_options_cyclograms(std::shared_ptr<Kia_settings> kia_settings, std::shared_ptr<Client> client, QWidget *parent) :
     QWidget(parent)
-    , ui(new Ui::Kia_options_cyclograms)
-    , m_kia_settings(kia_settings)
-    , m_client(client)
+  , ui(new Ui::Kia_options_cyclograms)
+  , m_kia_settings(kia_settings)
+  , m_client(client)
 {
     ui->setupUi(this);
     m_layout_for_place_tab_widget = new QVBoxLayout(this);
@@ -17,6 +17,7 @@ Kia_options_cyclograms::Kia_options_cyclograms(std::shared_ptr<Kia_settings> kia
         m_cyclogram_settings->addTab(m_tab_cyclograms[num_cyclograms], m_kia_settings->m_kia_bokz_settings->m_name_cyclograms[num_cyclograms]);
         m_layout_for_place_cyclogram_tab_widget.push_back(new QVBoxLayout(m_tab_cyclograms[num_cyclograms]));
     }
+    ai_settings();
     regular_settings();
     technical_run_settings();
     zkr_settings();
@@ -32,6 +33,14 @@ void Kia_options_cyclograms::set_load_settings(qint16 type_load, QStringList loa
 {
     switch(type_load)
     {
+    case KNCycl_AI:
+        if (load_data.size() != 0)
+        {
+            m_check_box_continue_if_fails->setChecked(load_data[0].toInt());
+        }
+        else
+            m_check_box_continue_if_fails->setChecked(true);
+        break;
     case KNCycl_REGULAR:
         if (load_data.size() != 0)
         {
@@ -68,6 +77,21 @@ void Kia_options_cyclograms::set_load_settings(qint16 type_load, QStringList loa
                 m_le_full_frames_settings[ind_zkr_param]->setText("0");
         break;
     }
+}
+
+void Kia_options_cyclograms::ai_settings()
+{
+    m_check_box_continue_if_fails = new QCheckBox("Продолжить, если ошибка", this);
+    m_check_box_continue_if_fails->setChecked(true);
+    connect(m_check_box_continue_if_fails, &QCheckBox::stateChanged, this, [this](int state)
+    {
+        m_kia_settings->m_kia_data_to_server->m_skip_fails_for_continue = state;
+        m_client->send_data_to_server(SET_AI_SKIP_OR_STOP, QStringList(QString::number(state)));
+    });
+    //m_check_box_continue_if_fails->setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
+    m_layout_for_place_cyclogram_tab_widget[KNCycl_AI]->addWidget(m_check_box_continue_if_fails);
+    auto* spacer = new QSpacerItem(20, 40, QSizePolicy::Fixed, QSizePolicy::Expanding);
+    m_layout_for_place_cyclogram_tab_widget[KNCycl_AI]->addItem(spacer);
 }
 
 void Kia_options_cyclograms::regular_settings()

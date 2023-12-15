@@ -12,6 +12,7 @@ SOURCES += \
     client.cpp \
     kia_custom_dialog.cpp \
     kia_custom_title_bar.cpp \
+    kia_debug_commands.cpp \
     kia_main_window.cpp \
     kia_options.cpp \
     kia_constructor.cpp \
@@ -41,6 +42,7 @@ HEADERS += \
     client.h \
     kia_custom_dialog.h \
     kia_custom_title_bar.h \
+    kia_debug_commands.h \
     kia_main_window.h \
     kia_options.h \
     kia_constructor.h \
@@ -64,6 +66,7 @@ HEADERS += \
     save_read_settings.h
 
 FORMS += \
+    kia_debug_commands.ui \
     kia_main_window.ui \
     kia_options.ui \
     kia_constructor.ui \

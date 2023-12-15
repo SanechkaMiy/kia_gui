@@ -39,6 +39,7 @@
     <addaction name="power_on"/>
     <addaction name="power_off"/>
     <addaction name="separator"/>
+    <addaction name="change_state_power"/>
     <addaction name="set_power_main"/>
     <addaction name="set_power_rezerv"/>
    </widget>
@@ -49,6 +50,7 @@
     <addaction name="second_mark_on"/>
     <addaction name="second_mark_off"/>
     <addaction name="separator"/>
+    <addaction name="change_state_1s"/>
     <addaction name="set_1s_main"/>
     <addaction name="set_1s_rezerv"/>
    </widget>
@@ -268,6 +270,16 @@
   <action name="add_profile">
    <property name="text">
     <string>Настройки профиля</string>
+   </property>
+  </action>
+  <action name="change_state_power">
+   <property name="text">
+    <string>Изменить состояние</string>
+   </property>
+  </action>
+  <action name="change_state_1s">
+   <property name="text">
+    <string>Изменить состояние</string>
    </property>
   </action>
   <addaction name="menu_file"/>

@@ -172,10 +172,9 @@ QWidget *Kia_main_window::get_current_tab_widget()
 
 void Kia_main_window::remove_tab_settings()
 {
-    std::cout << m_kia_settings->m_kia_gui_settings->m_data_tabs.size() << std::endl;
-    for (uint16_t index = 0; index < m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets.size(); ++index)
+    for (int16_t index = m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets.size() - 1; index >= 0; index--)
     {
-        if (index != 0)
+        if (index > 0)
         {
             auto new_index = index - 1;
             if (new_index + 1 < (m_main_tab_widget->count() - 1))
@@ -194,13 +193,11 @@ void Kia_main_window::remove_tab_settings()
                     }
                 }
             }
-
             for (auto el : m_kia_settings->m_kias_view_data->m_data_graph_on_tabs[index])
                 emit remove_graph(el.toInt());
 
             for (auto el : m_kia_settings->m_kias_view_data->m_data_tables_on_tabs[index])
                 emit remove_table(el.toInt());
-            m_kia_settings->m_kias_view_data->m_data_tables_on_tabs[index].clear();
             m_kia_settings->m_kia_gui_settings->m_data_tabs.erase(m_kia_settings->m_kia_gui_settings->m_data_tabs.begin() + new_index);
             m_main_tab_widget->removeTab(index);
             delete m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[index];
@@ -208,6 +205,7 @@ void Kia_main_window::remove_tab_settings()
             m_kia_settings->m_kia_gui_settings->m_count_tab_bar--;
         }
     }
+    std::cout << m_kia_settings->m_kia_gui_settings->m_data_tabs.size() << std::endl;
 }
 
 void Kia_main_window::set_current_index_tab_widget(uint16_t index)

@@ -86,6 +86,8 @@ void Kia_options_interface::create_actions_menu_settings(std::vector<std::pair<Q
     ui->gridLayout_2->addWidget(m_actions_settings);
     std::vector<QWidget*> widgets;
     std::vector<QHBoxLayout*> layouts;
+    m_kia_settings->m_kia_gui_settings->m_status_for_menu_action.resize(actions.size());
+    m_menu_actions.resize(actions.size());
     for (uint16_t num_menu = 0; num_menu < actions.size(); ++num_menu)
     {
         widgets.push_back(new QWidget(this));
@@ -94,6 +96,7 @@ void Kia_options_interface::create_actions_menu_settings(std::vector<std::pair<Q
         layouts[num_menu]->addWidget(m_lw_for_actions[num_menu]);
         for (uint16_t num_action = 0; num_action < actions[num_menu].second.size(); num_action++)
         {
+            m_kia_settings->m_kia_gui_settings->m_status_for_menu_action[num_menu].push_back("1");
             m_cb_for_actions[num_menu].push_back(new QCheckBox(actions[num_menu].second[num_action]->text(), this));
             m_cb_for_actions[num_menu][num_action]->setChecked(true);
             if (!actions[num_menu].second[num_action]->text().isEmpty())
@@ -101,6 +104,7 @@ void Kia_options_interface::create_actions_menu_settings(std::vector<std::pair<Q
                 m_lw_for_actions[num_menu]->setItemWidget(new QListWidgetItem(m_lw_for_actions[num_menu]), m_cb_for_actions[num_menu][num_action]);
                 connect(m_cb_for_actions[num_menu][num_action], &QCheckBox::toggled,  ([this, num_menu, num_action](bool is_toggled)
                 {
+                    m_kia_settings->m_kia_gui_settings->m_status_for_menu_action[num_menu][num_action] = QString::number(is_toggled);
                     emit send_num_actions(num_menu, num_action, is_toggled);
                 }));
             }
@@ -132,5 +136,16 @@ void Kia_options_interface::set_check_box_for_table_state_color(qint16 num_table
         emit send_color_and_num_row(num_table, num_row, active_rows[num_row].toInt());
         if (m_color[num_table].size() != 0)
             m_cb_for_color[num_table][num_row]->setChecked(m_color[num_table][num_row].toInt());
+    }
+}
+
+void Kia_options_interface::set_list_for_menu_actions(qint16 num_menu, QStringList list_actions)
+{
+    m_menu_actions[num_menu] = list_actions;
+    for (uint16_t num_action = 0; num_action < list_actions.size(); ++num_action)
+    {
+        emit send_num_actions(num_menu, num_action, list_actions[num_action].toInt());
+        if (m_menu_actions[num_menu].size() != 0)
+            m_cb_for_actions[num_menu][num_action]->setChecked(m_menu_actions[num_menu][num_action].toInt());
     }
 }

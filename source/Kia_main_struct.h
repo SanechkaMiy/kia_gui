@@ -35,7 +35,7 @@ const static uint16_t max_count_mpi = MAX_TMK_NUMBER * 2 + 1;
 const static uint16_t max_count_window = 1;
 const static uint16_t size_qa = 4;
 const static uint16_t size_w = 3;
-const static uint16_t max_count_cyclograms = 4;
+const static uint16_t max_count_cyclograms = 5;
 const static uint16_t max_count_param = 3;
 const static uint16_t max_count_relay_command = 3;
 const static uint16_t max_count_bi_settings = 2;
@@ -60,6 +60,7 @@ struct Kia_data_to_server
     std::array<uint16_t, constants::max_count_param> m_param_for_cycl_full_frames;
     std::array<uint16_t, constants::max_count_param> m_param_for_cycl_tech_run;
     int m_1s_mark_change;
+    uint16_t m_skip_fails_for_continue = 1;
     std::array<uint16_t, constants::max_count_relay_command> m_param_relay_command;
     std::vector<int> m_num_used_bi;
     std::vector<int> m_num_used_channel;
@@ -83,13 +84,13 @@ struct Kia_bi_settings
 struct Kia_bokz_settings
 {
     int m_freq_bokz;
-    std::array<QString, constants::count_type_bokz> m_bokz_type = {"БОКЗМ60", "БОКЗМ60/1000", "БОКЗМР", "АИС-2К", "БОКЗНК"};
+    std::array<QString, constants::count_type_bokz> m_bokz_type = {"БОКЗМ60", "БОКЗМФ"};
     int m_count_bokz;//0 - БОКЗМ60; 1 - БОКЗМ60/1000; 2 - БОКЗМР; 3 - АИС-2К; 4 - БОКЗНК.
     std::array<QStringList, constants::count_type_bokz> m_bokz_row_name;
     std::array<QStringList, constants::count_type_bokz> m_bokz_status_row_name;
     std::array<QString, constants::max_count_cyclograms> m_name_cyclograms =
     {
-        {"Штатная", "Технологический прогон", "Испытание крышки", "Получение кадров"}//,{"dr..."}
+        {"Автономные испытания", "Штатная", "Технологический прогон", "Испытание крышки", "Получение кадров"}//,{"dr..."}
     };
     std::vector<int> m_epsilon;
     std::vector<float> m_focus;
@@ -109,6 +110,9 @@ struct Kia_gui_settings
     uint16_t m_current_main_tab_widget = 0;
     std::vector<QStringList> m_status_for_table_state;
     std::vector<QStringList> m_color_for_table_state;
+    std::vector<QStringList> m_status_for_menu_action;
+    std::vector<QStringList> m_debug_comand_param;
+    std::vector<QStringList> m_word_data_param;
     std::vector<CDockWidget*> m_dock_widget;
     std::vector<QWidget*> m_main_tabs_widgets;
     std::vector<QStringList> m_data_tabs;
@@ -135,7 +139,7 @@ struct Kias_view_data
 #pragma pack(push, 1)
 struct Kias_db
 {
-    std::array<QString, constants::count_type_bokz> m_bokz_type = {"bokzm60", "БОКЗМ60/1000", "БОКЗМР", "АИС-2К", "БОКЗНК"};
+    std::array<QString, constants::count_type_bokz> m_bokz_type = {"bokzm60", "bokzmf"};
     std::array<QString, constants::count_type_bi> m_bi_type = {"bkpik", "biu"};//0 - БКПИК; 1 - БИ; 2 - БИУ; 3 - БИНК; 4 - БКПИКМ.
     QString m_experiment_id;
     QTime m_begin;

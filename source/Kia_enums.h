@@ -76,7 +76,9 @@ enum Kia_command
     SET_CORD_Y = 67,
     SET_MATRIX_PSK = 68,
     CYCLOGRAM_SYNCHRO = 69,
-    CYCLOGRAM_TEST_ADRESS = 70
+    CYCLOGRAM_TEST_ADRESS = 70,
+    SET_AI_SKIP_OR_STOP = 71,
+    DEBUGGING_COMMAND = 72
 };
 
 enum KIA_GUI_COMMAND
@@ -126,7 +128,7 @@ enum NUM_MPI_COMMAND
 enum TYPE_BOKZ
 {
     TYPE_BOKZ_BOKZM60 = 0,
-    TYPE_BOKZ_BOKZMR= 1,
+    TYPE_BOKZ_BOKZMF= 1,
 };
 
 enum TYPE_BI
@@ -165,10 +167,11 @@ enum DO_IT
 
 enum KIA_NAME_CYCLOGRAMS
 {
-    KNCycl_REGULAR = 0,
-    KNCycl_TR = 1,
-    KNCycl_ZKR = 2,
-    KNCycl_FRAMES = 3
+    KNCycl_AI = 0,
+    KNCycl_REGULAR = 1,
+    KNCycl_TR = 2,
+    KNCycl_ZKR = 3,
+    KNCycl_FRAMES = 4
 };
 
 enum SET_PARAM_CYCLOGRAM
@@ -270,6 +273,12 @@ enum TYPE_COMMAND
     IS_CYCLOGRAM = 1,
 };
 
+enum DEV_STATUS_POWERED
+{
+    IS_POWERED = 0,
+    IS_NOT_POWERED = 1,
+};
+
 enum COMMAND_PARAM
 {
     IS_PARAM = 0,
@@ -356,5 +365,17 @@ enum TYPE_MENU_ACTIONS
     RES = 2,
     COMMANDS = 3,
     GET_FRAMES = 4
+};
+
+enum COMMAND_SETTINGS
+{
+    CS_NUM_BOKZ = 0,
+    CS_DIRECTION = 1,
+    CS_FORMAT = 2,
+    CS_SUB_ADDRESS = 3,
+    CS_WORD_DATA = 4,
+    CS_STRUCT_ID = 5,
+    CS_STRUCT_ID_DESCK = 6,
+    CS_DATA_TO_EXC = 7
 };
 #endif // KIA_ENUMS_H

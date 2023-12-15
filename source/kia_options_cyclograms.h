@@ -31,6 +31,7 @@ private:
     Ui::Kia_options_cyclograms *ui;
     template <typename Arr>
     void set_data_for_server(qint16 num, Arr& data_arr);
+    void ai_settings();
     void regular_settings();
     void technical_run_settings();
     void zkr_settings();
@@ -45,6 +46,7 @@ private:
     QTabWidget* m_cyclogram_settings;
     std::array<QWidget*, constants::max_count_cyclograms> m_tab_cyclograms;
     std::array<QCheckBox*, constants::max_mpi_command> m_check_box_select_mpi_command;
+    QCheckBox* m_check_box_continue_if_fails;
 };
 
 #endif // KIA_OPTIONS_CYCLOGRAMS_H

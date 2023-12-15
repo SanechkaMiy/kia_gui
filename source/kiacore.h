@@ -24,6 +24,7 @@
 #include "kia_constructor.h"
 #include "kia_options.h"
 #include "kia_options_interface.h"
+#include "kia_debug_commands.h"
 #include <vector>
 #include <array>
 #include <utility>
@@ -47,6 +48,7 @@ private:
     std::shared_ptr<Save_read_settings> m_save_read_settings;
     Kia_main_window* m_kia_main_window;
     KiaMenuBar* m_kia_menubar;
+    Kia_debug_commands* m_kia_debug_commands;
     Kia_options* m_kia_options;
     Kia_profile* m_kia_profile;
     std::shared_ptr<Kia_constructor> m_kia_constructor;
@@ -79,6 +81,8 @@ private:
     void create_kia_options_for_cyclogram();
     void create_kia_options_for_command();
     void create_kia_options_for_interface();
+
+    void create_kia_debug_commands();
 private slots:
     void set_mpi_command_for_cyclogram();
     void set_kia_gui_settings_slot();

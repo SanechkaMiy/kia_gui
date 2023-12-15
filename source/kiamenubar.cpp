@@ -10,6 +10,7 @@ KiaMenuBar::KiaMenuBar(std::shared_ptr<Kia_settings> kia_settings,
     , m_client(client)
 {
     ui->setupUi(this);
+    m_actions.push_back(std::make_pair(ui->menu_bi->title(), ui->menu_bi->actions()));
     create_action_state_work();
     create_action_pci();
     create_action_res();
@@ -87,21 +88,22 @@ void KiaMenuBar::create_action_commands()
     commands_action.push_back(std::make_tuple("ДТМИ", QKeySequence(Qt::Key_F5), DTMI_ONE));
     commands_action.push_back(std::make_tuple("СМТИ", QKeySequence(), SMTI));
     commands_action.push_back(std::make_tuple("ВМТИ", QKeySequence(), VMTI));
-    commands_action.push_back(std::make_tuple("seperator", QKeySequence(), VMTI));
+    commands_action.push_back(std::make_tuple("separator", QKeySequence(), VMTI));
     commands_action.push_back(std::make_tuple("Команда СИНХРО", QKeySequence(Qt::Key_F7), SYNCHRO));
     commands_action.push_back(std::make_tuple("Команда СКОР", QKeySequence(), SKOR));
     commands_action.push_back(std::make_tuple("Команда НО", QKeySequence(), COMMAND_NO));
     commands_action.push_back(std::make_tuple("Команда ТО", QKeySequence(), COMMAND_TO));
     commands_action.push_back(std::make_tuple("Команда ЛОК", QKeySequence(), COMMAND_LOC));
     commands_action.push_back(std::make_tuple("Команда ОТКЛ Р", QKeySequence(), COMMAND_OTCLP));
-    commands_action.push_back(std::make_tuple("seperator", QKeySequence(), VMTI));
+    commands_action.push_back(std::make_tuple("separator", QKeySequence(), VMTI));
     commands_action.push_back(std::make_tuple("Команда ОС", QKeySequence(), COMMAND_OS));
     commands_action.push_back(std::make_tuple("Команда ВСКОУ", QKeySequence(), COMMAND_VSKOU));
-    commands_action.push_back(std::make_tuple("seperator", QKeySequence(), VMTI));
+    commands_action.push_back(std::make_tuple("separator", QKeySequence(), VMTI));
     commands_action.push_back(std::make_tuple("Полная экспозиция", QKeySequence(), CYCLOGRAM_DO_EXPOSURE));
+    commands_action.push_back(std::make_tuple("separator", QKeySequence(), VMTI));
     for (auto& el : commands_action)
     {
-        if (std::get<NAME_ACTION>(el) == "seperator")
+        if (std::get<NAME_ACTION>(el) == "separator")
         {
             ui->menu_commands->addSeparator();
         }
@@ -115,6 +117,11 @@ void KiaMenuBar::create_action_commands()
             action->setShortcut(std::get<HOT_KEY>(el));
         }
     }
+    ui->menu_commands->addAction("Отладочные команды", this, [this]()
+    {
+        emit show_kia_debug_command();
+    });
+
     m_actions.push_back(std::make_pair(ui->menu_commands->title(), ui->menu_commands->actions()));
 }
 
@@ -182,6 +189,11 @@ QMenu *KiaMenuBar::get_menu_profile()
 {
     return ui->menu_profile;
 }
+
+QMenu *KiaMenuBar::get_menu_commands()
+{
+    return ui->menu_commands;
+}
 void KiaMenuBar::load_mode_menu_bi()
 {
     load_mods = true;
@@ -202,11 +214,7 @@ std::vector<std::pair<QString, QList<QAction *> > > KiaMenuBar::get_menu_actions
 
 void KiaMenuBar::hide_or_show_actions(qint16 type_actions, qint16 num_actions, bool state)
 {
-     m_actions[type_actions].second[num_actions]->setVisible(state);
-//    if (!state)
-//        m_actions[type_actions].second[num_actions]->setVisible(false);
-//    else
-//        m_actions[type_actions].second[num_actions]->setVisible(true);
+    m_actions[type_actions].second[num_actions]->setVisible(state);
 }
 
 
@@ -364,5 +372,33 @@ void KiaMenuBar::on_control_power_off_triggered()
 void KiaMenuBar::on_add_profile_triggered()
 {
     emit show_kia_profile();
+}
+
+
+void KiaMenuBar::on_change_state_power_triggered()
+{
+    if (ui->set_power_main->isChecked())
+        ui->set_power_main->setChecked(false);
+    else
+        ui->set_power_main->setChecked(true);
+
+    if (ui->set_power_rezerv->isChecked())
+        ui->set_power_rezerv->setChecked(false);
+    else
+        ui->set_power_rezerv->setChecked(true);
+}
+
+
+void KiaMenuBar::on_change_state_1s_triggered()
+{
+    if (ui->set_1s_main->isChecked())
+        ui->set_1s_main->setChecked(false);
+    else
+        ui->set_1s_main->setChecked(true);
+
+    if (ui->set_1s_rezerv->isChecked())
+        ui->set_1s_rezerv->setChecked(false);
+    else
+        ui->set_1s_rezerv->setChecked(true);
 }
 

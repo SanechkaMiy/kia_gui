@@ -15,6 +15,7 @@ public:
     explicit Kia_profile(std::shared_ptr<Kia_settings> kia_settings,
                          QWidget *parent = nullptr);
     ~Kia_profile();
+        void create_main_profile(const QString& name_profile);
 signals:
     void create_action(QString, int32_t);
     void remove_action(int32_t);

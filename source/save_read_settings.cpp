@@ -21,6 +21,8 @@ void Save_read_settings::save_settings()
     QStringList list_frames_param;
     QStringList list_used_bi;
     QStringList list_used_channel;
+    QStringList list_ai_settings_is_continue;
+
     for (uint16_t mpi_command = 0; mpi_command < constants::max_mpi_command; ++mpi_command)
         list_do_mpi_command.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_mpi_command_in_cyclogram[mpi_command]));
 
@@ -40,8 +42,11 @@ void Save_read_settings::save_settings()
         list_used_channel.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_num_used_channel[num_bokz]));
     }
 
+    list_ai_settings_is_continue.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_skip_fails_for_continue));
+
     m_settings.beginGroup("/Device_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
     m_settings.setValue("/used_mpi_command", QVariant::fromValue(list_do_mpi_command));
+    m_settings.setValue("/ai_param_is_continue", QVariant::fromValue(list_ai_settings_is_continue));
     m_settings.setValue("/zkr_param", QVariant::fromValue(list_zkr_param));
     m_settings.setValue("/frames_param", QVariant::fromValue(list_frames_param));
     m_settings.setValue("/used_bokz", QVariant::fromValue(list_used_bokz));
@@ -63,12 +68,9 @@ void Save_read_settings::save_settings()
     for (uint16_t num_table = 0; num_table < m_kia_settings->m_kia_gui_settings->m_color_for_table_state.size(); ++num_table)
         m_settings.setValue("/color_for_table_state_" + QString::number(num_table), QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_color_for_table_state[num_table]));
 
-
-
-    //for (uint16_t num_tab_bar = 0; num_tab_bar < m_kia_settings->m_kia_gui_settings->m_count_tab_bar; ++num_tab_bar)
-    //    m_settings.setValue("/data_graph_on_tabs_" + QString::number(num_tab_bar), QVariant::fromValue(m_kia_settings->m_kias_view_data->m_data_graph_on_tabs[num_tab_bar]));
-
-
+    m_settings.setValue("/count_status_for_menu_action", QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_status_for_menu_action.size()));
+    for (uint16_t num_menu = 0; num_menu < m_kia_settings->m_kia_gui_settings->m_status_for_menu_action.size(); ++num_menu)
+        m_settings.setValue("/status_for_menu_action_" + QString::number(num_menu), QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_status_for_menu_action[num_menu]));
 
     m_settings.endGroup();
 
@@ -81,7 +83,7 @@ void Save_read_settings::save_settings()
 void Save_read_settings::load_settings()
 {
     bool do_load = true;
-    std::cout << m_settings.fileName().toStdString() << std::endl;
+    //std::cout << m_settings.fileName().toStdString() << std::endl;
     m_settings.beginGroup("/Device_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
     auto keys_dev = m_settings.allKeys();
     if (keys_dev.size() != 0)
@@ -100,6 +102,9 @@ void Save_read_settings::load_settings()
 
         QStringList list_mpi_num;
         list_mpi_num = m_settings.value("/mpi_num").value<QStringList>();
+
+        QStringList list_ai_settings_is_continue;
+        list_ai_settings_is_continue = m_settings.value("/ai_param_is_continue").value<QStringList>();
 
         QStringList list_address_change;
         list_address_change = m_settings.value("/list_address_change").value<QStringList>();
@@ -134,9 +139,11 @@ void Save_read_settings::load_settings()
         list_used_channel.push_front("load");
         list_used_channel.push_front(QString::number(TS_NUM_CH));
 
+        emit send_to_kia_options(KNCycl_AI, list_ai_settings_is_continue);
         emit send_to_kia_options(KNCycl_REGULAR, list_do_mpi_command);
         emit send_to_kia_options(KNCycl_ZKR, list_zkr_param);
         emit send_to_kia_options(KNCycl_FRAMES, list_frames_param);
+
         if (do_load)
         {
             emit send_to_table_settings_window(list_used_bokz);
@@ -146,7 +153,6 @@ void Save_read_settings::load_settings()
             emit send_to_table_settings_window(list_used_bi);
             emit send_to_table_settings_window(list_used_channel);
         }
-
     }
     else
         std::cout <<"empty ini dev settings" << std::endl;
@@ -165,7 +171,14 @@ void Save_read_settings::load_settings()
             auto list_color = m_settings.value("/color_for_table_state_" + QString::number(num_table)).value<QStringList>();
             emit send_list_for_check_box_color_table_state(num_table, list_color);
         }
-
+        auto count_menu = m_settings.value("/count_status_for_menu_action").value<quint16>();
+        std::cout << count_menu << std::endl;
+        for (uint16_t num_menu = 0; num_menu < count_menu; num_menu++)
+        {
+            auto list_actions = m_settings.value("/status_for_menu_action_" + QString::number(num_menu)).value<QStringList>();
+            //std::cout << list_actions.size() << std::endl;
+            emit send_list_for_menu_actions(num_menu, list_actions);
+        }
     }
     else
         std::cout <<"empty ini gui settings" << std::endl;

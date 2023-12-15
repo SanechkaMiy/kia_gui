@@ -33,6 +33,7 @@ public:
     QMenu* get_menu_plots();
     QMenu* get_menu_tables();
     QMenu* get_menu_profile();
+    QMenu* get_menu_commands();
 
     void load_mode_menu_bi();
     std::vector<std::pair<QString, QList<QAction*>>> get_menu_actions();
@@ -40,6 +41,7 @@ public slots:
     void hide_or_show_actions(qint16 type_actions, qint16 num_actions, bool state);
 signals:
     void show_kia_profile();
+    void show_kia_debug_command();
 private slots:
     void on_power_on_triggered();
     void on_power_off_triggered();
@@ -68,6 +70,10 @@ private slots:
 
     void on_add_profile_triggered();
 
+
+    void on_change_state_power_triggered();
+
+    void on_change_state_1s_triggered();
 
 private:
     void set_mode_menu_bi(QAction* main, QAction* rezerv, uint16_t mode);
