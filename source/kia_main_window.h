@@ -47,6 +47,7 @@ signals:
     void remove_graph(uint16_t);
     void remove_table(uint16_t);
     void set_stop();
+    void send_to_change_parent(QWidget*);
 public slots:
     void set_current_index_tab_widget(uint16_t index);
     void add_tab_bar_slot(QStringList data_tabs);

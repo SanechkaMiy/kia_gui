@@ -108,6 +108,7 @@ struct Kia_gui_settings
     std::vector<QStringList> m_list_profile;
     uint16_t m_count_profile = 0;
     uint16_t m_current_main_tab_widget = 0;
+    QMap<QWidget*, int16_t> m_current_num_parent;
     std::vector<QStringList> m_status_for_table_state;
     std::vector<QStringList> m_color_for_table_state;
     std::vector<QStringList> m_status_for_menu_action;

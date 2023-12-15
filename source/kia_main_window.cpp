@@ -31,7 +31,10 @@ Kia_main_window::Kia_main_window(std::shared_ptr<Kia_settings> kia_settings, QWi
             if (new_index + 1 < (m_main_tab_widget->count() - 1))
             {
                 for (uint16_t ind = new_index; ind < m_kia_settings->m_kia_gui_settings->m_data_tabs.size(); ++ind)
+                {
                     m_kia_settings->m_kia_gui_settings->m_data_tabs[ind][NUM_TAB] = QString::number(m_kia_settings->m_kia_gui_settings->m_data_tabs[ind][NUM_TAB].toUInt() - 1);
+
+                }
                 for (uint16_t ind = index; ind < m_kia_settings->m_kia_gui_settings->m_data_tabs.size(); ++ind)
                 {
                     for (auto el : m_kia_settings->m_kias_view_data->m_data_graph_on_tabs[ind + 1])
@@ -50,6 +53,18 @@ Kia_main_window::Kia_main_window(std::shared_ptr<Kia_settings> kia_settings, QWi
 
             for (auto el : m_kia_settings->m_kias_view_data->m_data_tables_on_tabs[index])
                 emit remove_table(el.toInt());
+
+            for (auto i = m_kia_settings->m_kia_gui_settings->m_current_num_parent.cbegin(), end = m_kia_settings->m_kia_gui_settings->m_current_num_parent.cend(); i != end; ++i)
+            {
+                if (index == i.value())
+                    emit send_to_change_parent(i.key());
+            }
+
+            if (index + 1 < m_main_tab_widget->count())
+                for (auto i = m_kia_settings->m_kia_gui_settings->m_current_num_parent.cbegin(), end = m_kia_settings->m_kia_gui_settings->m_current_num_parent.cend(); i != end; ++i)
+                    if ((index + 1) == i.value())
+                        m_kia_settings->m_kia_gui_settings->m_current_num_parent[i.key()] = m_kia_settings->m_kia_gui_settings->m_current_num_parent[i.key()] - 1;
+
             m_kia_settings->m_kias_view_data->m_data_tables_on_tabs[index].clear();
             m_kia_settings->m_kia_gui_settings->m_data_tabs.erase(m_kia_settings->m_kia_gui_settings->m_data_tabs.begin() + new_index);
             m_main_tab_widget->removeTab(index);
@@ -193,11 +208,23 @@ void Kia_main_window::remove_tab_settings()
                     }
                 }
             }
+
             for (auto el : m_kia_settings->m_kias_view_data->m_data_graph_on_tabs[index])
                 emit remove_graph(el.toInt());
-
             for (auto el : m_kia_settings->m_kias_view_data->m_data_tables_on_tabs[index])
                 emit remove_table(el.toInt());
+
+            for (auto i = m_kia_settings->m_kia_gui_settings->m_current_num_parent.cbegin(), end = m_kia_settings->m_kia_gui_settings->m_current_num_parent.cend(); i != end; ++i)
+            {
+                if (index == i.value())
+                    emit send_to_change_parent(i.key());
+            }
+
+            if (index + 1 < m_main_tab_widget->count())
+                for (auto i = m_kia_settings->m_kia_gui_settings->m_current_num_parent.cbegin(), end = m_kia_settings->m_kia_gui_settings->m_current_num_parent.cend(); i != end; ++i)
+                    if ((index + 1) == i.value())
+                        m_kia_settings->m_kia_gui_settings->m_current_num_parent[i.key()] = m_kia_settings->m_kia_gui_settings->m_current_num_parent[i.key()] - 1;
+
             m_kia_settings->m_kia_gui_settings->m_data_tabs.erase(m_kia_settings->m_kia_gui_settings->m_data_tabs.begin() + new_index);
             m_main_tab_widget->removeTab(index);
             delete m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[index];
