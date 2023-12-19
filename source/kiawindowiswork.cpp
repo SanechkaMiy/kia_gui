@@ -91,7 +91,9 @@ void KiaWindowIsWork::create_table_status_bokz()
             m_client->send_data_to_server(SET_BSHV, data_for_client);
         });
     }
-
+    QStringList tool_tip = {"Бортовое штатное время", "Код состояния 1", "Код состояния 2"};
+    for (uint16_t row = 0; row < tool_tip.size(); row++)
+        m_set_table->verticalHeaderItem(row)->setToolTip(tool_tip[row]);
 }
 
 void KiaWindowIsWork::create_status_bi()

@@ -8,7 +8,7 @@ Client::Client(const QString& strHost, int nPort, std::shared_ptr<Kia_settings> 
     connect_to_server();
 }
 
-void Client::send_data_to_server(const qint16 &num, QStringList data_for_server)
+void Client::send_data_to_server(uint16_t num, QStringList data_for_server)
 {
     QByteArray arrBlock;
     QDataStream out(&arrBlock, QIODevice::WriteOnly);

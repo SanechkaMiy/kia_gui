@@ -14,7 +14,7 @@ class Client : public QObject
 public:
     Client(const QString &strHost, int nPort, std::shared_ptr<Kia_settings> kia_settings);
 public slots:
-    void send_data_to_server(const qint16& num, QStringList data_for_server = QStringList());
+    void send_data_to_server(uint16_t num, QStringList data_for_server = QStringList());
 signals:
     void sendToAction(QString num_mpi);
     void send_to_set_table(QStringList);

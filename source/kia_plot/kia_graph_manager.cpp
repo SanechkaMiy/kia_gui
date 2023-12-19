@@ -2,8 +2,9 @@
 
 Kia_graph_manager::Kia_graph_manager(std::shared_ptr<Kia_settings> kia_settings,
                                      std::shared_ptr<Kia_constructor> kia_constructor,
-                                     QWidget *parent) :
+                                     QWidget *parent, QWidget* m_default_parent) :
     m_parent(parent),
+    m_default_parent(m_default_parent),
     m_kia_settings(kia_settings),
     m_kia_constructor(kia_constructor)
 {
@@ -96,9 +97,13 @@ Kia_graph_manager::~Kia_graph_manager()
 
 void Kia_graph_manager::create_plot_slot(QStringList query_param)
 {
-    m_kia_settings->m_kias_view_data->m_data_graph_on_tabs[query_param[QP_NUM_MAIN_TAB_WIDGET].toInt()].push_back(query_param[QP_NUM_WIDGET]);
     m_num_graph++;
-    m_kia_custom_dialog.push_back(new Kia_custom_dialog(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[query_param[QP_NUM_MAIN_TAB_WIDGET].toInt()]));
+    auto parent = m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[query_param[QP_NUM_MAIN_TAB_WIDGET].toInt()];
+    if (m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[query_param[QP_NUM_MAIN_TAB_WIDGET].toInt()])
+    {
+        parent = m_default_parent;
+    }
+    m_kia_custom_dialog.push_back(new Kia_custom_dialog(parent));
     connect(this, SIGNAL(set_default_pos()), m_kia_custom_dialog[m_num_graph], SLOT(set_default_pos_slot()));
     m_dialog.push_back(new QDialog());
     m_l_for_plots.push_back(new QVBoxLayout(m_dialog[m_num_graph]));
@@ -106,6 +111,8 @@ void Kia_graph_manager::create_plot_slot(QStringList query_param)
     m_kia_db.push_back(std::make_shared<Kia_db>("con_graph_" + QString::number(m_num_graph), m_kia_settings, m_kias_data_from_db[m_num_graph]));
     m_kia_db[m_num_graph]->set_query(query_param);
     m_kia_graph.push_back(new Kia_graph(m_kia_db[m_num_graph], m_kia_settings, m_kias_data_from_db[m_num_graph]));
+    m_kia_graph[m_num_graph]->xAxis->setLabel(query_param[QP_X_DESC]);
+    m_kia_graph[m_num_graph]->yAxis->setLabel(query_param[QP_Y_DESC]);
     if (query_param[QP_TYPE_WIDGET] == "datetime")
     {
         m_kias_data_from_db[m_num_graph]->m_is_default_graph = false;
@@ -118,8 +125,6 @@ void Kia_graph_manager::create_plot_slot(QStringList query_param)
         m_kia_graph[m_num_graph]->init_default_plot();
         start_data_timer_for_default_plot(m_kia_graph[m_num_graph]);
     }
-    m_kia_graph[m_num_graph]->xAxis->setLabel(query_param[QP_X_DESC]);
-    m_kia_graph[m_num_graph]->yAxis->setLabel(query_param[QP_Y_DESC]);
     m_l_for_plots[m_num_graph]->addWidget(m_kia_graph[m_num_graph]);
     m_kia_custom_dialog[m_num_graph]->set_wiget_to_layout(m_dialog[m_num_graph]);
     plots_interactions();
@@ -145,7 +150,7 @@ void Kia_graph_manager::remove_plot_slot(qint16 num_graph)
     m_kias_data_from_db[num_graph].reset();
     delete m_l_for_plots[num_graph];
     delete m_dialog[num_graph];
-    disconnect(this, SIGNAL(set_default_pos()), m_kia_custom_dialog[m_num_graph], SLOT(set_default_pos_slot()));
+    disconnect(this, SIGNAL(set_default_pos()), m_kia_custom_dialog[num_graph], SLOT(set_default_pos_slot()));
     delete m_kia_custom_dialog[num_graph];
     m_kia_graph.erase(m_kia_graph.begin() + num_graph);
     m_kia_db.erase(m_kia_db.begin() + num_graph);
@@ -164,11 +169,14 @@ void Kia_graph_manager::resize_window(qint16 num_graph, qint16 width, qint16 hei
 
 void Kia_graph_manager::show_graphs(int32_t num_plot)
 {
+    m_kia_settings->m_kias_view_data->m_data_graph[num_plot][QP_NUM_MAIN_TAB_WIDGET] = QString::number(m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget);
+    m_kia_custom_dialog[num_plot]->setParent(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget]);
     m_kia_custom_dialog[num_plot]->show();
+    m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[num_plot]] = m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget;
     m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[num_plot]] = m_kia_custom_dialog[num_plot]->isVisible();
 }
 
-QVector<QDialog*> Kia_graph_manager::get_graph_widget()
+QVector<QDialog*> Kia_graph_manager::get_graph_widgets()
 {
     QVector<QDialog*> list_widget;
     for (auto el : m_kia_custom_dialog)
@@ -179,6 +187,11 @@ QVector<QDialog*> Kia_graph_manager::get_graph_widget()
 QDialog *Kia_graph_manager::get_main_graph_widget()
 {
     return m_main_dialog;
+}
+
+Kia_custom_dialog *Kia_graph_manager::get_graph_widget(uint16_t num_graph)
+{
+    return m_kia_custom_dialog[num_graph];
 }
 
 void Kia_graph_manager::plots_interactions()
@@ -271,19 +284,19 @@ void Kia_graph_manager::plots_interactions()
             {
                 auto orient = (e->modifiers() != Qt::ControlModifier) ? Qt::Horizontal : Qt::Vertical;
                 plot->axisRect()->setRangeZoom(orient);
-//                if (!(e->modifiers() == Qt::ControlModifier))
-//                {
-//                    if((e->angleDelta().y()) > 0)
-//                    {
-//                        if (m_kia_settings->m_kias_view_data->m_x_size > 1)
-//                            m_kia_settings->m_kias_view_data->m_x_size = m_kia_settings->m_kias_view_data->m_x_size - 0.5;
+                //                if (!(e->modifiers() == Qt::ControlModifier))
+                //                {
+                //                    if((e->angleDelta().y()) > 0)
+                //                    {
+                //                        if (m_kia_settings->m_kias_view_data->m_x_size > 1)
+                //                            m_kia_settings->m_kias_view_data->m_x_size = m_kia_settings->m_kias_view_data->m_x_size - 0.5;
 
-//                    }
-//                    else
-//                    {
-//                        m_kia_settings->m_kias_view_data->m_x_size = m_kia_settings->m_kias_view_data->m_x_size + 0.5;
-//                    }
-//                }
+                //                    }
+                //                    else
+                //                    {
+                //                        m_kia_settings->m_kias_view_data->m_x_size = m_kia_settings->m_kias_view_data->m_x_size + 0.5;
+                //                    }
+                //                }
 
                 //plot->wheelEvent(e);
                 e->accept();

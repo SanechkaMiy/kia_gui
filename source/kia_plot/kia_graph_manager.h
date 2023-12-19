@@ -13,10 +13,11 @@ class Kia_graph_manager : public QObject
 public:
     Kia_graph_manager(std::shared_ptr<Kia_settings> kia_settings,
                       std::shared_ptr<Kia_constructor> kia_constructor,
-                      QWidget *parent);
+                      QWidget *parent, QWidget *m_default_parent);
     ~Kia_graph_manager();
-    QVector<QDialog*> get_graph_widget();
+    QVector<QDialog*> get_graph_widgets();
     QDialog* get_main_graph_widget();
+    Kia_custom_dialog* get_graph_widget(uint16_t num_graph);
 public slots:
     void show_graphs(int32_t num_plot);
 signals:
@@ -28,8 +29,8 @@ private slots:
     void remove_plot_slot(qint16 num_graph);
     void resize_window(qint16 num_graph, qint16 width, qint16 height);
 private:
-
     QWidget* m_parent;
+    QWidget* m_default_parent;
     void plots_interactions();
     void start_data_timer(Kia_graph *graph);
     void start_data_timer_for_default_plot(Kia_graph *graph);

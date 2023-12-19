@@ -17,14 +17,27 @@ void Save_read_settings::save_settings()
     QStringList list_address_change;
     QStringList list_lpi_change;
     QStringList list_do_mpi_command;
+    QStringList list_do_count_cyclogram;
+    QStringList list_do_cyclogram;
+    QStringList list_tp_param;
     QStringList list_zkr_param;
     QStringList list_frames_param;
     QStringList list_used_bi;
     QStringList list_used_channel;
     QStringList list_ai_settings_is_continue;
+    QStringList list_power_after_tp;
 
     for (uint16_t mpi_command = 0; mpi_command < constants::max_mpi_command; ++mpi_command)
         list_do_mpi_command.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_mpi_command_in_cyclogram[mpi_command]));
+
+    for (uint16_t mpi_command = 0; mpi_command < constants::max_count_cyclograms_in_tp; ++mpi_command)
+        list_do_cyclogram.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_cyclogram_in_tp[mpi_command]));
+
+    for (uint16_t mpi_command = 0; mpi_command < constants::max_count_cyclograms_in_tp; ++mpi_command)
+        list_do_count_cyclogram.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_count_to_do_cyclogram_in_tp[mpi_command]));
+
+    for (uint16_t ind_tp_param = 0; ind_tp_param < constants::max_count_param; ++ind_tp_param)
+        list_tp_param.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_param_for_cycl_tech_run[ind_tp_param]));
 
     for (uint16_t ind_zkr_param = 0; ind_zkr_param < constants::max_count_param; ++ind_zkr_param)
         list_zkr_param.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_param_for_cycl_zkr[ind_zkr_param]));
@@ -43,10 +56,15 @@ void Save_read_settings::save_settings()
     }
 
     list_ai_settings_is_continue.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_skip_fails_for_continue));
+    list_power_after_tp.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_off_power_for_tp));
 
     m_settings.beginGroup("/Device_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
     m_settings.setValue("/used_mpi_command", QVariant::fromValue(list_do_mpi_command));
+    m_settings.setValue("/used_cyclogram", QVariant::fromValue(list_do_cyclogram));
+    m_settings.setValue("/used_do_count_cyclogram", QVariant::fromValue(list_do_count_cyclogram));
     m_settings.setValue("/ai_param_is_continue", QVariant::fromValue(list_ai_settings_is_continue));
+    m_settings.setValue("/power_after_tp", QVariant::fromValue(list_power_after_tp));
+    m_settings.setValue("/tp_param", QVariant::fromValue(list_tp_param));
     m_settings.setValue("/zkr_param", QVariant::fromValue(list_zkr_param));
     m_settings.setValue("/frames_param", QVariant::fromValue(list_frames_param));
     m_settings.setValue("/used_bokz", QVariant::fromValue(list_used_bokz));
@@ -82,7 +100,6 @@ void Save_read_settings::save_settings()
 void Save_read_settings::load_settings()
 {
     bool do_load = true;
-    //std::cout << m_settings.fileName().toStdString() << std::endl;
     m_settings.beginGroup("/Device_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
     auto keys_dev = m_settings.allKeys();
     if (keys_dev.size() != 0)
@@ -90,8 +107,17 @@ void Save_read_settings::load_settings()
         QStringList list_do_mpi_command;
         list_do_mpi_command = m_settings.value("/used_mpi_command").value<QStringList>();
 
+        QStringList list_do_count_cyclogram;
+        list_do_count_cyclogram = m_settings.value("/used_do_count_cyclogram").value<QStringList>();
+
+        QStringList list_do_cyclogram;
+        list_do_cyclogram = m_settings.value("/used_cyclogram").value<QStringList>();
+
         QStringList list_zkr_param;
         list_zkr_param = m_settings.value("/zkr_param").value<QStringList>();
+
+        QStringList list_tp_param;
+        list_tp_param = m_settings.value("/tp_param").value<QStringList>();
 
         QStringList list_frames_param;
         list_frames_param = m_settings.value("/frames_param").value<QStringList>();
@@ -104,6 +130,9 @@ void Save_read_settings::load_settings()
 
         QStringList list_ai_settings_is_continue;
         list_ai_settings_is_continue = m_settings.value("/ai_param_is_continue").value<QStringList>();
+
+        QStringList list_power_after_tp;
+        list_power_after_tp = m_settings.value("/power_after_tp").value<QStringList>();
 
         QStringList list_address_change;
         list_address_change = m_settings.value("/list_address_change").value<QStringList>();
@@ -140,9 +169,13 @@ void Save_read_settings::load_settings()
 
         emit send_to_kia_options(KNCycl_AI, list_ai_settings_is_continue);
         emit send_to_kia_options(KNCycl_REGULAR, list_do_mpi_command);
+        emit send_to_kia_options(KNCycl_TR, list_tp_param);
         emit send_to_kia_options(KNCycl_ZKR, list_zkr_param);
         emit send_to_kia_options(KNCycl_FRAMES, list_frames_param);
 
+        emit send_to_tp_cyclogram_settings(USED_CYCLOGRAM, list_do_cyclogram);
+        emit send_to_tp_cyclogram_settings(COUNT_TO_DO_CYCLOGRAM, list_do_count_cyclogram);
+        emit send_to_tp_cyclogram_settings(OFF_POWER, list_power_after_tp);
         if (do_load)
         {
             emit send_to_table_settings_window(list_used_bokz);
@@ -363,19 +396,22 @@ void Save_read_settings::save_state_widgets(const QString save_name, QWidget *wg
     m_settings.endGroup();
 }
 
-void Save_read_settings::load_state_widgets(const QString save_name, QWidget *wgt)
+void Save_read_settings::load_state_widgets(const QString save_name, QWidget *wgt, bool is_window_info)
 {
     m_settings.beginGroup("/Window_save_state_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
     wgt->setWindowTitle(m_settings.value("/title_" + save_name).value<QString>());
     m_kia_settings->m_kia_gui_settings->m_widget_is_hide[wgt] = m_settings.value("/is_hide_" + save_name).value<bool>();
     m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt] = m_settings.value("/num_parent_" + save_name).value<int16_t>();
-    if (m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt] == -1)
+    if (is_window_info)
     {
-        emit set_default_parent(wgt);
+        if (m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt] == -1)
+        {
+            emit set_default_parent(wgt);
 
+        }
+        else
+            wgt->setParent(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt]]);
     }
-    else
-        wgt->setParent(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt]]);
     if (m_kia_settings->m_kia_gui_settings->m_widget_is_hide.value(wgt))
     {
 

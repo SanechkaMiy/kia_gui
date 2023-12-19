@@ -32,7 +32,7 @@ public:
     void save_pos_and_size_widgets(const QString save_name, QWidget* wgt);
     void load_pos_and_size_widgets(const QString save_name, QWidget* wgt);
     void save_state_widgets(const QString save_name, QWidget *wgt);
-    void load_state_widgets(const QString save_name, QWidget *wgt);
+    void load_state_widgets(const QString save_name, QWidget *wgt, bool is_window_info = true);
 
     void save_state_dock_manager(CDockManager *manager);
     void load_state_dock_manager(CDockManager *manager);
@@ -49,6 +49,7 @@ signals:
     void send_current_main_tab_widget(uint16_t);
     void send_list_to_add_tab(QStringList);
     void set_default_parent(QWidget*);
+    void send_to_tp_cyclogram_settings(qint16, QStringList);
 private:
     std::shared_ptr<Kia_settings> m_kia_settings;
     QSettings m_settings;

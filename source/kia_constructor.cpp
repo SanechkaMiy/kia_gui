@@ -202,6 +202,7 @@ void Kia_constructor::remove_graph_slot(uint16_t num_graph)
         }
         m_kia_settings->m_kias_view_data->m_data_graph.erase(m_kia_settings->m_kias_view_data->m_data_graph.begin() + num_graph);
         m_kia_settings->m_kias_view_data->m_graph_count -= 1;
+
         emit remove_graph(num_graph);
         delete ui->lw_list_graph->item(num_graph);
     }
@@ -243,7 +244,7 @@ void Kia_constructor::on_pb_add_graph_clicked()
 
 void Kia_constructor::on_pb_remove_graph_clicked()
 {
-    if (ui->lw_list_graph->count() != 0)
+    if (ui->lw_list_graph->selectedItems().size() != 0)
     {
         if (ui->lw_list_graph->currentRow() + 1 < ui->lw_list_graph->count())
         {

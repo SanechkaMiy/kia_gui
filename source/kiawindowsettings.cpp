@@ -69,9 +69,9 @@ void KiaWindowSettings::create_table_settings(qint16 type_bokz)
             m_kia_settings->m_kia_data_to_server->m_address_change[coll] = is_changed.toInt();
             set_data_for_server(SET_USED_ADDRESS, m_kia_settings->m_kia_data_to_server->m_address_change);
         });
-        connect(m_combo_box_lpi[coll], &QComboBox::currentTextChanged, [this, coll](const QString & is_changed)
+        connect(m_combo_box_lpi[coll], QOverload<int>::of(&QComboBox::currentIndexChanged), [this, coll](int index)
         {
-            m_kia_settings->m_kia_data_to_server->m_lpi_change[coll] = is_changed.toInt();
+            m_kia_settings->m_kia_data_to_server->m_lpi_change[coll] = index;
             set_data_for_server(SET_CURRENT_LPI, m_kia_settings->m_kia_data_to_server->m_lpi_change);
         });
 
@@ -99,13 +99,14 @@ void KiaWindowSettings::create_table_settings(qint16 type_bokz)
             m_kia_settings->m_kia_data_to_server->m_td_change[coll] = is_changed.toInt();
             set_data_for_server(SET_TD, m_kia_settings->m_kia_data_to_server->m_td_change);
         });
-        for (uint16_t set_address = 0; set_address < constants::max_count_address; ++set_address)
+        QStringList lpi_descr = {"A", "B"};
+        for (uint16_t num = 0; num < constants::max_count_address; ++num)
         {
-            m_combo_box_address[coll]->addItem(QString::number(set_address));
-            if (set_address < constants::max_count_lpi)
-                m_combo_box_lpi[coll]->addItem(QString::number(set_address));
-            if (set_address < constants::max_count_td)
-                m_combo_box_td[coll]->addItem(QString::number(set_address + 1));
+            m_combo_box_address[coll]->addItem(QString::number(num));
+            if (num < constants::max_count_lpi)
+                m_combo_box_lpi[coll]->addItem(lpi_descr[num]);
+            if (num < constants::max_count_td)
+                m_combo_box_td[coll]->addItem(QString::number(num + 1));
         }
         for (int num_ch = 0; num_ch < m_kia_settings->m_kia_bi_settings->m_bi_count_channel[m_kia_settings->m_type_bi]; ++num_ch)
         {

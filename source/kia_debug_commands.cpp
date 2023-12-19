@@ -69,13 +69,13 @@ void Kia_debug_commands::add_command()
             debug_command.push_back(ui->cb_word_data->currentText());
             debug_command.push_back(ui->le_struct_id->text());
             debug_command.push_back(ui->le_struct_id_desc->text());
-            for (uint16_t num_word = 0; num_word < ui->cb_word_data->currentText().toInt(); ++num_word)
+            if (ui->cb_direction == 0)
             {
-//                if (ui->tw_for_sd->takeItem(num_word,1)->text()[0] == "0")
-//                    is_dec_or_hex = 16;
-//                else
-//                    is_dec_or_hex = 10;
-                debug_command.push_back(ui->tw_for_sd->takeItem(num_word,1)->text());
+                for (uint16_t num_word = 0; num_word < ui->cb_word_data->currentText().toInt(); ++num_word)
+                {
+                    debug_command.push_back(ui->tw_for_sd->takeItem(num_word,1)->text());
+                }
+
             }
             m_kia_settings->m_kia_gui_settings->m_debug_comand_param.push_back(debug_command);
             //m_kia_settings->m

@@ -9,6 +9,8 @@
 #include "Kia_main_struct.h"
 #include <functional>
 #include <vector>
+#include "Kia_menu/kia_menu.h"
+#include "Kia_menu/kia_menu_bokzm60.h"
 namespace Ui {
 class KiaMenuBar;
 }
@@ -35,6 +37,7 @@ public:
     QMenu* get_menu_profile();
     QMenu* get_menu_commands();
 
+    void create_actions(uint16_t type_bokz);
     void load_mode_menu_bi();
     std::vector<std::pair<QString, QList<QAction*>>> get_menu_actions();
 public slots:
@@ -70,21 +73,17 @@ private slots:
 
     void on_add_profile_triggered();
 
-
     void on_change_state_power_triggered();
 
     void on_change_state_1s_triggered();
 
 private:
     void set_mode_menu_bi(QAction* main, QAction* rezerv, uint16_t mode);
-    void create_action_state_work();
-    void create_action_pci();
-    void create_action_res();
-    void create_action_commands();
-    void create_action_get_frames();
+
     Ui::KiaMenuBar *ui;
     std::shared_ptr<Kia_settings> m_kia_settings;
     std::shared_ptr<Client> m_client;
+    std::shared_ptr<Kia_menu> m_kia_menu;
     QAction* m_action_for_num_mpi;
     QMenu * m_edit_context_menu;
     QPushButton* m_pb_for_delete_plots;

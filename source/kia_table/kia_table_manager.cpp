@@ -2,8 +2,9 @@
 
 Kia_table_manager::Kia_table_manager(std::shared_ptr<Kia_settings> kia_settings,
                                      std::shared_ptr<Kia_constructor> kia_constructor,
-                                     QWidget *parent)
+                                     QWidget *parent, QWidget *m_default_parent)
     : m_parent(parent),
+      m_default_parent(m_default_parent),
       m_kia_settings(kia_settings),
       m_kia_constructor(kia_constructor)
 {
@@ -13,12 +14,17 @@ Kia_table_manager::Kia_table_manager(std::shared_ptr<Kia_settings> kia_settings,
     connect(m_kia_constructor.get(), SIGNAL(show_table(int32_t)), this, SLOT(show_tables(int32_t)));
 }
 
-QVector<QDialog *> Kia_table_manager::get_table_widget()
+QVector<QDialog *> Kia_table_manager::get_table_widgets()
 {
     QVector<QDialog*> list_widget;
     for (auto el : m_kia_custom_dialog)
         list_widget.push_back(el);
     return list_widget;
+}
+
+Kia_custom_dialog *Kia_table_manager::get_table_widget(uint16_t num_table)
+{
+    return m_kia_custom_dialog[num_table];
 }
 
 Kia_table_manager::~Kia_table_manager()
@@ -28,9 +34,13 @@ Kia_table_manager::~Kia_table_manager()
 
 void Kia_table_manager::create_table_slot(QStringList query_param, QStringList data)
 {
-    m_kia_settings->m_kias_view_data->m_data_tables_on_tabs[query_param[QP_NUM_MAIN_TAB_WIDGET].toInt()].push_back(query_param[QP_NUM_WIDGET]);
     m_num_table++;
-    m_kia_custom_dialog.push_back(new Kia_custom_dialog(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[query_param[QP_NUM_MAIN_TAB_WIDGET].toInt()]));
+    auto parent = m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[query_param[QP_NUM_MAIN_TAB_WIDGET].toInt()];
+    if (m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[query_param[QP_NUM_MAIN_TAB_WIDGET].toInt()])
+    {
+        parent = m_default_parent;
+    }
+    m_kia_custom_dialog.push_back(new Kia_custom_dialog(parent));
     m_dialog.push_back(new QDialog());
     m_l_for_tables.push_back(new QVBoxLayout(m_dialog[m_num_table]));
     m_kias_data_from_db.push_back(std::make_shared<Kias_data_from_db>());
@@ -71,7 +81,10 @@ void Kia_table_manager::remove_table_slot(qint16 num_table)
 
 void Kia_table_manager::show_tables(int32_t num_table)
 {
+    m_kia_settings->m_kias_view_data->m_data_table[num_table][QP_NUM_MAIN_TAB_WIDGET] = QString::number(m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget);
+    m_kia_custom_dialog[num_table]->setParent(m_kia_settings->m_kia_gui_settings->m_main_tabs_widgets[m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget]);
     m_kia_custom_dialog[num_table]->show();
+    m_kia_settings->m_kia_gui_settings->m_current_num_parent[m_kia_custom_dialog[num_table]] = m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget;
     m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[num_table]] = m_kia_custom_dialog[num_table]->isVisible();
 }
 

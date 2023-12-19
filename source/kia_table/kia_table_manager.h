@@ -18,8 +18,9 @@ class Kia_table_manager : public QObject
 public:
     Kia_table_manager(std::shared_ptr<Kia_settings> kia_settings,
                       std::shared_ptr<Kia_constructor> kia_constructor,
-                      QWidget *parent);
-    QVector<QDialog*> get_table_widget();
+                      QWidget *parent, QWidget *m_default_parent);
+    QVector<QDialog*> get_table_widgets();
+    Kia_custom_dialog* get_table_widget(uint16_t num_table);
     ~Kia_table_manager();
 public slots:
     void show_tables(int32_t num_table);
@@ -32,6 +33,7 @@ signals:
 private:
     int32_t m_num_table = -1;
     QWidget* m_parent;
+    QWidget* m_default_parent;
     QVector<QVBoxLayout*> m_l_for_tables;
     QVector<Kia_custom_dialog*> m_kia_custom_dialog;
     QVector<QDialog*> m_dialog;

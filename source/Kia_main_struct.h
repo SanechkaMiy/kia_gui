@@ -31,6 +31,7 @@ const static uint16_t max_count_channel = 4;
 const static uint16_t max_count_address = 32;
 const static uint16_t max_count_td = 6;
 const static uint16_t max_mpi_command = 5;
+const static uint16_t max_count_cyclograms_in_tp = 3;
 const static uint16_t max_count_mpi = MAX_TMK_NUMBER * 2 + 1;
 const static uint16_t max_count_window = 1;
 const static uint16_t size_qa = 4;
@@ -47,6 +48,8 @@ const static uint16_t max_grid_size = 25;
 struct Kia_data_to_server
 {
     std::array<uint16_t, constants::max_mpi_command> m_do_mpi_command_in_cyclogram;
+    std::array<uint16_t, constants::max_count_cyclograms_in_tp> m_do_cyclogram_in_tp;
+    std::array<uint16_t, constants::max_count_cyclograms_in_tp> m_count_to_do_cyclogram_in_tp;
     std::vector<int> m_is_used_bokz;
     std::vector<int> m_mpi_num;
     std::vector<int> m_mpi_num_index_of_num_bokz;
@@ -56,11 +59,12 @@ struct Kia_data_to_server
     std::vector<float> m_qa;
     std::vector<float> m_w;
     int m_bshv;
-    std::array<uint16_t, constants::max_count_param> m_param_for_cycl_zkr;
-    std::array<uint16_t, constants::max_count_param> m_param_for_cycl_full_frames;
-    std::array<uint16_t, constants::max_count_param> m_param_for_cycl_tech_run;
+    std::array<float, constants::max_count_param> m_param_for_cycl_zkr;
+    std::array<float, constants::max_count_param> m_param_for_cycl_full_frames;
+    std::array<float, constants::max_count_param> m_param_for_cycl_tech_run;
     int m_1s_mark_change;
     uint16_t m_skip_fails_for_continue = 1;
+    uint16_t m_off_power_for_tp = 0;
     std::array<uint16_t, constants::max_count_relay_command> m_param_relay_command;
     std::vector<int> m_num_used_bi;
     std::vector<int> m_num_used_channel;
@@ -105,6 +109,7 @@ struct Kia_gui_settings
     bool m_widget_is_closed = false;
     QMap<QWidget*, bool> m_widget_is_hide;
     QStringList m_mpi_command_name = {"ШТМИ1", "ШТМИ2", "МШИОР", "ДТМИ", "ДТМИ-ЛОК"};
+    QStringList m_cyclogram_name = {"НО", "ТО", "ЛОК"};
     std::vector<QStringList> m_list_profile;
     uint16_t m_count_profile = 0;
     uint16_t m_current_main_tab_widget = 0;
@@ -130,8 +135,6 @@ struct Kias_view_data
     std::vector<QStringList> m_data_graph;
     std::vector<QStringList> m_data_table;
     std::vector<QStringList> m_data_table_cols;
-    QMap<uint16_t, QStringList> m_data_graph_on_tabs;
-    QMap<uint16_t, QStringList> m_data_tables_on_tabs;
     uint16_t m_graph_count = 0;
     uint16_t m_table_count = 0;
 };
@@ -155,6 +158,7 @@ struct Kias_data_from_db
     QVector<QVariant> m_x_value;
     QVector<QVariant> m_y_value;
     QVector<QVariant> m_date_time_val;
+    QVector<QString> m_data_to_view;
     std::queue<QSqlQueryModel*> m_model;
     std::atomic_bool m_is_main_graph{false};
     std::atomic_bool m_is_default_graph{false};

@@ -64,6 +64,7 @@ private:
     QWidget* m_main_widget;
     QGridLayout* m_main_layout;
     std::shared_ptr<Kia_settings> m_kia_settings;
+    QMap<QString, uint16_t> m_true_num_tabs;
     QVBoxLayout* m_layout;
     QPushButton* m_start_or_stop;
     QPushButton* m_now;

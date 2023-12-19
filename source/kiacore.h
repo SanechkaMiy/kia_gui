@@ -34,8 +34,6 @@ class KiaCore : public QObject
 public:
     explicit KiaCore(QWidget * wgt = nullptr, QObject *parent = nullptr);
     ~KiaCore();
-public slots:
-    void create_menubar();
 private:
     CDockManager* m_dock_manager;
     std::map<QString, std::vector<uint16_t>> m_keys_for_dock_widget;
@@ -69,6 +67,9 @@ private:
     KiaWindowInfo* m_kia_window_info_mpi;
     KiaWindowIsWork* m_kia_window_is_work;
     std::map<uint16_t, QVector<Kia_custom_dialog*>> m_kia_custom_dialog;
+
+    void create_menubar(uint16_t type_bokz);
+
     void set_dock_actions(const std::pair<QString, QAction*>& action);
 
     void create_menu_action();
@@ -84,9 +85,7 @@ private:
 
     void create_kia_debug_commands();
 private slots:
-    void set_mpi_command_for_cyclogram();
     void set_kia_gui_settings_slot();
-
 
     void create_kia_graph_manager();
     void create_action_for_graph(QString name_graph, int32_t num_graph);
