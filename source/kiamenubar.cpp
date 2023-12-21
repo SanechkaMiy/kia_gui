@@ -51,7 +51,16 @@ QMenu *KiaMenuBar::get_menu_commands()
 
 void KiaMenuBar::create_actions(uint16_t type_bokz)
 {
-    m_kia_menu.reset(new Kia_menu_bokzm60(m_client));
+    switch(type_bokz)
+    {
+    case TYPE_BOKZ_BOKZM60:
+            m_kia_menu.reset(new Kia_menu_bokzm60(m_client));
+        break;
+    case TYPE_BOKZ_BOKZMF:
+            m_kia_menu.reset(new Kia_menu_bokzmf(m_client));
+        break;
+    }
+
     m_kia_menu->create_action_state_work(ui->menu_stated_work);
     m_kia_menu->create_action_pci(ui->menu_pci);
     m_kia_menu->create_action_res(ui->menu_res);

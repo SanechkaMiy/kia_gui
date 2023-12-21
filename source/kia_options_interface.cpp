@@ -141,11 +141,14 @@ void Kia_options_interface::set_check_box_for_table_state_color(qint16 num_table
 
 void Kia_options_interface::set_list_for_menu_actions(qint16 num_menu, QStringList list_actions)
 {
-    m_menu_actions[num_menu] = list_actions;
-    for (uint16_t num_action = 0; num_action < list_actions.size(); ++num_action)
+    if (list_actions.size() == m_menu_actions[num_menu].size())
     {
-        emit send_num_actions(num_menu, num_action, list_actions[num_action].toInt());
-        if (m_menu_actions[num_menu].size() != 0)
-            m_cb_for_actions[num_menu][num_action]->setChecked(m_menu_actions[num_menu][num_action].toInt());
+        m_menu_actions[num_menu] = list_actions;
+        for (uint16_t num_action = 0; num_action < list_actions.size(); ++num_action)
+        {
+            emit send_num_actions(num_menu, num_action, list_actions[num_action].toInt());
+            if (m_menu_actions[num_menu].size() != 0)
+                m_cb_for_actions[num_menu][num_action]->setChecked(m_menu_actions[num_menu][num_action].toInt());
+        }
     }
 }

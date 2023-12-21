@@ -27,13 +27,13 @@ void Save_read_settings::save_settings()
     QStringList list_ai_settings_is_continue;
     QStringList list_power_after_tp;
 
-    for (uint16_t mpi_command = 0; mpi_command < constants::max_mpi_command; ++mpi_command)
+    for (uint16_t mpi_command = 0; mpi_command < m_kia_settings->m_kia_bokz_settings->m_max_mpi_command; ++mpi_command)
         list_do_mpi_command.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_mpi_command_in_cyclogram[mpi_command]));
 
-    for (uint16_t mpi_command = 0; mpi_command < constants::max_count_cyclograms_in_tp; ++mpi_command)
+    for (uint16_t mpi_command = 0; mpi_command < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp; ++mpi_command)
         list_do_cyclogram.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_cyclogram_in_tp[mpi_command]));
 
-    for (uint16_t mpi_command = 0; mpi_command < constants::max_count_cyclograms_in_tp; ++mpi_command)
+    for (uint16_t mpi_command = 0; mpi_command < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp; ++mpi_command)
         list_do_count_cyclogram.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_count_to_do_cyclogram_in_tp[mpi_command]));
 
     for (uint16_t ind_tp_param = 0; ind_tp_param < constants::max_count_param; ++ind_tp_param)

@@ -44,9 +44,9 @@ void Kia_options_cyclograms::set_load_settings(qint16 type_load, QStringList loa
             m_check_box_continue_if_fails->setChecked(true);
         break;
     case KNCycl_REGULAR:
-        if (load_data.size() != 0)
+        if (load_data.size() == m_kia_settings->m_kia_bokz_settings->m_max_mpi_command)
         {
-            for (uint16_t num_check_box = 0; num_check_box < constants::max_mpi_command; ++num_check_box)
+            for (uint16_t num_check_box = 0; num_check_box < m_kia_settings->m_kia_bokz_settings->m_max_mpi_command; ++num_check_box)
             {
                 if (load_data[num_check_box].toInt() == KiaS_SUCCESS)
                 {
@@ -59,7 +59,7 @@ void Kia_options_cyclograms::set_load_settings(qint16 type_load, QStringList loa
             }
         }
         else
-            for (uint16_t num_check_box = 0; num_check_box < constants::max_mpi_command; ++num_check_box)
+            for (uint16_t num_check_box = 0; num_check_box < m_kia_settings->m_kia_bokz_settings->m_max_mpi_command; ++num_check_box)
                 m_check_box_select_mpi_command[num_check_box]->setCheckState(Qt::CheckState::Unchecked);
         break;
     case KNCycl_TR:
@@ -95,9 +95,9 @@ void Kia_options_cyclograms::set_load_tp_settings(qint16 type_settings, QStringL
     switch(type_settings)
     {
     case USED_CYCLOGRAM:
-        if (load_data.size() != 0)
+        if (load_data.size() == m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp)
         {
-            for (uint16_t num_check_box = 0; num_check_box < constants::max_count_cyclograms_in_tp; ++num_check_box)
+            for (uint16_t num_check_box = 0; num_check_box < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp; ++num_check_box)
             {
                 if (load_data[num_check_box].toInt() == KiaS_SUCCESS)
                 {
@@ -113,20 +113,20 @@ void Kia_options_cyclograms::set_load_tp_settings(qint16 type_settings, QStringL
             set_data_for_server(SET_DO_CYCLOGRAM_IN_TP, m_kia_settings->m_kia_data_to_server->m_do_cyclogram_in_tp);
         }
         else
-            for (uint16_t num_check_box = 0; num_check_box < constants::max_count_cyclograms_in_tp; ++num_check_box)
+            for (uint16_t num_check_box = 0; num_check_box < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp; ++num_check_box)
                 m_check_box_select_cyclograms[num_check_box]->setCheckState(Qt::CheckState::Unchecked);
         break;
     case COUNT_TO_DO_CYCLOGRAM:
-        if (load_data.size() != 0)
+        if (load_data.size() == m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp)
         {
-            for (uint16_t num_le = 0; num_le < constants::max_count_cyclograms_in_tp; ++num_le)
+            for (uint16_t num_le = 0; num_le < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp; ++num_le)
             {
                 m_kia_settings->m_kia_data_to_server->m_count_to_do_cyclogram_in_tp[num_le] = load_data[num_le].toUInt();
                 m_le_count_to_do_cyclograms[num_le]->setText(load_data[num_le]);
             }
         }
         else
-            for (uint16_t num_le = 0; num_le < constants::max_count_cyclograms_in_tp; ++num_le)
+            for (uint16_t num_le = 0; num_le < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp; ++num_le)
                 m_le_count_to_do_cyclograms[num_le]->setText("100");
         break;
     case OFF_POWER:
@@ -161,9 +161,9 @@ void Kia_options_cyclograms::regular_settings()
 {
     QLabel* label_name_settings =  new QLabel("Съем телеметрических массивов:", this);
     m_layout_for_place_cyclogram_tab_widget[KNCycl_REGULAR]->addWidget(label_name_settings);
-    for (uint16_t num_check_box = 0; num_check_box < constants::max_mpi_command; ++num_check_box)
+    for (uint16_t num_check_box = 0; num_check_box < m_kia_settings->m_kia_bokz_settings->m_max_mpi_command; ++num_check_box)
     {
-        m_check_box_select_mpi_command[num_check_box] = new QCheckBox(m_kia_settings->m_kia_gui_settings->m_mpi_command_name[num_check_box], this);
+        m_check_box_select_mpi_command.push_back(new QCheckBox(m_kia_settings->m_kia_gui_settings->m_mpi_command_name[num_check_box], this));
         m_layout_for_place_cyclogram_tab_widget[KNCycl_REGULAR]->addWidget(m_check_box_select_mpi_command[num_check_box]);
         connect(m_check_box_select_mpi_command[num_check_box], &QCheckBox::stateChanged, this, [this, num_check_box](int state)
         {
@@ -232,11 +232,12 @@ void Kia_options_cyclograms::cyclogram_tp()
     m_layout_for_place_cyclogram_tab_widget[KNCycl_TR]->addWidget(label_name_settings);
     QGridLayout* lay = new QGridLayout();
     m_layout_for_place_cyclogram_tab_widget[KNCycl_TR]->addLayout(lay);
-    for (uint16_t num_cyclogram = 0; num_cyclogram < constants::max_count_cyclograms_in_tp; ++num_cyclogram)
+
+    for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp; ++num_cyclogram)
     {
-        m_check_box_select_cyclograms[num_cyclogram] = new QCheckBox(m_kia_settings->m_kia_gui_settings->m_cyclogram_name[num_cyclogram], this);
-        m_le_count_to_do_cyclograms[num_cyclogram] = new QLineEdit("100", this);
-        m_kia_settings->m_kia_data_to_server->m_count_to_do_cyclogram_in_tp[num_cyclogram] = 100;
+        m_check_box_select_cyclograms.push_back(new QCheckBox(m_kia_settings->m_kia_gui_settings->m_cyclogram_name[num_cyclogram], this));
+        m_le_count_to_do_cyclograms.push_back(new QLineEdit("100", this));
+        m_kia_settings->m_kia_data_to_server->m_count_to_do_cyclogram_in_tp.push_back(100);
         m_le_count_to_do_cyclograms[num_cyclogram]->setEnabled(false);
         lay->addWidget(m_check_box_select_cyclograms[num_cyclogram], num_cyclogram, USED_CYCLOGRAM);
         lay->addWidget(m_le_count_to_do_cyclograms[num_cyclogram], num_cyclogram, COUNT_TO_DO_CYCLOGRAM);

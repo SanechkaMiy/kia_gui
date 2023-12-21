@@ -30,8 +30,6 @@ const static uint16_t count_type_bokz = 6;
 const static uint16_t max_count_channel = 4;
 const static uint16_t max_count_address = 32;
 const static uint16_t max_count_td = 6;
-const static uint16_t max_mpi_command = 5;
-const static uint16_t max_count_cyclograms_in_tp = 3;
 const static uint16_t max_count_mpi = MAX_TMK_NUMBER * 2 + 1;
 const static uint16_t max_count_window = 1;
 const static uint16_t size_qa = 4;
@@ -47,9 +45,9 @@ const static uint16_t max_grid_size = 25;
 #pragma pack(push, 1)
 struct Kia_data_to_server
 {
-    std::array<uint16_t, constants::max_mpi_command> m_do_mpi_command_in_cyclogram;
-    std::array<uint16_t, constants::max_count_cyclograms_in_tp> m_do_cyclogram_in_tp;
-    std::array<uint16_t, constants::max_count_cyclograms_in_tp> m_count_to_do_cyclogram_in_tp;
+    std::vector<uint16_t> m_do_mpi_command_in_cyclogram;
+    std::vector<uint16_t> m_do_cyclogram_in_tp;
+    std::vector<uint16_t> m_count_to_do_cyclogram_in_tp;
     std::vector<int> m_is_used_bokz;
     std::vector<int> m_mpi_num;
     std::vector<int> m_mpi_num_index_of_num_bokz;
@@ -90,6 +88,8 @@ struct Kia_bokz_settings
     int m_freq_bokz;
     std::array<QString, constants::count_type_bokz> m_bokz_type = {"БОКЗМ60", "БОКЗМФ"};
     int m_count_bokz;//0 - БОКЗМ60; 1 - БОКЗМ60/1000; 2 - БОКЗМР; 3 - АИС-2К; 4 - БОКЗНК.
+    uint16_t m_max_mpi_command;
+    uint16_t m_max_cyclograms_in_tp;
     std::array<QStringList, constants::count_type_bokz> m_bokz_row_name;
     std::array<QStringList, constants::count_type_bokz> m_bokz_status_row_name;
     std::array<QString, constants::max_count_cyclograms> m_name_cyclograms =
@@ -108,8 +108,8 @@ struct Kia_gui_settings
 {
     bool m_widget_is_closed = false;
     QMap<QWidget*, bool> m_widget_is_hide;
-    QStringList m_mpi_command_name = {"ШТМИ1", "ШТМИ2", "МШИОР", "ДТМИ", "ДТМИ-ЛОК"};
-    QStringList m_cyclogram_name = {"НО", "ТО", "ЛОК"};
+    QStringList m_mpi_command_name;
+    QStringList m_cyclogram_name;
     std::vector<QStringList> m_list_profile;
     uint16_t m_count_profile = 0;
     uint16_t m_current_main_tab_widget = 0;

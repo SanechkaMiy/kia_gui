@@ -73,6 +73,7 @@ void Client::slot_read_server()
         qint16 type_bokz;
         qint16 type_bi;
         in >> data_from_server >> type_bokz >> type_bi >> num;
+        //m_kia_settings->m_kia_gui_settings->m_mpi_command_name
         switch (num)
         {
         case SET_KIA_GUI_SETTINGS:
@@ -80,10 +81,17 @@ void Client::slot_read_server()
             m_kia_settings->m_type_bi = type_bi;
             m_kia_settings->m_kia_bi_settings->m_count_bi = data_from_server[0].toInt();
             break;
+        case SEND_MPI_COMMAND:
+            m_kia_settings->m_kia_gui_settings->m_mpi_command_name = data_from_server;
+            m_kia_settings->m_kia_bokz_settings->m_max_mpi_command = data_from_server.size();
+            break;
+        case SEND_CYCLOGRAMS:
+            m_kia_settings->m_kia_gui_settings->m_cyclogram_name = data_from_server;
+            m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp = data_from_server.size();
+            break;
         case CONNECT_TO_CORE:
             m_kia_settings->m_kias_db->m_experiment_id = data_from_server[0];
             emit set_kia_gui_settings();
-
             m_kia_settings->m_is_con_to_core = CS_IS_ON;
             emit check_connect(CHECK_CON_CORE, m_kia_settings->m_is_con_to_core);
             break;

@@ -11,6 +11,7 @@
 #include <vector>
 #include "Kia_menu/kia_menu.h"
 #include "Kia_menu/kia_menu_bokzm60.h"
+#include "Kia_menu/kia_menu_bokzmf.h"
 namespace Ui {
 class KiaMenuBar;
 }

@@ -70,7 +70,7 @@ KiaCore::~KiaCore()
         m_save_read_settings->save_pos_and_size_widgets("ai_protocol_" + QString::number(num_bokz), m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]);
     }
 
-    for (uint16_t num_mpi_command = 0; num_mpi_command < constants::max_mpi_command; ++num_mpi_command)
+    for (uint16_t num_mpi_command = 0; num_mpi_command < m_kia_settings->m_kia_bokz_settings->m_max_mpi_command; ++num_mpi_command)
     {
         for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
         {
@@ -331,7 +331,8 @@ void KiaCore::set_kia_gui_settings_slot()
 
 
     }
-    for (uint16_t num_mpi_command = 0; num_mpi_command < constants::max_mpi_command; ++num_mpi_command)
+    m_kia_window_info_mpi_command.resize(m_kia_settings->m_kia_bokz_settings->m_max_mpi_command);
+    for (uint16_t num_mpi_command = 0; num_mpi_command < m_kia_settings->m_kia_bokz_settings->m_max_mpi_command; ++num_mpi_command)
     {
         m_kia_window_info_mpi_command[num_mpi_command].resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
         for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
@@ -350,9 +351,6 @@ void KiaCore::set_kia_gui_settings_slot()
                 m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]] =
                         m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]->isVisible();
             });
-            //            m_keys_for_dock_widget["window_mpi_command_" + QString::number(num_mpi_command) + "_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_mpi_command[num_mpi_command][num_bokz], m_kia_settings->m_kia_gui_settings->m_mpi_command_name[num_mpi_command]
-            //                                                                                                                                                                                           + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-            //                                                                                                                                         + " " + QString::number(num_bokz + 1)));
             correct_save_state_window(m_kia_custom_dialog[WINDOW_MPI_COMMAND][num_bokz + (num_mpi_command * m_kia_settings->m_kia_bokz_settings->m_count_bokz)]);
         }
     }
@@ -376,8 +374,10 @@ void KiaCore::create_kia_options_for_bi_command()
 
 void KiaCore::create_kia_options_for_cyclogram()
 {
+    m_kia_settings->m_kia_data_to_server->m_do_mpi_command_in_cyclogram.resize(m_kia_settings->m_kia_bokz_settings->m_max_mpi_command);
     std::fill(m_kia_settings->m_kia_data_to_server->m_do_mpi_command_in_cyclogram.begin(),
               m_kia_settings->m_kia_data_to_server->m_do_mpi_command_in_cyclogram.end(), KiaS_FAIL);
+    m_kia_settings->m_kia_data_to_server->m_do_cyclogram_in_tp.resize(m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp);
     std::fill(m_kia_settings->m_kia_data_to_server->m_do_cyclogram_in_tp.begin(),
               m_kia_settings->m_kia_data_to_server->m_do_cyclogram_in_tp.end(), KiaS_FAIL);
     m_kia_options_cyclograms = new Kia_options_cyclograms(m_kia_settings, m_client, m_kia_main_window);
@@ -665,7 +665,7 @@ void KiaCore::create_window_is_work()
 
 void KiaCore::create_mpi_command_action()
 {
-    for (uint16_t num_mpi_command = 0; num_mpi_command < constants::max_mpi_command; ++num_mpi_command)
+    for (uint16_t num_mpi_command = 0; num_mpi_command < m_kia_settings->m_kia_bokz_settings->m_max_mpi_command; ++num_mpi_command)
     {
         m_kia_menubar->get_menu_windows()->addAction("Окно " + m_kia_settings->m_kia_gui_settings->m_mpi_command_name[num_mpi_command], m_kia_menubar, [this, num_mpi_command]()
         {
@@ -756,7 +756,7 @@ void KiaCore::set_window_info_error_window(qint16 num_bokz, QString data_from_se
 void KiaCore::set_window_info_device_protocol(qint16 num_mpi_command, qint16 num_bokz, QString data_from_server)
 {
     m_kia_window_info_device_protocol[num_bokz]->append_info_to_window(data_from_server);
-    if (num_mpi_command < constants::max_mpi_command)
+    if (num_mpi_command < m_kia_settings->m_kia_bokz_settings->m_max_mpi_command)
         m_kia_window_info_mpi_command[num_mpi_command][num_bokz]->set_info_to_window(data_from_server);
 
 }
@@ -814,7 +814,7 @@ void KiaCore::load_profile_settings()
     m_save_read_settings->load_pos_and_size_widgets("mpi_all_dev", m_kia_custom_dialog[WINDOW_MPI][0]);
     m_save_read_settings->load_state_widgets("mpi_all_dev", m_kia_custom_dialog[WINDOW_MPI][0]);
 
-    for (uint16_t num_mpi_command = 0; num_mpi_command < constants::max_mpi_command; ++num_mpi_command)
+    for (uint16_t num_mpi_command = 0; num_mpi_command < m_kia_settings->m_kia_bokz_settings->m_max_mpi_command; ++num_mpi_command)
     {
         for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
         {

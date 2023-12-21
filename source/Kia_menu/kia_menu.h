@@ -6,6 +6,12 @@
 class Kia_menu
 {
 public:
+    enum st_work_action
+    {
+        NAME_ACTION = 0,
+        HOT_KEY = 1,
+        NUM_COMMAND = 2,
+    };
     virtual void create_action_state_work(QMenu* menu) = 0;
     virtual void create_action_pci(QMenu* menu) = 0;
     virtual void create_action_res(QMenu* menu) = 0;

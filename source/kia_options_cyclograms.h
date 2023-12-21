@@ -46,10 +46,10 @@ private:
     std::shared_ptr<Client> m_client;
     QTabWidget* m_cyclogram_settings;
     std::array<QWidget*, constants::max_count_cyclograms> m_tab_cyclograms;
-    std::array<QCheckBox*, constants::max_mpi_command> m_check_box_select_mpi_command;
+    std::vector<QCheckBox*> m_check_box_select_mpi_command;
 
-    std::array<QCheckBox*, constants::max_count_cyclograms_in_tp> m_check_box_select_cyclograms;
-    std::array<QLineEdit*, constants::max_count_cyclograms_in_tp> m_le_count_to_do_cyclograms;
+    std::vector<QCheckBox*> m_check_box_select_cyclograms;
+    std::vector<QLineEdit*> m_le_count_to_do_cyclograms;
     QCheckBox* m_check_box_continue_if_fails;
     QCheckBox* m_check_box_off_power_for_tp;
 };

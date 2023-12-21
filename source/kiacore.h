@@ -63,7 +63,7 @@ private:
     std::vector<KiaWindowInfo*> m_kia_window_info_mpi_for_dev;
     std::vector<KiaWindowInfo*> m_kia_window_info_device_protocol;
     std::vector<KiaWindowInfo*> m_kia_window_info_ai_protocol;
-    std::array<std::vector<KiaWindowInfo*>, constants::max_mpi_command> m_kia_window_info_mpi_command;
+    std::vector<std::vector<KiaWindowInfo*>> m_kia_window_info_mpi_command;
     KiaWindowInfo* m_kia_window_info_mpi;
     KiaWindowIsWork* m_kia_window_is_work;
     std::map<uint16_t, QVector<Kia_custom_dialog*>> m_kia_custom_dialog;
