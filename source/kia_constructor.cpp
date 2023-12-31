@@ -191,40 +191,6 @@ void Kia_constructor::add_table()
     }
 }
 
-void Kia_constructor::remove_graph_slot(uint16_t num_graph)
-{
-    if (ui->lw_list_graph->count() != 0)
-    {
-        if (num_graph + 1 < ui->lw_list_graph->count())
-        {
-            for (uint16_t ind = num_graph; ind < m_kia_settings->m_kias_view_data->m_data_graph.size(); ++ind)
-                m_kia_settings->m_kias_view_data->m_data_graph[ind][QP_NUM_WIDGET] = QString::number(m_kia_settings->m_kias_view_data->m_data_graph[ind][QP_NUM_WIDGET].toUInt() - 1);
-        }
-        m_kia_settings->m_kias_view_data->m_data_graph.erase(m_kia_settings->m_kias_view_data->m_data_graph.begin() + num_graph);
-        m_kia_settings->m_kias_view_data->m_graph_count -= 1;
-
-        emit remove_graph(num_graph);
-        delete ui->lw_list_graph->item(num_graph);
-    }
-}
-
-void Kia_constructor::remove_table_slot(uint16_t num_table)
-{
-    if (ui->lw_list_table->count() != 0)
-    {
-        if (num_table + 1 < ui->lw_list_table->count())
-        {
-            for (uint16_t ind = num_table; ind < m_kia_settings->m_kias_view_data->m_data_table.size(); ++ind)
-                m_kia_settings->m_kias_view_data->m_data_table[ind][QP_NUM_WIDGET] = QString::number(m_kia_settings->m_kias_view_data->m_data_table[ind][QP_NUM_WIDGET].toUInt() - 1);
-        }
-        m_kia_settings->m_kias_view_data->m_data_table.erase(m_kia_settings->m_kias_view_data->m_data_table.begin() + num_table);
-        m_kia_settings->m_kias_view_data->m_data_table_cols.erase(m_kia_settings->m_kias_view_data->m_data_table_cols.begin() + num_table);
-        m_kia_settings->m_kias_view_data->m_table_count -= 1;
-        emit remove_table(num_table);
-        delete ui->lw_list_table->item(num_table);
-    }
-}
-
 void Kia_constructor::add_graph_to_list(QStringList query_param)
 {
     ui->lw_list_graph->addItem("График " + query_param[QP_Y] + " от " + query_param[QP_X]);

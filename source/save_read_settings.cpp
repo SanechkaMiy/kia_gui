@@ -18,7 +18,8 @@ void Save_read_settings::save_settings()
     QStringList list_lpi_change;
     QStringList list_do_mpi_command;
     QStringList list_do_count_cyclogram;
-    QStringList list_do_cyclogram;
+    QStringList list_do_cyclogram_tp;
+    QStringList list_do_cyclogram_ai;
     QStringList list_tp_param;
     QStringList list_zkr_param;
     QStringList list_frames_param;
@@ -30,11 +31,14 @@ void Save_read_settings::save_settings()
     for (uint16_t mpi_command = 0; mpi_command < m_kia_settings->m_kia_bokz_settings->m_max_mpi_command; ++mpi_command)
         list_do_mpi_command.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_mpi_command_in_cyclogram[mpi_command]));
 
-    for (uint16_t mpi_command = 0; mpi_command < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp; ++mpi_command)
-        list_do_cyclogram.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_cyclogram_in_tp[mpi_command]));
+    for (uint16_t num_cycl = 0; num_cycl < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp; ++num_cycl)
+        list_do_cyclogram_tp.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_cyclogram_in_tp[num_cycl]));
 
-    for (uint16_t mpi_command = 0; mpi_command < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp; ++mpi_command)
-        list_do_count_cyclogram.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_count_to_do_cyclogram_in_tp[mpi_command]));
+    for (uint16_t num_cycl = 0; num_cycl < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_ai; ++num_cycl)
+        list_do_cyclogram_ai.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_cyclogram_in_ai[num_cycl]));
+
+    for (uint16_t num_cycl = 0; num_cycl < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp; ++num_cycl)
+        list_do_count_cyclogram.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_count_to_do_cyclogram_in_tp[num_cycl]));
 
     for (uint16_t ind_tp_param = 0; ind_tp_param < constants::max_count_param; ++ind_tp_param)
         list_tp_param.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_param_for_cycl_tech_run[ind_tp_param]));
@@ -60,7 +64,8 @@ void Save_read_settings::save_settings()
 
     m_settings.beginGroup("/Device_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
     m_settings.setValue("/used_mpi_command", QVariant::fromValue(list_do_mpi_command));
-    m_settings.setValue("/used_cyclogram", QVariant::fromValue(list_do_cyclogram));
+    m_settings.setValue("/used_cyclogram", QVariant::fromValue(list_do_cyclogram_tp));
+    m_settings.setValue("/list_used_ai_cycl", QVariant::fromValue(list_do_cyclogram_ai));
     m_settings.setValue("/used_do_count_cyclogram", QVariant::fromValue(list_do_count_cyclogram));
     m_settings.setValue("/ai_param_is_continue", QVariant::fromValue(list_ai_settings_is_continue));
     m_settings.setValue("/power_after_tp", QVariant::fromValue(list_power_after_tp));
@@ -152,6 +157,9 @@ void Save_read_settings::load_settings()
         if (list_used_bokz.size() != m_kia_settings->m_kia_bokz_settings->m_count_bokz)
             do_load = false;
 
+        QStringList list_ai_used_cycl;
+        list_ai_used_cycl = m_settings.value("/list_used_ai_cycl").value<QStringList>();
+
         list_used_bokz.push_front(QString::number(TS_USED_BOKZ));
 
         list_address_change.push_front(QString::number(TS_ADDRESS));
@@ -172,6 +180,7 @@ void Save_read_settings::load_settings()
         emit send_to_kia_options(KNCycl_TR, list_tp_param);
         emit send_to_kia_options(KNCycl_ZKR, list_zkr_param);
         emit send_to_kia_options(KNCycl_FRAMES, list_frames_param);
+        emit send_to_kia_options(KNCycl_AI_USED_CYCL, list_ai_used_cycl);
 
         emit send_to_tp_cyclogram_settings(USED_CYCLOGRAM, list_do_cyclogram);
         emit send_to_tp_cyclogram_settings(COUNT_TO_DO_CYCLOGRAM, list_do_count_cyclogram);
@@ -204,6 +213,7 @@ void Save_read_settings::load_settings()
             emit send_list_for_check_box_color_table_state(num_table, list_color);
         }
         auto count_menu = m_settings.value("/count_status_for_menu_action").value<quint16>();
+                    std::cout << "load menu" << std::endl;
         for (uint16_t num_menu = 0; num_menu < count_menu; num_menu++)
         {
             auto list_actions = m_settings.value("/status_for_menu_action_" + QString::number(num_menu)).value<QStringList>();

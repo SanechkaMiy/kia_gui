@@ -17,20 +17,101 @@ Kia_graph::Kia_graph(std::shared_ptr<Kia_db> kia_db,
             QString text = QString("%1").arg(m_kias_graph_data->m_data_to_view[dataIndex]);
             QToolTip::showText(event->globalPos(), text);
         }
-        //item->
-        //        int mouseX = xAxis->pixelToCoord(e->pos().x());
-        //        int mouseY = yAxis->pixelToCoord(e->pos().y());
-        //        int index = graph()->findBegin(mouseX);
-        //        int x = graph()->dataMainKey(index);
-        //        int y = graph()->dataMainValue(index);
-        //        QCPDataSelection selection = graph()->selection();
-        //        if (((x >= (mouseX - 1)) && (x <= (mouseX + 1))) && ((y >= (mouseY - 1)) && (y <= (mouseY + 1))))
-        //        {
-        //            QString text = QString("%1 = %2").arg(m_query_param[QP_X]).arg(m_kias_graph_data->m_x_value[index].toDouble());
-        //            QToolTip::showText(e->globalPos(), text);
-        //        }
-
     });
+    auto func_for_timestamp_graph = [this]()
+    {
+        for (uint16_t ind = 0; ind < m_kias_graph_data->m_date_time_val.size(); ind++)
+        {
+            double y_value = 0;
+            switch(m_is_value_or_nothing)
+            {
+            case NOTHING:
+                y_value = m_kias_graph_data->m_y_value[ind].toDouble();
+                break;
+            case DEGREEZ:
+                y_value = get_degreze(m_kias_graph_data->m_y_value[ind]);
+                break;
+            case SECOND:
+                y_value = get_seconds(m_kias_graph_data->m_y_value[ind]);
+                break;
+            case DEGREEZ_IN_SEC:
+                y_value = get_degreze(m_kias_graph_data->m_y_value[ind]);
+                break;
+            case RAD_IN_SEC:
+                y_value = get_radians(m_kias_graph_data->m_y_value[ind]);
+                break;
+
+            }
+            QTime timeStart = m_kias_graph_data->m_date_time_val[ind].toTime();
+            double key = QTime(0, 0, 0).secsTo(timeStart);
+            m_xData.push_back(key);
+            m_yData.push_back(y_value);
+        }
+    };
+    m_func_for_graph_type.push_back(func_for_timestamp_graph);
+
+    auto func_for_deafult_graph = [this]()
+    {
+        for (uint16_t ind = 0; ind < m_kias_graph_data->m_x_value.size(); ind++)
+        {
+            double x_value = 0;
+            double y_value = 0;
+            for (auto el : m_do_convert_for_angle)
+            {
+                if (m_query_param[QP_X] != el)
+                {
+                    x_value = m_kias_graph_data->m_x_value[ind].toDouble();
+                    switch(m_is_value_or_nothing)
+                    {
+                    case NOTHING:
+                        y_value = m_kias_graph_data->m_y_value[ind].toDouble();
+                        break;
+                    case DEGREEZ:
+                        y_value = get_degreze(m_kias_graph_data->m_y_value[ind]);
+                        break;
+                    case SECOND:
+                        y_value = get_seconds(m_kias_graph_data->m_y_value[ind]);
+                        break;
+                    case DEGREEZ_IN_SEC:
+                        y_value = get_degreze(m_kias_graph_data->m_y_value[ind]);
+                        break;
+                    case RAD_IN_SEC:
+                        y_value = get_radians(m_kias_graph_data->m_y_value[ind]);
+                        break;
+                    }
+                }
+                else
+                {
+                    switch(m_is_value_or_nothing)
+                    {
+                    case NOTHING:
+                        y_value = m_kias_graph_data->m_y_value[ind].toDouble();
+                        x_value = m_kias_graph_data->m_x_value[ind].toDouble();
+                        break;
+                    case DEGREEZ:
+                        y_value = get_degreze(m_kias_graph_data->m_y_value[ind]);
+                        x_value = get_degreze(m_kias_graph_data->m_x_value[ind]);
+                        break;
+                    case SECOND:
+                        y_value = get_seconds(m_kias_graph_data->m_y_value[ind]);
+                        x_value = get_seconds(m_kias_graph_data->m_x_value[ind]);
+                        break;
+                    case DEGREEZ_IN_SEC:
+                        y_value = get_degreze(m_kias_graph_data->m_y_value[ind]);
+                        x_value = get_degreze(m_kias_graph_data->m_x_value[ind]);
+                        break;
+                    case RAD_IN_SEC:
+                        y_value = get_radians(m_kias_graph_data->m_y_value[ind]);
+                        x_value = get_radians(m_kias_graph_data->m_x_value[ind]);
+                        break;
+                    }
+                }
+            }
+            m_xData.push_back(x_value);
+            m_yData.push_back(y_value);
+        }
+    };
+    m_func_for_graph_type.push_back(func_for_deafult_graph);
 }
 
 
@@ -54,7 +135,7 @@ void Kia_graph::init_timestamp_plot()
     graph()->setLineStyle(QCPGraph::lsNone);
     create_context_menu();
 
-    if (m_kias_graph_data->m_is_main_graph)
+    if (m_kias_graph_data->m_graph_type == MAIN_GRAPH)
     {
         yAxis->setOffset(120);
         yAxis->setVisible(false);
@@ -129,14 +210,14 @@ void Kia_graph::get_data_from_db_slot()
             last_point_key = m_kia_settings->m_kias_db->m_key;
         if (m_kia_settings->m_kias_db->m_key - last_point_key >= 1)
         {
-            if (!m_kias_graph_data->m_is_default_graph)
+            if (m_kias_graph_data->m_graph_type != DEFAULT_GRAPH)
             {
                 m_begin = QTime(0, 0, 0).addMSecs((xAxis->range().lower) * 1000);
                 m_end = QTime(0, 0, 0).addMSecs((xAxis->range().upper) * 1000);
             }
-            if (!m_kias_graph_data->m_is_main_graph)
+            if (m_kias_graph_data->m_graph_type != MAIN_GRAPH)
             {
-                if (!m_kias_graph_data->m_is_default_graph)
+                if (m_kias_graph_data->m_graph_type != DEFAULT_GRAPH)
                 {
                     emit get_data_from_db(m_begin.toString("hh:mm:ss.zzz"), m_end.toString("hh:mm:ss.zzz"));
                 }
@@ -151,7 +232,7 @@ void Kia_graph::get_data_from_db_slot()
             }
             last_point_key = m_kia_settings->m_kias_db->m_key;
         }
-        if (!m_kias_graph_data->m_is_default_graph)
+        if (m_kias_graph_data->m_graph_type != DEFAULT_GRAPH)
         {
             emit change_range();
         }
@@ -163,71 +244,8 @@ void Kia_graph::get_data_from_db_slot()
 
 void Kia_graph::set_data_on_plot_slot()
 {
-    if (!m_kias_graph_data->m_is_default_graph)
-    {
-        for (uint16_t ind = 0; ind < m_kias_graph_data->m_date_time_val.size(); ind++)
-        {
-            double y_value = 0;
-            if (m_is_degr_sec_or_nothing == DEGREEZ)
-                y_value = get_degreze(m_kias_graph_data->m_y_value[ind]);
-            else if(m_is_degr_sec_or_nothing == SECOND)
-                y_value = get_seconds(m_kias_graph_data->m_y_value[ind]);
-            else
-                y_value = m_kias_graph_data->m_y_value[ind].toDouble();
-            QTime timeStart = m_kias_graph_data->m_date_time_val[ind].toTime();
-            double key = QTime(0, 0, 0).secsTo(timeStart);
-            m_xData.push_back(key);
-            m_yData.push_back(y_value);
-        }
-        graph()->setData(m_xData, m_yData);
-    }
-    else
-    {
-        for (uint16_t ind = 0; ind < m_kias_graph_data->m_x_value.size(); ind++)
-        {
-            double x_value = 0;
-            double y_value = 0;
-            if (m_query_param[QP_X] != "alpha" && m_query_param[QP_X] != "delta" && m_query_param[QP_X] != "azimuth")
-            {
-                x_value = m_kias_graph_data->m_x_value[ind].toDouble();
-                if (m_is_degr_sec_or_nothing == DEGREEZ)
-                {
-                    std::cout << "here" << std::endl;
-                    y_value = get_degreze(m_kias_graph_data->m_y_value[ind]);
-                }
-                else if(m_is_degr_sec_or_nothing == SECOND)
-                {
-                    y_value = get_seconds(m_kias_graph_data->m_y_value[ind]);
-                }
-                else
-                {
-                    y_value = m_kias_graph_data->m_y_value[ind].toDouble();
-                }
-            }
-            else
-            {
-                if (m_is_degr_sec_or_nothing == DEGREEZ)
-                {
-
-                    x_value = get_degreze(m_kias_graph_data->m_x_value[ind]);
-                    y_value = get_degreze(m_kias_graph_data->m_y_value[ind]);
-                }
-                else if(m_is_degr_sec_or_nothing == SECOND)
-                {
-                    x_value = get_seconds(m_kias_graph_data->m_x_value[ind]);
-                    y_value = get_seconds(m_kias_graph_data->m_y_value[ind]);
-                }
-                else
-                {
-                    y_value = m_kias_graph_data->m_y_value[ind].toDouble();
-                    x_value = m_kias_graph_data->m_x_value[ind].toDouble();
-                }
-            }
-            m_xData.push_back(x_value);
-            m_yData.push_back(y_value);
-        }
-        graph()->setData(m_xData, m_yData);
-    }
+    m_func_for_graph_type[m_kias_graph_data->m_graph_type]();
+    graph()->setData(m_xData, m_yData);
     m_xData.clear();
     m_yData.clear();
 }
@@ -346,68 +364,136 @@ void Kia_graph::change_range_default_slot()
 
 void Kia_graph::create_context_menu()
 {
-    if (!m_kias_graph_data->m_is_main_graph)
+    if (m_kias_graph_data->m_graph_type != MAIN_GRAPH)
     {
         m_context_menu = new QMenu(this);
         setContextMenuPolicy(Qt::CustomContextMenu);
 
         connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(show_context_menu(QPoint)));
-        QAction* is_sec_or_degr = new QAction("Градусы", this);
-        is_sec_or_degr->setCheckable(true);
+
+        m_action_to_change_dimensions = new QAction("Градусы", this);
+        m_action_to_change_dimensions->setCheckable(true);
         m_query_param = m_kia_db->get_query_param();
-        if (m_query_param[QP_Y] == "alpha" || m_query_param[QP_Y] == "delta" || m_query_param[QP_Y] == "azimuth")
-        {
 
-            m_is_degr_sec_or_nothing = DEGREEZ;
+        auto func_angles = [this]()
+        {
+            m_is_value_or_nothing = DEGREEZ;
             auto y_label = yAxis->label();
             auto x_label = xAxis->label();
-            yAxis->setLabel(y_label + "°");
-            connect(is_sec_or_degr, &QAction::triggered, this, [this, is_sec_or_degr, y_label, x_label]()
+            yAxis->setLabel(y_label + " °");
+            for (auto el : m_do_convert_for_angle)
             {
-                if (is_sec_or_degr->isChecked())
+                if (m_query_param[QP_X] == el)
                 {
-                    m_is_degr_sec_or_nothing = SECOND;
-                    is_sec_or_degr->setText("Секунды");
-                    yAxis->setLabel(y_label + "\"");
+                    xAxis->setLabel(x_label + " °");
+                }
+            }
+            connect(m_action_to_change_dimensions, &QAction::triggered, this, [this, y_label, x_label]()
+            {
+                if (m_action_to_change_dimensions->isChecked())
+                {
+                    m_is_value_or_nothing = SECOND;
+                    m_action_to_change_dimensions->setText("Секунды");
+                    yAxis->setLabel(y_label + " \"");
                 }
                 else
                 {
-                    m_is_degr_sec_or_nothing = DEGREEZ;
-                    is_sec_or_degr->setText("Градусы");
-                    yAxis->setLabel(y_label + "°");
+                    m_is_value_or_nothing = DEGREEZ;
+                    m_action_to_change_dimensions->setText("Градусы");
+                    yAxis->setLabel(y_label + " °");
+                }
+                for (auto el : m_do_convert_for_angle)
+                {
+                    if (m_query_param[QP_X] == el)
+                    {
+                        if (m_action_to_change_dimensions->isChecked())
+                        {
+                            m_is_value_or_nothing = SECOND;
+                            m_action_to_change_dimensions->setText("Секунды");
+                            xAxis->setLabel(x_label + " \"");
+                        }
+                        else
+                        {
+                            m_is_value_or_nothing = DEGREEZ;
+                            m_action_to_change_dimensions->setText("Градусы");
+
+                            xAxis->setLabel(x_label + " °");
+                        }
+                    }
+                }
+            });
+
+            m_context_menu->addAction(m_action_to_change_dimensions);
+
+        };
+        m_func_for_data_type.push_back(func_angles);
+
+        auto func_speed = [this]()
+        {
+            m_is_value_or_nothing = DEGREEZ_IN_SEC;
+            auto y_label = yAxis->label();
+            auto x_label = xAxis->label();
+            yAxis->setLabel(y_label + " °/с");
+            for (auto el : m_do_convert_for_speed)
+            {
+                if (m_query_param[QP_X] == el)
+                {
+                    xAxis->setLabel(x_label + " °");
+                }
+            }
+            connect(m_action_to_change_dimensions, &QAction::triggered, this, [this, y_label, x_label]()
+            {
+                if (m_action_to_change_dimensions->isChecked())
+                {
+                    m_is_value_or_nothing = RAD_IN_SEC;
+                    m_action_to_change_dimensions->setText("Радианы");
+                    yAxis->setLabel(y_label + "рад/с");
+                }
+                else
+                {
+                    m_is_value_or_nothing = DEGREEZ_IN_SEC;
+                    m_action_to_change_dimensions->setText("Градусы");
+                    yAxis->setLabel(y_label + " °/с");
+                }
+
+                for (auto el : m_do_convert_for_speed)
+                {
+                    if (m_query_param[QP_X] == el)
+                    {
+                        if (m_action_to_change_dimensions->isChecked())
+                        {
+                            m_is_value_or_nothing = RAD_IN_SEC;
+                            m_action_to_change_dimensions->setText("Радианы");
+                            yAxis->setLabel(y_label + " рад/с");
+                        }
+                        else
+                        {
+                            m_is_value_or_nothing = DEGREEZ_IN_SEC;
+                            m_action_to_change_dimensions->setText("Градусы");
+                            yAxis->setLabel(y_label + " рад/с");
+                        }
+                    }
                 }
 
             });
 
-            m_context_menu->addAction(is_sec_or_degr);
-        }
+            m_context_menu->addAction(m_action_to_change_dimensions);
 
-        if (m_query_param[QP_X] == "alpha" || m_query_param[QP_X] == "delta" || m_query_param[QP_X] == "azimuth")
+        };
+        m_func_for_data_type.push_back(func_speed);
+
+        auto func_tmpt = [this]()
         {
-            m_is_degr_sec_or_nothing = DEGREEZ;
             auto y_label = yAxis->label();
             auto x_label = xAxis->label();
-            xAxis->setLabel(x_label + "°");
-            connect(is_sec_or_degr, &QAction::triggered, this, [this, is_sec_or_degr, y_label, x_label]()
-            {
-                if (is_sec_or_degr->isChecked())
-                {
-                    m_is_degr_sec_or_nothing = SECOND;
-                    is_sec_or_degr->setText("Секунды");
-                    xAxis->setLabel(x_label + "\"");
-                }
-                else
-                {
-                    m_is_degr_sec_or_nothing = DEGREEZ;
-                    is_sec_or_degr->setText("Градусы");
+            yAxis->setLabel(y_label + " °C/с");
+        };
 
-                    xAxis->setLabel(x_label + "°");
-                }
+        m_func_for_data_type.push_back(func_tmpt);
+        check_data();
 
-            });
 
-            m_context_menu->addAction(is_sec_or_degr);
-        }
+
         QAction* clear_action = new QAction("Очистить", this);
 
         connect(clear_action, &QAction::triggered, this, [this]()
@@ -437,6 +523,35 @@ void Kia_graph::show_context_menu(QPoint point)
     m_context_menu->popup(mapToGlobal(point));
 }
 
+
+void Kia_graph::check_data()
+{
+    for (auto el : m_do_convert_for_angle)
+    {
+        if (m_query_param[QP_Y] == el)
+        {
+            m_data_type = ANGLES;
+        }
+    }
+
+    for (auto el : m_do_convert_for_speed)
+    {
+        if (m_query_param[QP_Y] == el)
+        {
+            m_data_type = SPEED;
+        }
+    }
+
+    for (auto el : m_do_conver_if_tmprt)
+    {
+        if (m_query_param[QP_Y] == el)
+        {
+            m_data_type = TMPT;
+        }
+    }
+    m_func_for_data_type[m_data_type]();
+}
+
 double Kia_graph::get_degreze(QVariant &value)
 {
     auto ret = value.toDouble() * 180 / PI;
@@ -451,4 +566,10 @@ double Kia_graph::get_seconds(QVariant &value)
     auto seconds = minutes - (int)minutes;
     seconds = 60 * seconds;
     return seconds;
+}
+
+double Kia_graph::get_radians(QVariant &value)
+{
+    auto ret = value.toDouble() * PI / 180;
+    return ret;
 }

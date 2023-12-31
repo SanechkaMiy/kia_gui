@@ -47,6 +47,7 @@ struct Kia_data_to_server
 {
     std::vector<uint16_t> m_do_mpi_command_in_cyclogram;
     std::vector<uint16_t> m_do_cyclogram_in_tp;
+    std::vector<uint16_t> m_do_cyclogram_in_ai;
     std::vector<uint16_t> m_count_to_do_cyclogram_in_tp;
     std::vector<int> m_is_used_bokz;
     std::vector<int> m_mpi_num;
@@ -89,6 +90,7 @@ struct Kia_bokz_settings
     std::array<QString, constants::count_type_bokz> m_bokz_type = {"БОКЗМ60", "БОКЗМФ"};
     int m_count_bokz;//0 - БОКЗМ60; 1 - БОКЗМ60/1000; 2 - БОКЗМР; 3 - АИС-2К; 4 - БОКЗНК.
     uint16_t m_max_mpi_command;
+    uint16_t m_max_cyclograms_in_ai;
     uint16_t m_max_cyclograms_in_tp;
     std::array<QStringList, constants::count_type_bokz> m_bokz_row_name;
     std::array<QStringList, constants::count_type_bokz> m_bokz_status_row_name;
@@ -108,8 +110,9 @@ struct Kia_gui_settings
 {
     bool m_widget_is_closed = false;
     QMap<QWidget*, bool> m_widget_is_hide;
-    QStringList m_mpi_command_name;
-    QStringList m_cyclogram_name;
+    QVector<std::pair<QString, uint16_t>> m_mpi_command_name;
+    QVector<std::pair<QString, uint16_t>> m_cyclogram_ai_name;
+    QVector<std::pair<QString, uint16_t>> m_cyclogram_tp_name;
     std::vector<QStringList> m_list_profile;
     uint16_t m_count_profile = 0;
     uint16_t m_current_main_tab_widget = 0;
@@ -160,8 +163,7 @@ struct Kias_data_from_db
     QVector<QVariant> m_date_time_val;
     QVector<QString> m_data_to_view;
     std::queue<QSqlQueryModel*> m_model;
-    std::atomic_bool m_is_main_graph{false};
-    std::atomic_bool m_is_default_graph{false};
+    int16_t m_graph_type = 0;
 };
 #pragma pack(pop)
 

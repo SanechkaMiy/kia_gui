@@ -26,7 +26,7 @@ void KiaWindowInfo::set_info_to_window(QString info)
 void KiaWindowInfo::append_info_to_window(QString info)
 {
         info = info.left(info.lastIndexOf('\n'));
-        uint16_t max_count_out_to_window = 50;
+        uint16_t max_count_out_to_window = 100;
         m_count_out_to_window++;
         if (m_count_out_to_window == max_count_out_to_window)
         {

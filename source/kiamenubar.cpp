@@ -54,10 +54,10 @@ void KiaMenuBar::create_actions(uint16_t type_bokz)
     switch(type_bokz)
     {
     case TYPE_BOKZ_BOKZM60:
-            m_kia_menu.reset(new Kia_menu_bokzm60(m_client));
+            m_kia_menu.reset(new Kia_menu_bokzm60(m_client, m_kia_settings));
         break;
     case TYPE_BOKZ_BOKZMF:
-            m_kia_menu.reset(new Kia_menu_bokzmf(m_client));
+            m_kia_menu.reset(new Kia_menu_bokzmf(m_client, m_kia_settings));
         break;
     }
 
@@ -97,6 +97,7 @@ void KiaMenuBar::load_mode_menu_bi()
 
 std::vector<std::pair<QString, QList<QAction *> > > KiaMenuBar::get_menu_actions()
 {
+    std::cout << "get actions" << std::endl;
     return m_actions;
 }
 

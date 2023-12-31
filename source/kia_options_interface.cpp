@@ -90,12 +90,14 @@ void Kia_options_interface::create_actions_menu_settings(std::vector<std::pair<Q
     m_menu_actions.resize(actions.size());
     for (uint16_t num_menu = 0; num_menu < actions.size(); ++num_menu)
     {
+
         widgets.push_back(new QWidget(this));
         layouts.push_back(new QHBoxLayout(widgets[num_menu]));
         m_lw_for_actions.push_back(new QListWidget(this));
         layouts[num_menu]->addWidget(m_lw_for_actions[num_menu]);
         for (uint16_t num_action = 0; num_action < actions[num_menu].second.size(); num_action++)
         {
+            m_menu_actions[num_menu].push_back(actions[num_menu].second[num_action]->text());
             m_kia_settings->m_kia_gui_settings->m_status_for_menu_action[num_menu].push_back("1");
             m_cb_for_actions[num_menu].push_back(new QCheckBox(actions[num_menu].second[num_action]->text(), this));
             m_cb_for_actions[num_menu][num_action]->setChecked(true);

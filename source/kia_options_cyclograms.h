@@ -48,7 +48,8 @@ private:
     std::array<QWidget*, constants::max_count_cyclograms> m_tab_cyclograms;
     std::vector<QCheckBox*> m_check_box_select_mpi_command;
 
-    std::vector<QCheckBox*> m_check_box_select_cyclograms;
+    std::vector<QCheckBox*> m_check_box_select_cyclograms_tp;
+    std::vector<QCheckBox*> m_check_box_select_cyclograms_ai;
     std::vector<QLineEdit*> m_le_count_to_do_cyclograms;
     QCheckBox* m_check_box_continue_if_fails;
     QCheckBox* m_check_box_off_power_for_tp;

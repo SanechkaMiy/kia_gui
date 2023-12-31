@@ -35,9 +35,7 @@ signals:
     void add_table(QStringList, QStringList);
     void remove_table(qint16);
     void show_table(int32_t);
-public slots:
-    void remove_graph_slot(uint16_t num_graph);
-    void remove_table_slot(uint16_t num_table);
+
 private slots:
     void on_pb_add_graph_clicked();
 

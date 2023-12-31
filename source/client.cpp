@@ -82,12 +82,29 @@ void Client::slot_read_server()
             m_kia_settings->m_kia_bi_settings->m_count_bi = data_from_server[0].toInt();
             break;
         case SEND_MPI_COMMAND:
-            m_kia_settings->m_kia_gui_settings->m_mpi_command_name = data_from_server;
-            m_kia_settings->m_kia_bokz_settings->m_max_mpi_command = data_from_server.size();
+            for (uint16_t num_comm = 0; num_comm < data_from_server.size(); num_comm++)
+            {
+                if (num_comm % 2 == 0)
+                    m_kia_settings->m_kia_gui_settings->m_mpi_command_name.push_back(std::make_pair(data_from_server[num_comm], data_from_server[num_comm + 1].toInt()));
+            }
+            m_kia_settings->m_kia_bokz_settings->m_max_mpi_command = data_from_server.size() / 2;
             break;
-        case SEND_CYCLOGRAMS:
-            m_kia_settings->m_kia_gui_settings->m_cyclogram_name = data_from_server;
-            m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp = data_from_server.size();
+        case SEND_CYCLOGRAMS_AI:
+            for (uint16_t num_cycl = 0; num_cycl < data_from_server.size(); num_cycl++)
+            {
+                if (num_cycl % 2 == 0)
+                    m_kia_settings->m_kia_gui_settings->m_cyclogram_ai_name.push_back(std::make_pair(data_from_server[num_cycl], data_from_server[num_cycl + 1].toInt()));
+            }
+            m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_ai = data_from_server.size() / 2;
+            std::cout << m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_ai << std::endl;
+            break;
+        case SEND_CYCLOGRAMS_TP:
+            for (uint16_t num_cycl = 0; num_cycl < data_from_server.size(); num_cycl++)
+            {
+                if (num_cycl % 2 == 0)
+                    m_kia_settings->m_kia_gui_settings->m_cyclogram_tp_name.push_back(std::make_pair(data_from_server[num_cycl], data_from_server[num_cycl + 1].toInt()));
+            }
+            m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp = data_from_server.size() / 2;
             break;
         case CONNECT_TO_CORE:
             m_kia_settings->m_kias_db->m_experiment_id = data_from_server[0];

@@ -68,6 +68,7 @@ void Kia_table_manager::remove_table_slot(qint16 num_table)
     m_kias_data_from_db[num_table].reset();
     delete m_l_for_tables[num_table];
     delete m_dialog[num_table];
+    m_kia_settings->m_kia_gui_settings->m_current_num_parent.remove(m_kia_custom_dialog[num_table]);
     delete m_kia_custom_dialog[num_table];
     m_kia_tables.erase(m_kia_tables.begin() + num_table);
     m_kia_db.erase(m_kia_db.begin() + num_table);

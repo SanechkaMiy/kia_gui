@@ -31,8 +31,7 @@ void Kia_graph_manager::create_main_graph()
     m_main_dialog->setWindowFlags(Qt::WindowShadeButtonHint);
     auto l_for_plot = new QHBoxLayout(m_main_dialog);
     auto kias_data_from_db = std::make_shared<Kias_data_from_db>();
-    kias_data_from_db->m_is_main_graph = true;
-    kias_data_from_db->m_is_default_graph = false;
+    kias_data_from_db->m_graph_type = Kia_graph::MAIN_GRAPH;
     auto kia_db = std::make_shared<Kia_db>("con_main_graph", m_kia_settings, kias_data_from_db);
     m_main_graph = new Kia_graph(kia_db, m_kia_settings, kias_data_from_db, m_main_dialog);
     m_main_graph->init_timestamp_plot();
@@ -46,7 +45,7 @@ Kia_graph_manager::~Kia_graph_manager()
 {
     for (auto plot : m_kia_graph)
     {
-        if(!plot->m_kias_graph_data->m_is_main_graph)
+        if(plot->m_kias_graph_data->m_graph_type != Kia_graph::MAIN_GRAPH)
         {
             plot->clear_clipboard_buffer();
         }
@@ -115,13 +114,13 @@ void Kia_graph_manager::create_plot_slot(QStringList query_param)
     m_kia_graph[m_num_graph]->yAxis->setLabel(query_param[QP_Y_DESC]);
     if (query_param[QP_TYPE_WIDGET] == "datetime")
     {
-        m_kias_data_from_db[m_num_graph]->m_is_default_graph = false;
+        m_kias_data_from_db[m_num_graph]->m_graph_type = Kia_graph::TIMESTAMP_GRAPH;
         m_kia_graph[m_num_graph]->init_timestamp_plot();
         start_data_timer(m_kia_graph[m_num_graph]);
     }
     else
     {
-        m_kias_data_from_db[m_num_graph]->m_is_default_graph = true;
+        m_kias_data_from_db[m_num_graph]->m_graph_type = Kia_graph::DEFAULT_GRAPH;
         m_kia_graph[m_num_graph]->init_default_plot();
         start_data_timer_for_default_plot(m_kia_graph[m_num_graph]);
     }
@@ -151,6 +150,7 @@ void Kia_graph_manager::remove_plot_slot(qint16 num_graph)
     delete m_l_for_plots[num_graph];
     delete m_dialog[num_graph];
     disconnect(this, SIGNAL(set_default_pos()), m_kia_custom_dialog[num_graph], SLOT(set_default_pos_slot()));
+    m_kia_settings->m_kia_gui_settings->m_current_num_parent.remove(m_kia_custom_dialog[num_graph]);
     delete m_kia_custom_dialog[num_graph];
     m_kia_graph.erase(m_kia_graph.begin() + num_graph);
     m_kia_db.erase(m_kia_db.begin() + num_graph);
@@ -198,7 +198,7 @@ void Kia_graph_manager::plots_interactions()
 {
     for (auto plot : m_kia_graph)
     {
-        if (!plot->m_kias_graph_data->m_is_main_graph)
+        if (plot->m_kias_graph_data->m_graph_type != Kia_graph::MAIN_GRAPH)
         {
             plot->connect(plot, &QCustomPlot::mouseMove, [=](auto e)
             {
@@ -209,7 +209,7 @@ void Kia_graph_manager::plots_interactions()
                 emit set_default_pos();
             });
         }
-        if (!plot->m_kias_graph_data->m_is_default_graph)
+        if (plot->m_kias_graph_data->m_graph_type != Kia_graph::DEFAULT_GRAPH)
         {
             plot->connect(plot, &QCustomPlot::mouseWheel, [=](QWheelEvent* e)
             {
@@ -266,7 +266,7 @@ void Kia_graph_manager::plots_interactions()
             {
                 for (auto plot : m_kia_graph)
                 {
-                    if (!plot->m_kias_graph_data->m_is_default_graph)
+                    if (plot->m_kias_graph_data->m_graph_type != Kia_graph::DEFAULT_GRAPH)
                     {
                         plot->xAxis->setRange(range);
                         plot->replot(QCustomPlot::rpQueuedReplot);
@@ -354,7 +354,7 @@ void Kia_graph_manager::plots_interactions()
         for (auto plot : m_kia_graph)
 
         {
-            if (!plot->m_kias_graph_data->m_is_default_graph)
+            if (plot->m_kias_graph_data->m_graph_type != Kia_graph::DEFAULT_GRAPH)
             {
                 plot->xAxis->setRange(range);
                 plot->replot(QCustomPlot::rpQueuedReplot);
@@ -369,7 +369,7 @@ void Kia_graph_manager::plots_interactions()
 void Kia_graph_manager::start_data_timer(Kia_graph* graph)
 {
     QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-    timeTicker->setTimeFormat("%h:%m:%s");
+    timeTicker->setTimeFormat("%h:%m:%s.%z");
     graph->xAxis->setTicker(timeTicker);
     graph->axisRect()->setupFullAxesBox();
     //graph->yAxis->setRange(-1.2, 1.2);
