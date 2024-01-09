@@ -11,6 +11,7 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <functional>
+#include <algorithm>
 namespace Ui {
 class Kia_graph;
 }
@@ -71,6 +72,7 @@ private:
     double get_degreze(QVariant& value);
     double get_seconds(QVariant& value);
     double get_radians(QVariant& value);
+    void auto_scale();
     QAction* m_action_to_change_dimensions;
     QMenu* m_context_menu;
     QStringList m_query_param;
@@ -79,6 +81,7 @@ private:
     void start_data_timer();
     void set_style();
     QVector<double> m_xData, m_yData;
+     QVector<double> m_buffer_for_auto_scale;
     uint16_t m_is_value_or_nothing = NOTHING;
     double m_start_time = 0;
     std::future<void> start_get_data;
@@ -90,7 +93,7 @@ private:
     QStringList m_do_convert_for_speed = {"wox", "woy", "woz"};
     QStringList m_do_conver_if_tmprt = {"td_1"};
     uint16_t m_data_type;
-
+    bool m_is_show_mean = false;
 protected:
     void keyPressEvent(QKeyEvent *e);
 };

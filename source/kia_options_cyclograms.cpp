@@ -120,11 +120,6 @@ void Kia_options_cyclograms::set_load_tp_settings(qint16 type_settings, QStringL
                     m_kia_settings->m_kia_data_to_server->m_do_cyclogram_in_tp[num_check_box] = KiaS_SUCCESS;
                     m_check_box_select_cyclograms_tp[num_check_box]->setCheckState(Qt::CheckState::Checked);
                 }
-                else
-                {
-                    m_kia_settings->m_kia_data_to_server->m_do_cyclogram_in_tp[num_check_box] = KiaS_FAIL;
-                    m_check_box_select_cyclograms_tp[num_check_box]->setCheckState(Qt::CheckState::Unchecked);
-                }
             }
             set_data_for_server(SET_DO_CYCLOGRAM_IN_TP, m_kia_settings->m_kia_data_to_server->m_do_cyclogram_in_tp);
         }

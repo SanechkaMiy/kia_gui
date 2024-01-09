@@ -41,8 +41,11 @@ public:
     void create_actions(uint16_t type_bokz);
     void load_mode_menu_bi();
     std::vector<std::pair<QString, QList<QAction*>>> get_menu_actions();
+
+    std::vector<QMenu*> get_menu_from_menubar();
 public slots:
     void hide_or_show_actions(qint16 type_actions, qint16 num_actions, bool state);
+    void hide_or_show_menu(qint16 type_menu, bool state);
 signals:
     void show_kia_profile();
     void show_kia_debug_command();
@@ -80,7 +83,6 @@ private slots:
 
 private:
     void set_mode_menu_bi(QAction* main, QAction* rezerv, uint16_t mode);
-
     Ui::KiaMenuBar *ui;
     std::shared_ptr<Kia_settings> m_kia_settings;
     std::shared_ptr<Client> m_client;
@@ -90,6 +92,7 @@ private:
     QPushButton* m_pb_for_delete_plots;
     bool load_mods = false;
     std::vector<std::pair<QString, QList<QAction*>>> m_actions;
+    std::vector<QMenu*> m_menu_bar_list;
 };
 
 #endif // KIAMENUBAR_H

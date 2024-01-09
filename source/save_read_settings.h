@@ -50,6 +50,7 @@ signals:
     void send_list_to_add_tab(QStringList);
     void set_default_parent(QWidget*);
     void send_to_tp_cyclogram_settings(qint16, QStringList);
+    void send_to_list_for_check_box_menu_for_menubar(QStringList);
 private:
     std::shared_ptr<Kia_settings> m_kia_settings;
     QSettings m_settings;

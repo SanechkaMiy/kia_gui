@@ -2,6 +2,7 @@
 #define KIA_OPTIONS_INTERFACE_H
 
 #include <QWidget>
+#include <QMenu>
 #include "Kia_main_struct.h"
 #include "client.h"
 #include <QCheckBox>
@@ -22,14 +23,17 @@ public:
     ~Kia_options_interface();
     void create_window_state_settings(QStringList name_tables, QVector<QStringList> rows_from_table);
     void create_actions_menu_settings(std::vector<std::pair<QString, QList<QAction *> > > actions);
+    void create_menu_for_menu_bar(std::vector<QMenu*> menu_list);
 signals:
     void send_state_and_num_row(qint16, qint16, bool);
     void send_color_and_num_row(qint16, qint16, bool);
     void send_num_actions(qint16, qint16, bool);
+    void send_num_menus(qint16, bool);
 private slots:
     void set_check_box_for_table_state(qint16 num_table, QStringList active_rows);
     void set_check_box_for_table_state_color(qint16 num_table, QStringList active_rows);
     void set_list_for_menu_actions(qint16 num_menu, QStringList list_actions);
+    void set_list_for_menu_actions_for_menubar(QStringList list_actions);
 private:
     Ui::Kia_options_interface *ui;
     std::shared_ptr<Kia_settings> m_kia_settings;
@@ -43,6 +47,7 @@ private:
     std::vector<QStringList> m_menu_actions;
     std::vector<QListWidget*> m_lw_for_actions;
     std::vector<std::vector<QCheckBox*>> m_cb_for_actions;
+    std::vector<QCheckBox*> m_cb_for_menu;
 };
 
 #endif // KIA_OPTIONS_INTERFACE_H

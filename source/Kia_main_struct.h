@@ -121,6 +121,7 @@ struct Kia_gui_settings
     std::vector<QStringList> m_color_for_table_state;
     std::vector<QStringList> m_status_for_menu_action;
     std::vector<QStringList> m_debug_comand_param;
+    QStringList m_status_menu_from_menubar;
     std::vector<QStringList> m_word_data_param;
     std::vector<CDockWidget*> m_dock_widget;
     std::vector<QWidget*> m_main_tabs_widgets;

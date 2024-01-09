@@ -18,18 +18,18 @@ KiaCore::KiaCore(QWidget *wgt, QObject *parent)
     connect(m_save_read_settings.get(), SIGNAL(send_list_to_add_tab(QStringList)), m_kia_main_window, SLOT(add_tab_bar_slot(QStringList)));
     connect(m_save_read_settings.get(), &Save_read_settings::set_default_parent, this, [this](QWidget* wgt)
     {
-            wgt->hide();
-            wgt->setParent(m_kia_main_window);
-            m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt] = -1;
-            m_kia_settings->m_kia_gui_settings->m_widget_is_hide[wgt] = wgt->isVisible();
+        wgt->hide();
+        wgt->setParent(m_kia_main_window);
+        m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt] = -1;
+        m_kia_settings->m_kia_gui_settings->m_widget_is_hide[wgt] = wgt->isVisible();
     });
 
     connect(m_kia_main_window, &Kia_main_window::send_to_change_parent, this, [this](QWidget* wgt)
     {
-            wgt->hide();
-            wgt->setParent(m_kia_main_window);
-            m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt] = -1;
-            m_kia_settings->m_kia_gui_settings->m_widget_is_hide[wgt] = wgt->isVisible();
+        wgt->hide();
+        wgt->setParent(m_kia_main_window);
+        m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt] = -1;
+        m_kia_settings->m_kia_gui_settings->m_widget_is_hide[wgt] = wgt->isVisible();
         std::cout << "set default parent" << std::endl;
     });
     m_kia_main_window->setWindowTitle("КИА");
@@ -417,19 +417,30 @@ void KiaCore::create_kia_options_for_interface()
         m_kia_window_state_for_all_dev->set_color_row(num_row, is_active);
     });
     m_kia_options_interface->create_window_state_settings(list_name_table, list_rows);
-    auto actions = m_kia_menubar->get_menu_actions();
-    m_kia_options_interface->create_actions_menu_settings(actions);
+
+    m_kia_options_interface->create_actions_menu_settings(m_kia_menubar->get_menu_actions());
 
     connect(m_kia_options_interface, &Kia_options_interface::send_num_actions, this, [this](qint16 type_actions, qint16 num_actions, bool is_active)
     {
         m_kia_menubar->hide_or_show_actions(type_actions, num_actions, is_active);
     });
-    connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_table_state(qint16, QStringList)), m_kia_options_interface, SLOT(set_check_box_for_table_state(qint16, QStringList)));
-    connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_color_table_state(qint16, QStringList)), m_kia_options_interface, SLOT(set_check_box_for_table_state_color(qint16, QStringList)));
-    connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_color_table_state(qint16, QStringList)), m_kia_options_interface, SLOT(set_check_box_for_table_state_color(qint16, QStringList)));
 
-    connect(m_save_read_settings.get(), SIGNAL(send_list_for_menu_actions(qint16, QStringList)), m_kia_options_interface, SLOT(set_list_for_menu_actions(qint16, QStringList)));
+    m_kia_options_interface->create_menu_for_menu_bar(m_kia_menubar->get_menu_from_menubar());
+    connect(m_kia_options_interface, &Kia_options_interface::send_num_menus, this, [this](qint16 type_menu, bool is_active)
+    {
+        m_kia_menubar->hide_or_show_menu(type_menu, is_active);
+    });
 
+    connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_table_state(qint16, QStringList)),
+            m_kia_options_interface, SLOT(set_check_box_for_table_state(qint16, QStringList)));
+    connect(m_save_read_settings.get(), SIGNAL(send_list_for_check_box_color_table_state(qint16, QStringList)),
+            m_kia_options_interface, SLOT(set_check_box_for_table_state_color(qint16, QStringList)));
+
+    connect(m_save_read_settings.get(), SIGNAL(send_list_for_menu_actions(qint16, QStringList)),
+            m_kia_options_interface, SLOT(set_list_for_menu_actions(qint16, QStringList)));
+
+    connect(m_save_read_settings.get(), SIGNAL(send_to_list_for_check_box_menu_for_menubar(QStringList)),
+            m_kia_options_interface, SLOT(set_list_for_menu_actions_for_menubar(QStringList)));
 }
 
 void KiaCore::create_kia_debug_commands()

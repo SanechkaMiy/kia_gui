@@ -119,6 +119,23 @@ void Kia_options_interface::create_actions_menu_settings(std::vector<std::pair<Q
     }
 }
 
+void Kia_options_interface::create_menu_for_menu_bar(std::vector<QMenu*> menu_list)
+{
+    m_cb_for_menu.resize(menu_list.size());
+    for (uint16_t num_menu = 0; num_menu < menu_list.size(); ++num_menu)
+    {
+        m_cb_for_menu[num_menu] = new QCheckBox(menu_list[num_menu]->title(), this);
+        m_cb_for_menu[num_menu]->setChecked(true);
+        ui->gridLayout_4->addWidget(m_cb_for_menu[num_menu]);
+        m_kia_settings->m_kia_gui_settings->m_status_menu_from_menubar.push_back("1");
+        connect(m_cb_for_menu[num_menu], &QCheckBox::toggled,  ([this, num_menu](bool is_toggled)
+        {
+            m_kia_settings->m_kia_gui_settings->m_status_menu_from_menubar[num_menu] = QString::number(is_toggled);
+            emit send_num_menus(num_menu, is_toggled);
+        }));
+    }
+}
+
 void Kia_options_interface::set_check_box_for_table_state(qint16 num_table, QStringList active_rows)
 {
     m_status[num_table] = active_rows;
@@ -151,6 +168,18 @@ void Kia_options_interface::set_list_for_menu_actions(qint16 num_menu, QStringLi
             emit send_num_actions(num_menu, num_action, list_actions[num_action].toInt());
             if (m_menu_actions[num_menu].size() != 0)
                 m_cb_for_actions[num_menu][num_action]->setChecked(m_menu_actions[num_menu][num_action].toInt());
+        }
+    }
+}
+
+void Kia_options_interface::set_list_for_menu_actions_for_menubar(QStringList list_actions)
+{
+    if (list_actions.size() == m_cb_for_menu.size())
+    {
+        for (uint16_t num_menu = 0; num_menu < list_actions.size(); ++num_menu)
+        {
+            emit send_num_menus(num_menu, list_actions[num_menu].toInt());
+            m_cb_for_menu[num_menu]->setChecked(list_actions[num_menu].toInt());
         }
     }
 }

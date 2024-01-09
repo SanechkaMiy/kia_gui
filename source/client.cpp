@@ -96,7 +96,6 @@ void Client::slot_read_server()
                     m_kia_settings->m_kia_gui_settings->m_cyclogram_ai_name.push_back(std::make_pair(data_from_server[num_cycl], data_from_server[num_cycl + 1].toInt()));
             }
             m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_ai = data_from_server.size() / 2;
-            std::cout << m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_ai << std::endl;
             break;
         case SEND_CYCLOGRAMS_TP:
             for (uint16_t num_cycl = 0; num_cycl < data_from_server.size(); num_cycl++)

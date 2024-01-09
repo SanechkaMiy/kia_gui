@@ -62,7 +62,8 @@ void Save_read_settings::save_settings()
     list_ai_settings_is_continue.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_skip_fails_for_continue));
     list_power_after_tp.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_off_power_for_tp));
 
-    m_settings.beginGroup("/Device_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Device_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     m_settings.setValue("/used_mpi_command", QVariant::fromValue(list_do_mpi_command));
     m_settings.setValue("/used_cyclogram", QVariant::fromValue(list_do_cyclogram_tp));
     m_settings.setValue("/list_used_ai_cycl", QVariant::fromValue(list_do_cyclogram_ai));
@@ -83,7 +84,8 @@ void Save_read_settings::save_settings()
     m_settings.endGroup();
 
 
-    m_settings.beginGroup("/Gui_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Gui_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     m_settings.setValue("/count_table_state" , QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_status_for_table_state.size()));
     for (uint16_t num_table = 0; num_table < m_kia_settings->m_kia_gui_settings->m_status_for_table_state.size(); ++num_table)
         m_settings.setValue("/status_for_table_state_" + QString::number(num_table), QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_status_for_table_state[num_table]));
@@ -95,6 +97,8 @@ void Save_read_settings::save_settings()
     for (uint16_t num_menu = 0; num_menu < m_kia_settings->m_kia_gui_settings->m_status_for_menu_action.size(); ++num_menu)
         m_settings.setValue("/status_for_menu_action_" + QString::number(num_menu), QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_status_for_menu_action[num_menu]));
 
+    m_settings.setValue("/status_for_menu_for_menubar", QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_status_menu_from_menubar));
+
     m_settings.endGroup();
     save_tabs_settings();
     save_graph_settings();
@@ -105,7 +109,8 @@ void Save_read_settings::save_settings()
 void Save_read_settings::load_settings()
 {
     bool do_load = true;
-    m_settings.beginGroup("/Device_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Device_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     auto keys_dev = m_settings.allKeys();
     if (keys_dev.size() != 0)
     {
@@ -199,7 +204,8 @@ void Save_read_settings::load_settings()
         std::cout <<"empty ini dev settings" << std::endl;
     m_settings.endGroup();
 
-    m_settings.beginGroup("/Gui_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Gui_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     auto keys_gui = m_settings.allKeys();
     if (keys_gui.size() != 0)
     {
@@ -213,13 +219,15 @@ void Save_read_settings::load_settings()
             emit send_list_for_check_box_color_table_state(num_table, list_color);
         }
         auto count_menu = m_settings.value("/count_status_for_menu_action").value<quint16>();
-                    std::cout << "load menu" << std::endl;
+
         for (uint16_t num_menu = 0; num_menu < count_menu; num_menu++)
         {
             auto list_actions = m_settings.value("/status_for_menu_action_" + QString::number(num_menu)).value<QStringList>();
             //std::cout << list_actions.size() << std::endl;
             emit send_list_for_menu_actions(num_menu, list_actions);
         }
+        auto list_actions = m_settings.value("/status_for_menu_for_menubar").value<QStringList>();
+        emit send_to_list_for_check_box_menu_for_menubar(list_actions);
     }
     else
         std::cout <<"empty ini gui settings" << std::endl;
@@ -229,7 +237,8 @@ void Save_read_settings::load_settings()
 
 void Save_read_settings::load_graph_settings()
 {
-    m_settings.beginGroup("/Graph_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Graph_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     if (m_settings.allKeys().size() != 0)
     {
 
@@ -250,7 +259,8 @@ void Save_read_settings::load_graph_settings()
 
 void Save_read_settings::save_graph_settings()
 {
-    m_settings.beginGroup("/Graph_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Graph_settings_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     QStringList  used_graph;
     for (uint16_t num_graph = 0; num_graph < m_kia_settings->m_kias_view_data->m_data_graph.size(); num_graph++)
     {
@@ -264,7 +274,8 @@ void Save_read_settings::save_graph_settings()
 
 void Save_read_settings::load_table_settings()
 {
-    m_settings.beginGroup("/Table_settings" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Table_settings" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     if (m_settings.allKeys().size() != 0)
     {
 
@@ -288,7 +299,8 @@ void Save_read_settings::load_table_settings()
 
 void Save_read_settings::save_table_settings()
 {
-    m_settings.beginGroup("/Table_settings" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Table_settings" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     QStringList  used_table;
     for (uint16_t num_table = 0; num_table < m_kia_settings->m_kias_view_data->m_data_table.size(); num_table++)
     {
@@ -303,7 +315,8 @@ void Save_read_settings::save_table_settings()
 
 void Save_read_settings::load_tabs_settings()
 {
-    m_settings.beginGroup("/Tabs_settings" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Tabs_settings" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     if (m_settings.allKeys().size() != 0)
     {
         m_kia_settings->m_kia_gui_settings->m_count_tab_bar = m_settings.value("/count_tabs").value<uint16_t>();
@@ -326,7 +339,8 @@ void Save_read_settings::load_tabs_settings()
 
 void Save_read_settings::save_tabs_settings()
 {
-    m_settings.beginGroup("/Tabs_settings" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Tabs_settings" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     m_settings.setValue("/current_main_tab_index" , QVariant::fromValue(m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget));
     QStringList  used_tab;
     for (uint16_t num_tab = 0; num_tab < m_kia_settings->m_kia_gui_settings->m_data_tabs.size(); num_tab++)
@@ -381,7 +395,8 @@ void Save_read_settings::save_profile_settings()
 
 void Save_read_settings::save_pos_and_size_widgets(const QString save_name, QWidget *wgt)
 {
-    m_settings.beginGroup("/Window_save_geometry_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Window_save_geometry_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     m_settings.setValue("/geometry_" + save_name, wgt->saveGeometry());
     m_settings.endGroup();
 }
@@ -389,7 +404,8 @@ void Save_read_settings::save_pos_and_size_widgets(const QString save_name, QWid
 void Save_read_settings::load_pos_and_size_widgets(const QString save_name, QWidget *wgt)
 {
 
-    m_settings.beginGroup("/Window_save_geometry_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Window_save_geometry_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     wgt->restoreGeometry(m_settings.value("/geometry_" + save_name).toByteArray());
     auto curr_pos = QPoint((int)(wgt->pos().x() / constants::max_grid_size) * constants::max_grid_size,
                            (int)(wgt->pos().y() / constants::max_grid_size) * constants::max_grid_size);
@@ -399,7 +415,8 @@ void Save_read_settings::load_pos_and_size_widgets(const QString save_name, QWid
 
 void Save_read_settings::save_state_widgets(const QString save_name, QWidget *wgt)
 {
-    m_settings.beginGroup("/Window_save_state_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Window_save_state_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     m_settings.setValue("/title_" + save_name, wgt->windowTitle());
     m_settings.setValue("/num_parent_" + save_name, m_kia_settings->m_kia_gui_settings->m_current_num_parent.value(wgt));
     m_settings.setValue("/is_hide_" + save_name, m_kia_settings->m_kia_gui_settings->m_widget_is_hide.value(wgt));
@@ -408,7 +425,8 @@ void Save_read_settings::save_state_widgets(const QString save_name, QWidget *wg
 
 void Save_read_settings::load_state_widgets(const QString save_name, QWidget *wgt, bool is_window_info)
 {
-    m_settings.beginGroup("/Window_save_state_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Window_save_state_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     wgt->setWindowTitle(m_settings.value("/title_" + save_name).value<QString>());
     m_kia_settings->m_kia_gui_settings->m_widget_is_hide[wgt] = m_settings.value("/is_hide_" + save_name).value<bool>();
     m_kia_settings->m_kia_gui_settings->m_current_num_parent[wgt] = m_settings.value("/num_parent_" + save_name).value<int16_t>();
@@ -437,14 +455,16 @@ void Save_read_settings::load_state_widgets(const QString save_name, QWidget *wg
 
 void Save_read_settings::save_state_dock_manager(CDockManager *manager)
 {
-    m_settings.beginGroup("/Docker_save_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Docker_save_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     m_settings.setValue("/dock_manager", manager->saveState());
     m_settings.endGroup();
 }
 
 void Save_read_settings::load_state_dock_manager(CDockManager *manager)
 {
-    m_settings.beginGroup("/Docker_save_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile));
+    m_settings.beginGroup("/Docker_save_" + QString("type_profile_") + QString::number(m_kia_settings->m_current_profile)
+                          + QString("_type_bokz_") + QString::number(m_kia_settings->m_type_bokz));
     manager->restoreState(m_settings.value("/dock_manager").toByteArray());
     m_settings.endGroup();
 }

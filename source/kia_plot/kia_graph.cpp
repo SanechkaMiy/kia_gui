@@ -246,6 +246,13 @@ void Kia_graph::set_data_on_plot_slot()
 {
     m_func_for_graph_type[m_kias_graph_data->m_graph_type]();
     graph()->setData(m_xData, m_yData);
+    m_buffer_for_auto_scale = m_yData;
+    if (m_is_show_mean)
+    {
+        auto sum = std::accumulate(m_buffer_for_auto_scale.begin(), m_buffer_for_auto_scale.end(), 0.);
+        auto mean = sum / m_buffer_for_auto_scale.size();
+        xAxis2->setLabel("Среднее: " + QString::number(mean));
+    }
     m_xData.clear();
     m_yData.clear();
 }
@@ -492,6 +499,29 @@ void Kia_graph::create_context_menu()
         m_func_for_data_type.push_back(func_tmpt);
         check_data();
 
+        QAction* show_mean_action = new QAction("Показать среднее", this);
+        show_mean_action->setCheckable(true);
+        connect(show_mean_action, &QAction::triggered, this, [this, show_mean_action]()
+        {
+            if (show_mean_action->isChecked())
+                m_is_show_mean = true;
+            else
+            {
+                m_is_show_mean = false;
+                xAxis2->setLabel("");
+            }
+
+        });
+        m_context_menu->addAction(show_mean_action);
+
+        QAction* auto_scale_action = new QAction("Автомасштабирование", this);
+
+        connect(auto_scale_action, &QAction::triggered, this, [this]()
+        {
+            auto_scale();
+
+        });
+        m_context_menu->addAction(auto_scale_action);
 
 
         QAction* clear_action = new QAction("Очистить", this);
@@ -572,4 +602,12 @@ double Kia_graph::get_radians(QVariant &value)
 {
     auto ret = value.toDouble() * PI / 180;
     return ret;
+}
+
+void Kia_graph::auto_scale()
+{
+    const auto [min, max] = std::minmax_element(std::begin(m_buffer_for_auto_scale), std::end(m_buffer_for_auto_scale));
+
+            auto delta = *max - *min;
+            yAxis->setRange(*min - delta, *max + delta);
 }
