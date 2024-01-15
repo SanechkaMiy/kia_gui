@@ -41,34 +41,73 @@ void Kia_db::get_data_from_db_for_graph_slot(QString begin, QString end)
     m_kias_data_from_db->m_data_to_view.clear();
     QString data_get_db;
     QString data_get;
-    if (m_query_param[QP_TYPE_ARR] == "frames")
+    if (m_query_param[QP_NUM_BOKZ_FOR_ANGLES].isEmpty())
     {
-        data_get = "frame_name";
-        data_get_db = ", " + data_get;
+
+        if (m_query_param[QP_TYPE_ARR] == "frames")
+        {
+            data_get = "frame_name";
+            data_get_db = ", " + data_get;
+        }
+        if (!m_query->exec("SELECT datetime, "+ m_query_param[QP_X] + ", " + m_query_param[QP_Y] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
+                           "WHERE host_id='04:92:26:d0:ef:d6'::macaddr "
+                           "AND experiment_id='" + m_kia_settings->m_kias_db->m_experiment_id + "' AND serial_num=" + m_query_param[QP_NUM_BOKZ] + " "
+                           "AND datetime >= '" + QDate::currentDate().toString("yyyy-MM-dd") + " " + begin + "' AND datetime <='" + QDate::currentDate().toString("yyyy-MM-dd") + " " + end + "';"))
+        {
+            qDebug() <<"Unable to execute query";
+        }
+        QSqlRecord rec = m_query->record();
+        QDateTime date_time;
+        QString data_to_view;
+        double y_val;
+        double x_val;
+        while(m_query->next())
+        {
+            date_time = m_query->value(rec.indexOf("datetime")).toDateTime();
+            y_val = m_query->value(rec.indexOf(m_query_param[QP_Y])).toDouble();
+            x_val = m_query->value(rec.indexOf(m_query_param[QP_X])).toDouble();
+            if (!data_get.isEmpty())
+                data_to_view = m_query->value(rec.indexOf(data_get)).value<QString>();
+            m_kias_data_from_db->m_date_time_val.push_back(date_time.time());
+            m_kias_data_from_db->m_y_value.push_back(y_val);
+            m_kias_data_from_db->m_x_value.push_back(x_val);
+            m_kias_data_from_db->m_data_to_view.push_back(data_to_view);
+        }
+
     }
-    if (!m_query->exec("SELECT datetime, "+ m_query_param[QP_X] + ", " + m_query_param[QP_Y] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
-                       "WHERE host_id='04:92:26:d0:ef:d6'::macaddr "
-                       "AND experiment_id='" + m_kia_settings->m_kias_db->m_experiment_id + "' AND serial_num=" + m_query_param[QP_NUM_BOKZ] + " "
-                       "AND datetime >= '" + QDate::currentDate().toString("yyyy-MM-dd") + " " + begin + "' AND datetime <='" + QDate::currentDate().toString("yyyy-MM-dd") + " " + end + "';"))
+    else
     {
-        qDebug() <<"Unable to execute query";
-    }
-    QSqlRecord rec = m_query->record();
-    QDateTime date_time;
-    QString data_to_view;
-    double y_val;
-    double x_val;
-    while(m_query->next())
-    {
-        date_time = m_query->value(rec.indexOf("datetime")).toDateTime();
-        y_val = m_query->value(rec.indexOf(m_query_param[QP_Y])).toDouble();
-        x_val = m_query->value(rec.indexOf(m_query_param[QP_X])).toDouble();
-        if (!data_get.isEmpty())
-            data_to_view = m_query->value(rec.indexOf(data_get)).value<QString>();
-        m_kias_data_from_db->m_date_time_val.push_back(date_time.time());
-        m_kias_data_from_db->m_y_value.push_back(y_val);
-        m_kias_data_from_db->m_x_value.push_back(x_val);
-        m_kias_data_from_db->m_data_to_view.push_back(data_to_view);
+        auto query_bokz_x = new QSqlQuery(m_db);
+        if (!query_bokz_x->exec("SELECT datetime, "+ m_query_param[QP_X] + ", " + m_query_param[QP_Y] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
+                                "WHERE host_id='04:92:26:d0:ef:d6'::macaddr "
+                                "AND experiment_id='" + m_kia_settings->m_kias_db->m_experiment_id + "' AND serial_num=" + m_query_param[QP_NUM_BOKZ] + " "
+                                "AND datetime >= '" + QDate::currentDate().toString("yyyy-MM-dd") + " " + begin + "' AND datetime <='" + QDate::currentDate().toString("yyyy-MM-dd") + " " + end + "';"))
+        {
+            qDebug() <<"Unable to execute query";
+        }
+        QSqlRecord rec_x = query_bokz_x->record();
+        double x_val;
+        while(m_query->next())
+        {
+            x_val = m_query->value(rec_x.indexOf(m_query_param[QP_X])).toDouble();
+            m_kias_data_from_db->m_x_value.push_back(x_val);
+        }
+
+        auto query_bokz_y = new QSqlQuery(m_db);
+        if (!query_bokz_y->exec("SELECT datetime, "+ m_query_param[QP_X] + ", " + m_query_param[QP_Y] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
+                                "WHERE host_id='04:92:26:d0:ef:d6'::macaddr "
+                                "AND experiment_id='" + m_kia_settings->m_kias_db->m_experiment_id + "' AND serial_num=" + m_query_param[QP_NUM_BOKZ_FOR_ANGLES] + " "
+                                "AND datetime >= '" + QDate::currentDate().toString("yyyy-MM-dd") + " " + begin + "' AND datetime <='" + QDate::currentDate().toString("yyyy-MM-dd") + " " + end + "';"))
+        {
+            qDebug() <<"Unable to execute query";
+        }
+        QSqlRecord rec_y = query_bokz_y->record();
+        double y_val;
+        while(m_query->next())
+        {
+            y_val = m_query->value(rec_y.indexOf(m_query_param[QP_Y])).toDouble();
+            m_kias_data_from_db->m_y_value.push_back(y_val);
+        }
     }
 }
 

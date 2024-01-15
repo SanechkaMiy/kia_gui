@@ -192,8 +192,11 @@ void KiaCore::create_kia_options()
 {
 
     create_kia_options_for_bi_command();
+
     create_kia_options_for_cyclogram();
+
     create_kia_options_for_command();
+
     create_kia_options_for_interface();
     m_kia_options = new Kia_options(m_kia_settings, m_kia_options_list, m_kia_main_window);
 }
@@ -387,6 +390,8 @@ void KiaCore::create_kia_options_for_cyclogram()
     m_kia_options_list.push_back(pair);
     connect(m_save_read_settings.get(), SIGNAL(send_to_kia_options(qint16, QStringList)), m_kia_options_cyclograms, SLOT(set_load_settings(qint16, QStringList)));
     connect(m_save_read_settings.get(), SIGNAL(send_to_tp_cyclogram_settings(qint16, QStringList)), m_kia_options_cyclograms, SLOT(set_load_tp_settings(qint16, QStringList)));
+        connect(m_save_read_settings.get(), SIGNAL(send_to_ri_cyclograms(qint16, QStringList)), m_kia_options_cyclograms, SLOT(load_for_specific_cyclogram(qint16, QStringList)));
+    connect(m_save_read_settings.get(), SIGNAL(send_to_regular_cyclogram_do_command(qint16, qint16, QStringList)), m_kia_options_cyclograms, SLOT(set_load_regular_settings_do_command(qint16, qint16, QStringList)));
 }
 
 void KiaCore::create_kia_options_for_command()

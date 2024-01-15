@@ -19,4 +19,8 @@ Kia_menu::Kia_menu()
     map_key_cyclogram_ai[CYCLOGRAM_OPERATION] = QKeySequence();
     map_key_cyclogram_ai[CYCLOGRAM_SYNCHRO] = QKeySequence();
     map_key_cyclogram_ai[CYCLOGRAM_STATE_OFF] = QKeySequence();
+
+    map_key_cyclogram_ri[CYCLOGRAM_TECH_RUN] = QKeySequence();
+    map_key_cyclogram_ri[CYCLOGRAM_ZKR] = QKeySequence();
+    map_key_cyclogram_ri[CYCL_FULL_FRAMES] = QKeySequence();
 }

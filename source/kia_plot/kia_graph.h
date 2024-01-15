@@ -81,7 +81,7 @@ private:
     void start_data_timer();
     void set_style();
     QVector<double> m_xData, m_yData;
-     QVector<double> m_buffer_for_auto_scale;
+    QVector<double> m_buffer_for_auto_scale;
     uint16_t m_is_value_or_nothing = NOTHING;
     double m_start_time = 0;
     std::future<void> start_get_data;

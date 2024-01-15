@@ -9,6 +9,24 @@ Kia_constructor::Kia_constructor(std::shared_ptr<Kia_settings> kia_settings, QWi
 {
     ui->setupUi(this);
     start_thread();
+
+    m_select_dev_for_plot = new QDialog(this);
+    auto layout_dev_for_plot = new QVBoxLayout(m_select_dev_for_plot);
+    QListWidget* lw_for_dev = new QListWidget(m_select_dev_for_plot);
+    layout_dev_for_plot->addWidget(lw_for_dev);
+    std::vector<QCheckBox*> m_cb_dev;
+    m_selected_bokz.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
+    for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; num_bokz++)
+    {
+        m_cb_dev.push_back(new QCheckBox("БОКЗ №" + QString::number(num_bokz),m_select_dev_for_plot));
+        lw_for_dev->setItemWidget(new QListWidgetItem(lw_for_dev), m_cb_dev[num_bokz]);
+
+        connect(m_cb_dev[num_bokz], &QCheckBox::toggled,  ([this, num_bokz](bool is_toggled)
+        {
+            m_selected_bokz[num_bokz] = is_toggled;
+        }));
+    }
+
 }
 
 Kia_constructor::~Kia_constructor()
@@ -126,28 +144,55 @@ void Kia_constructor::set_type_dev(uint16_t type_bokz, uint16_t type_bi)
 }
 void Kia_constructor::add_graph()
 {
+
+    QString type_dev = "bokz";
+    bool is_bi = false;
+    QStringList query_param;
+    query_param.push_back(m_x_val);
+    query_param.push_back(m_y_val);
+    query_param.push_back(m_type_dev);
+    query_param.push_back(m_type_arr);
+    query_param.push_back(m_x_desc);
+    query_param.push_back(m_y_desc);
+    auto name_dev = m_type_dev;
+    name_dev.resize(type_dev.size());
+    if (type_dev != name_dev)
+    {
+        is_bi = true;
+    }
+
+    auto count_if_used = 0;
     for (int num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
     {
         if (m_kia_settings->m_kia_data_to_server->m_is_used_bokz[num_bokz] == CS_IS_ON)
         {
-            QStringList query_param;
-            query_param.push_back(m_x_val);
-            query_param.push_back(m_y_val);
-            query_param.push_back(m_type_dev);
-            query_param.push_back(m_type_arr);
-            query_param.push_back(m_x_desc);
-            query_param.push_back(m_y_desc);
-            query_param.push_back(QString::number(num_bokz));
-            query_param.push_back(QString::number(m_kia_settings->m_kias_view_data->m_graph_count));
-            query_param.push_back(m_type_widget);
-            query_param.push_back(QString::number(m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget));
-            m_kia_settings->m_kias_view_data->m_graph_count++;
-            m_kia_settings->m_kias_view_data->m_data_graph.push_back(query_param);
-            emit add_graph(query_param);
-            emit set_window_initial_settings(query_param[QP_NUM_WIDGET].toInt(), 800, 500);
-            emit show_graph(query_param[QP_NUM_WIDGET].toInt());
+            count_if_used++;
+            if (is_bi)
+            {
+                query_param.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_num_used_bi[num_bokz]));
+            }
+            else
+                query_param.push_back(QString::number(num_bokz));
         }
     }
+
+    if (count_if_used == 1)
+    {
+        query_param.push_back("");
+    }
+
+    query_param.push_back(QString::number(m_kia_settings->m_kias_view_data->m_graph_count));
+    query_param.push_back(m_type_widget);
+    query_param.push_back(QString::number(m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget));
+    if (count_if_used != 0)
+    {
+        m_kia_settings->m_kias_view_data->m_graph_count++;
+        m_kia_settings->m_kias_view_data->m_data_graph.push_back(query_param);
+        emit add_graph(query_param);
+        emit set_window_initial_settings(query_param[QP_NUM_WIDGET].toInt(), 800, 500);
+        emit show_graph(query_param[QP_NUM_WIDGET].toInt());
+    }
+
 }
 
 void Kia_constructor::add_table()
@@ -172,9 +217,14 @@ void Kia_constructor::add_table()
                 is_bi = true;
             }
             if (is_bi)
+            {
                 query_param.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_num_used_bi[num_bokz]));
+            }
             else
+            {
                 query_param.push_back(QString::number(num_bokz));
+            }
+            query_param.push_back("");
             query_param.push_back(QString::number(m_kia_settings->m_kias_view_data->m_table_count));
             query_param.push_back(m_type_widget);
             query_param.push_back(QString::number(m_kia_settings->m_kia_gui_settings->m_current_main_tab_widget));
@@ -203,8 +253,11 @@ void Kia_constructor::add_table_to_list(QStringList query_param)
 
 void Kia_constructor::on_pb_add_graph_clicked()
 {
-    m_type_widget = ui->lw_x->currentItem()->text();
-    add_graph();
+    if (ui->lw_x->selectedItems().size() != 0)
+    {
+        m_type_widget = ui->lw_x->currentItem()->text();
+        add_graph();
+    }
 }
 
 
@@ -306,5 +359,11 @@ void Kia_constructor::start_thread()
             }
         }
     });
+}
+
+
+void Kia_constructor::on_pb_graph_angles_clicked()
+{
+    m_select_dev_for_plot->show();
 }
 

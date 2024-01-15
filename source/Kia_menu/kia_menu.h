@@ -16,6 +16,7 @@ public:
     QMap<uint16_t, QKeySequence> map_key_command;
     QMap<uint16_t, QKeySequence> map_key_cyclogram_tp;
     QMap<uint16_t, QKeySequence> map_key_cyclogram_ai;
+    QMap<uint16_t, QKeySequence> map_key_cyclogram_ri;
     virtual void create_action_state_work(QMenu* menu) = 0;
     virtual void create_action_pci(QMenu* menu) = 0;
     virtual void create_action_res(QMenu* menu) = 0;

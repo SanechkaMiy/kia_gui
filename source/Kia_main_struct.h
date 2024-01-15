@@ -13,6 +13,7 @@
 #include <QMap>
 #include <QAction>
 #include <QSqlQueryModel>
+#include <QLineEdit>
 #include <queue>
 #include "DockWidget.h"
 #include <nlohmann/json.hpp>
@@ -34,7 +35,7 @@ const static uint16_t max_count_mpi = MAX_TMK_NUMBER * 2 + 1;
 const static uint16_t max_count_window = 1;
 const static uint16_t size_qa = 4;
 const static uint16_t size_w = 3;
-const static uint16_t max_count_cyclograms = 5;
+const static uint16_t max_count_cyclograms = 2;
 const static uint16_t max_count_param = 3;
 const static uint16_t max_count_relay_command = 3;
 const static uint16_t max_count_bi_settings = 2;
@@ -48,6 +49,8 @@ struct Kia_data_to_server
     std::vector<uint16_t> m_do_mpi_command_in_cyclogram;
     std::vector<uint16_t> m_do_cyclogram_in_tp;
     std::vector<uint16_t> m_do_cyclogram_in_ai;
+    std::vector<std::vector<uint16_t>> m_do_cyclograms_in_do;
+    std::vector<std::vector<uint64_t>> m_pause_to_do_cyclogram_in_do;
     std::vector<uint16_t> m_count_to_do_cyclogram_in_tp;
     std::vector<int> m_is_used_bokz;
     std::vector<int> m_mpi_num;
@@ -58,9 +61,7 @@ struct Kia_data_to_server
     std::vector<float> m_qa;
     std::vector<float> m_w;
     int m_bshv;
-    std::array<float, constants::max_count_param> m_param_for_cycl_zkr;
-    std::array<float, constants::max_count_param> m_param_for_cycl_full_frames;
-    std::array<float, constants::max_count_param> m_param_for_cycl_tech_run;
+    std::vector<std::array<float, constants::max_count_param>> m_param_for_run_a_lot;
     int m_1s_mark_change;
     uint16_t m_skip_fails_for_continue = 1;
     uint16_t m_off_power_for_tp = 0;
@@ -92,11 +93,12 @@ struct Kia_bokz_settings
     uint16_t m_max_mpi_command;
     uint16_t m_max_cyclograms_in_ai;
     uint16_t m_max_cyclograms_in_tp;
+    uint16_t m_max_cyclograms_in_ri;
     std::array<QStringList, constants::count_type_bokz> m_bokz_row_name;
     std::array<QStringList, constants::count_type_bokz> m_bokz_status_row_name;
     std::array<QString, constants::max_count_cyclograms> m_name_cyclograms =
     {
-        {"Автономные испытания", "Штатная", "Технологический прогон", "Испытание крышки", "Получение кадров"}//,{"dr..."}
+        {"Автономные испытания", "Штатная"}//,{"dr..."}
     };
     std::vector<int> m_epsilon;
     std::vector<float> m_focus;
@@ -113,6 +115,8 @@ struct Kia_gui_settings
     QVector<std::pair<QString, uint16_t>> m_mpi_command_name;
     QVector<std::pair<QString, uint16_t>> m_cyclogram_ai_name;
     QVector<std::pair<QString, uint16_t>> m_cyclogram_tp_name;
+    QVector<std::pair<QString, uint16_t>> m_cyclogram_ri_name;
+    std::vector<QVector<std::pair<QString, uint16_t>>> m_cyclogram_do_name;
     std::vector<QStringList> m_list_profile;
     uint16_t m_count_profile = 0;
     uint16_t m_current_main_tab_widget = 0;

@@ -251,7 +251,14 @@ void Kia_graph::set_data_on_plot_slot()
     {
         auto sum = std::accumulate(m_buffer_for_auto_scale.begin(), m_buffer_for_auto_scale.end(), 0.);
         auto mean = sum / m_buffer_for_auto_scale.size();
-        xAxis2->setLabel("Среднее: " + QString::number(mean));
+        double sko = 0;
+        for (auto el : m_buffer_for_auto_scale)
+        {
+            sko = sko + ((el - mean) * (el - mean));
+        }
+
+        auto skoo = sqrt(sko / m_buffer_for_auto_scale.size());
+        xAxis2->setLabel("Среднее: " + QString::number(mean) + " СКО: " + QString::number(skoo));
     }
     m_xData.clear();
     m_yData.clear();

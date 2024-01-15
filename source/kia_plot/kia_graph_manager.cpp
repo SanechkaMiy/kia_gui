@@ -128,15 +128,18 @@ void Kia_graph_manager::create_plot_slot(QStringList query_param)
     m_kia_custom_dialog[m_num_graph]->set_wiget_to_layout(m_dialog[m_num_graph]);
     plots_interactions();
     m_kia_constructor->add_graph_to_list(query_param);
-    m_dialog[m_num_graph]->setWindowTitle("График " + query_param[QP_Y_DESC]
-                                          + " от " + query_param[QP_X_DESC]
-                                          + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
 
-            + " " + QString::number(query_param[QP_NUM_BOKZ].toInt() + 1));
+
     QString title = "График " + query_param[QP_Y_DESC]
             + " от " + query_param[QP_X_DESC]
             + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
             + " " + QString::number(query_param[QP_NUM_BOKZ].toInt() + 1);
+    if (!query_param[QP_NUM_BOKZ_FOR_ANGLES].isEmpty())
+    {
+        title = title + " и " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+                + " " + QString::number(query_param[QP_NUM_BOKZ_FOR_ANGLES].toInt() + 1);
+    }
+    m_dialog[m_num_graph]->setWindowTitle(title);
     m_kia_custom_dialog[m_num_graph]->set_window_title(title);
 
     emit create_action(title, m_num_graph);

@@ -60,9 +60,10 @@ void Kia_menu_bokzm60::create_action_pci(QMenu *menu)
 void Kia_menu_bokzm60::create_action_res(QMenu *menu)
 {
     std::vector<std::tuple<QString, QKeySequence, uint16_t>> res_action;
-    res_action.push_back(std::make_tuple("Испытание крышки", QKeySequence(), CYCLOGRAM_ZKR));
-    res_action.push_back(std::make_tuple("Технологический прогон", QKeySequence(), CYCLOGRAM_TECH_RUN));
-    res_action.push_back(std::make_tuple("Получение темновых кадров", QKeySequence(), CYCL_FULL_FRAMES));
+    for (auto el : m_kia_settings->m_kia_gui_settings->m_cyclogram_ri_name)
+    {
+        res_action.push_back(std::make_tuple(el.first, map_key_cyclogram_ri[el.second], el.second));
+    }
     for (auto& el : res_action)
     {
         auto action = menu->addAction(std::get<NAME_ACTION>(el), menu, [this, el]()
@@ -119,7 +120,7 @@ void Kia_menu_bokzm60::create_action_get_frames(QMenu *menu)
 {
     std::vector<std::tuple<QString, QKeySequence, uint16_t>> frames_action;
     frames_action.push_back(std::make_tuple("Полный кадр", QKeySequence(), DO_FULL_FRAME));
-    frames_action.push_back(std::make_tuple("Бинированный кадр", QKeySequence(), DO_FULL_FRAME));
+    frames_action.push_back(std::make_tuple("Бинированный кадр", QKeySequence(), DO_BIN_FRAME));
     for (auto& el : frames_action)
     {
         auto action = menu->addAction(std::get<NAME_ACTION>(el), menu, [this, el]()

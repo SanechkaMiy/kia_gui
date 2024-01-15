@@ -47,6 +47,8 @@ private slots:
 
     void on_pb_show_graph_clicked();
 
+    void on_pb_graph_angles_clicked();
+
 private:
     void start_thread();
     Ui::Kia_constructor *ui;
@@ -64,6 +66,9 @@ private:
     std::vector<QCheckBox*> m_cb_for_data;
     std::future<void> m_thread_change_range;
     std::atomic_bool m_stop_change_range{false};
+
+    QDialog* m_select_dev_for_plot;
+    std::vector<uint16_t> m_selected_bokz;
 };
 
 #endif // KIA_CONSTRUCTOR_H

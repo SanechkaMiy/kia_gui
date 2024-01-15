@@ -20,13 +20,13 @@ void Save_read_settings::save_settings()
     QStringList list_do_count_cyclogram;
     QStringList list_do_cyclogram_tp;
     QStringList list_do_cyclogram_ai;
-    QStringList list_tp_param;
-    QStringList list_zkr_param;
-    QStringList list_frames_param;
     QStringList list_used_bi;
     QStringList list_used_channel;
     QStringList list_ai_settings_is_continue;
     QStringList list_power_after_tp;
+
+
+
 
     for (uint16_t mpi_command = 0; mpi_command < m_kia_settings->m_kia_bokz_settings->m_max_mpi_command; ++mpi_command)
         list_do_mpi_command.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_mpi_command_in_cyclogram[mpi_command]));
@@ -39,15 +39,6 @@ void Save_read_settings::save_settings()
 
     for (uint16_t num_cycl = 0; num_cycl < m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp; ++num_cycl)
         list_do_count_cyclogram.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_count_to_do_cyclogram_in_tp[num_cycl]));
-
-    for (uint16_t ind_tp_param = 0; ind_tp_param < constants::max_count_param; ++ind_tp_param)
-        list_tp_param.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_param_for_cycl_tech_run[ind_tp_param]));
-
-    for (uint16_t ind_zkr_param = 0; ind_zkr_param < constants::max_count_param; ++ind_zkr_param)
-        list_zkr_param.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_param_for_cycl_zkr[ind_zkr_param]));
-
-    for (uint16_t ind_frames_param = 0; ind_frames_param < constants::max_count_param; ++ind_frames_param)
-        list_frames_param.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_param_for_cycl_full_frames[ind_frames_param]));
 
     for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
     {
@@ -70,9 +61,6 @@ void Save_read_settings::save_settings()
     m_settings.setValue("/used_do_count_cyclogram", QVariant::fromValue(list_do_count_cyclogram));
     m_settings.setValue("/ai_param_is_continue", QVariant::fromValue(list_ai_settings_is_continue));
     m_settings.setValue("/power_after_tp", QVariant::fromValue(list_power_after_tp));
-    m_settings.setValue("/tp_param", QVariant::fromValue(list_tp_param));
-    m_settings.setValue("/zkr_param", QVariant::fromValue(list_zkr_param));
-    m_settings.setValue("/frames_param", QVariant::fromValue(list_frames_param));
     m_settings.setValue("/used_bokz", QVariant::fromValue(list_used_bokz));
     m_settings.setValue("/mpi_num", QVariant::fromValue(list_mpi_num));
     m_settings.setValue("/list_address_change", QVariant::fromValue(list_address_change));
@@ -81,6 +69,30 @@ void Save_read_settings::save_settings()
     m_settings.setValue("/mode_1s", QVariant::fromValue(m_kia_settings->m_kia_bi_settings->m_mode_1s));
     m_settings.setValue("/list_used_bi", QVariant::fromValue(list_used_bi));
     m_settings.setValue("/list_used_channel", QVariant::fromValue(list_used_channel));
+
+    for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do.size(); num_cyclogram++)
+    {
+        QStringList command_in_cyclograms;
+        QStringList pause_command_in_cyclograms;
+        for (uint16_t num_command = 0; num_command < m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do[num_cyclogram].size(); num_command++)
+        {
+            command_in_cyclograms.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do[num_cyclogram][num_command]));
+            pause_command_in_cyclograms.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_pause_to_do_cyclogram_in_do[num_cyclogram][num_command]));
+        }
+        m_settings.setValue("/used_command_in_cyclogram_" + QString::number(num_cyclogram), QVariant::fromValue(command_in_cyclograms));
+        m_settings.setValue("/used_pause_command_in_cyclogram_" + QString::number(num_cyclogram), QVariant::fromValue(pause_command_in_cyclograms));
+    }
+
+    for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_gui_settings->m_cyclogram_ri_name.size(); num_cyclogram++)
+    {
+        QStringList param;
+        for (uint16_t num_param = 0; num_param < m_kia_settings->m_kia_data_to_server->m_param_for_run_a_lot[num_cyclogram].size(); num_param++)
+        {
+            param.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_param_for_run_a_lot[num_cyclogram][num_param]));
+        }
+        m_settings.setValue("/param_ri_" + QString::number(num_cyclogram), QVariant::fromValue(param));
+    }
+
     m_settings.endGroup();
 
 
@@ -122,15 +134,6 @@ void Save_read_settings::load_settings()
 
         QStringList list_do_cyclogram;
         list_do_cyclogram = m_settings.value("/used_cyclogram").value<QStringList>();
-
-        QStringList list_zkr_param;
-        list_zkr_param = m_settings.value("/zkr_param").value<QStringList>();
-
-        QStringList list_tp_param;
-        list_tp_param = m_settings.value("/tp_param").value<QStringList>();
-
-        QStringList list_frames_param;
-        list_frames_param = m_settings.value("/frames_param").value<QStringList>();
 
         QStringList list_used_bokz;
         list_used_bokz = m_settings.value("/used_bokz").value<QStringList>();
@@ -182,14 +185,33 @@ void Save_read_settings::load_settings()
 
         emit send_to_kia_options(KNCycl_AI, list_ai_settings_is_continue);
         emit send_to_kia_options(KNCycl_REGULAR, list_do_mpi_command);
-        emit send_to_kia_options(KNCycl_TR, list_tp_param);
-        emit send_to_kia_options(KNCycl_ZKR, list_zkr_param);
-        emit send_to_kia_options(KNCycl_FRAMES, list_frames_param);
-        emit send_to_kia_options(KNCycl_AI_USED_CYCL, list_ai_used_cycl);
 
+        emit send_to_kia_options(KNCycl_AI_USED_CYCL, list_ai_used_cycl);
         emit send_to_tp_cyclogram_settings(USED_CYCLOGRAM, list_do_cyclogram);
         emit send_to_tp_cyclogram_settings(COUNT_TO_DO_CYCLOGRAM, list_do_count_cyclogram);
         emit send_to_tp_cyclogram_settings(OFF_POWER, list_power_after_tp);
+
+        for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do.size(); num_cyclogram++)
+        {
+            QStringList command_in_cyclograms;
+            QStringList pause_command_in_cyclograms;
+            command_in_cyclograms = m_settings.value("/used_command_in_cyclogram_" + QString::number(num_cyclogram)).value<QStringList>();
+            pause_command_in_cyclograms = m_settings.value("/used_pause_command_in_cyclogram_" + QString::number(num_cyclogram)).value<QStringList>();
+            emit send_to_regular_cyclogram_do_command(num_cyclogram, USED_COMMAND, command_in_cyclograms);
+            emit send_to_regular_cyclogram_do_command(num_cyclogram, PAUSE_COMMAND, pause_command_in_cyclograms);
+        }
+
+        for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_gui_settings->m_cyclogram_ri_name.size(); num_cyclogram++)
+        {
+            QStringList param;
+            for (uint16_t num_param = 0; num_param < m_kia_settings->m_kia_data_to_server->m_param_for_run_a_lot[num_cyclogram].size(); num_param++)
+            {
+                param.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_param_for_run_a_lot[num_cyclogram][num_param]));
+            }
+            param = m_settings.value("/param_ri_" + QString::number(num_cyclogram)).value<QStringList>();
+            emit send_to_ri_cyclograms(num_cyclogram, param);
+        }
+
         if (do_load)
         {
             emit send_to_table_settings_window(list_used_bokz);

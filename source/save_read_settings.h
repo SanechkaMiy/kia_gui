@@ -51,6 +51,8 @@ signals:
     void set_default_parent(QWidget*);
     void send_to_tp_cyclogram_settings(qint16, QStringList);
     void send_to_list_for_check_box_menu_for_menubar(QStringList);
+    void send_to_regular_cyclogram_do_command(qint16, qint16, QStringList);
+    void send_to_ri_cyclograms(qint16, QStringList);
 private:
     std::shared_ptr<Kia_settings> m_kia_settings;
     QSettings m_settings;
