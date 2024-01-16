@@ -91,6 +91,7 @@ struct Kia_bokz_settings
     std::array<QString, constants::count_type_bokz> m_bokz_type = {"БОКЗМ60", "БОКЗМФ"};
     int m_count_bokz;//0 - БОКЗМ60; 1 - БОКЗМ60/1000; 2 - БОКЗМР; 3 - АИС-2К; 4 - БОКЗНК.
     uint16_t m_max_mpi_command;
+    uint16_t m_max_other_mpi_command;
     uint16_t m_max_cyclograms_in_ai;
     uint16_t m_max_cyclograms_in_tp;
     uint16_t m_max_cyclograms_in_ri;
@@ -113,6 +114,7 @@ struct Kia_gui_settings
     bool m_widget_is_closed = false;
     QMap<QWidget*, bool> m_widget_is_hide;
     QVector<std::pair<QString, uint16_t>> m_mpi_command_name;
+    QVector<std::pair<QString, uint16_t>> m_mpi_other_command_name;
     QVector<std::pair<QString, uint16_t>> m_cyclogram_ai_name;
     QVector<std::pair<QString, uint16_t>> m_cyclogram_tp_name;
     QVector<std::pair<QString, uint16_t>> m_cyclogram_ri_name;

@@ -89,6 +89,14 @@ void Client::slot_read_server()
             }
             m_kia_settings->m_kia_bokz_settings->m_max_mpi_command = data_from_server.size() / 2;
             break;
+        case SEND_OTHER_MPI_COMMAND:
+            for (uint16_t num_comm = 0; num_comm < data_from_server.size(); num_comm++)
+            {
+                if (num_comm % 2 == 0)
+                    m_kia_settings->m_kia_gui_settings->m_mpi_other_command_name.push_back(std::make_pair(data_from_server[num_comm], data_from_server[num_comm + 1].toInt()));
+            }
+            m_kia_settings->m_kia_bokz_settings->m_max_other_mpi_command = data_from_server.size() / 2;
+            break;
         case SEND_CYCLOGRAMS_AI:
             for (uint16_t num_cycl = 0; num_cycl < data_from_server.size(); num_cycl++)
             {

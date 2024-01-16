@@ -10,8 +10,6 @@
 #include <functional>
 #include <vector>
 #include "Kia_menu/kia_menu.h"
-#include "Kia_menu/kia_menu_bokzm60.h"
-#include "Kia_menu/kia_menu_bokzmf.h"
 namespace Ui {
 class KiaMenuBar;
 }
@@ -38,7 +36,7 @@ public:
     QMenu* get_menu_profile();
     QMenu* get_menu_commands();
 
-    void create_actions(uint16_t type_bokz);
+    void create_actions();
     void load_mode_menu_bi();
     std::vector<std::pair<QString, QList<QAction*>>> get_menu_actions();
 

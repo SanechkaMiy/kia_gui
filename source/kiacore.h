@@ -68,7 +68,7 @@ private:
     KiaWindowIsWork* m_kia_window_is_work;
     std::map<uint16_t, QVector<Kia_custom_dialog*>> m_kia_custom_dialog;
 
-    void create_menubar(uint16_t type_bokz);
+    void create_menubar();
 
     void set_dock_actions(const std::pair<QString, QAction*>& action);
 

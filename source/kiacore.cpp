@@ -97,9 +97,9 @@ KiaCore::~KiaCore()
 }
 
 
-void KiaCore::create_menubar(uint16_t type_bokz)
+void KiaCore::create_menubar()
 {
-    m_kia_menubar->create_actions(type_bokz);
+    m_kia_menubar->create_actions();
 }
 
 void KiaCore::set_dock_actions(const std::pair<QString, QAction *> &action)
@@ -221,7 +221,7 @@ void KiaCore::set_kia_gui_settings_slot()
     m_kia_window_info_ai_protocol.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
 
 
-    create_menubar(m_kia_settings->m_type_bokz);
+    create_menubar();
 
     m_kia_main_window->show();
 
