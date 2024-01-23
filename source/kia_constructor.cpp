@@ -83,6 +83,7 @@ void Kia_constructor::set_type_dev(uint16_t type_bokz, uint16_t type_bi)
     {
         m_x_val = x_val->text();
         m_x_desc = m_kia_db->get_columns_description(m_type_dev, m_type_arr, m_x_val);
+        m_x_um = m_kia_db->get_columns_units_of_measurement(m_type_dev, m_type_arr, m_x_val);
 
     });
 
@@ -90,6 +91,7 @@ void Kia_constructor::set_type_dev(uint16_t type_bokz, uint16_t type_bi)
     {
         m_y_val = y_val->text();
         m_y_desc = m_kia_db->get_columns_description(m_type_dev, m_type_arr, m_y_val);
+        m_y_um = m_kia_db->get_columns_units_of_measurement(m_type_dev, m_type_arr, m_y_val);
     });
 
 
@@ -154,13 +156,14 @@ void Kia_constructor::add_graph()
     query_param.push_back(m_type_arr);
     query_param.push_back(m_x_desc);
     query_param.push_back(m_y_desc);
+    query_param.push_back(m_x_um);
+    query_param.push_back(m_y_um);
     auto name_dev = m_type_dev;
     name_dev.resize(type_dev.size());
     if (type_dev != name_dev)
     {
         is_bi = true;
     }
-
     auto count_if_used = 0;
     for (int num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
     {
@@ -208,6 +211,8 @@ void Kia_constructor::add_table()
             query_param.push_back("");
             query_param.push_back(m_type_dev);
             query_param.push_back(m_type_arr);
+            query_param.push_back("");
+            query_param.push_back("");
             query_param.push_back("");
             query_param.push_back("");
             auto name_dev = m_type_dev;
@@ -353,7 +358,7 @@ void Kia_constructor::start_thread()
         while(m_stop_change_range)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
-            if (m_kia_settings->m_kias_view_data->m_is_change_range)
+            if (m_kia_settings->m_kias_view_data->m_is_change_range && m_kia_settings->m_kias_view_data->m_is_stop_graph)
             {
                 m_kia_settings->m_kias_db->m_key = m_kia_settings->m_kias_db->m_key + 1 / 1000.0;
             }

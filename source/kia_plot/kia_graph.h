@@ -29,16 +29,16 @@ public:
         TIMESTAMP_GRAPH = 0,
         DEFAULT_GRAPH = 1
     };
-    enum TYPE_DATA
+    enum TYPE_DATA_IF_CHANGE
     {
+        NOTHING = -1,
         ANGLES = 0,
-        SPEED = 1,
-        TMPT = 2
+        SPEED = 1
     };
 
     enum TYPE_DATA_FOR_GRAPH
     {
-        NOTHING = 0,
+        DEFAULT = 0,
         DEGREEZ = 1,
         SECOND = 2,
         DEGREEZ_IN_SEC = 3,
@@ -82,7 +82,7 @@ private:
     void set_style();
     QVector<double> m_xData, m_yData;
     QVector<double> m_buffer_for_auto_scale;
-    uint16_t m_is_value_or_nothing = NOTHING;
+    uint16_t m_is_value_or_nothing = DEFAULT;
     double m_start_time = 0;
     std::future<void> start_get_data;
     QTime m_begin;
@@ -92,8 +92,29 @@ private:
     QStringList m_do_convert_for_angle = {"alpha", "delta", "azimuth"};
     QStringList m_do_convert_for_speed = {"wox", "woy", "woz"};
     QStringList m_do_conver_if_tmprt = {"td_1"};
-    uint16_t m_data_type;
+    int16_t m_data_type = NOTHING;
     bool m_is_show_mean = false;
+
+    size_t split(const std::string &txt, std::vector<std::string> &strs, char ch)
+    {
+        size_t pos = txt.find( ch );
+        size_t initialPos = 0;
+        strs.clear();
+
+        // Decompose statement
+        while( pos != std::string::npos ) {
+            strs.push_back( txt.substr( initialPos, pos - initialPos ) );
+            initialPos = pos + 1;
+
+            pos = txt.find( ch, initialPos );
+        }
+
+        // Add the last one
+        strs.push_back( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) );
+
+        return strs.size();
+    }
+
 protected:
     void keyPressEvent(QKeyEvent *e);
 };

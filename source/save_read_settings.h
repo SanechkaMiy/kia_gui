@@ -53,6 +53,7 @@ signals:
     void send_to_list_for_check_box_menu_for_menubar(QStringList);
     void send_to_regular_cyclogram_do_command(qint16, qint16, QStringList);
     void send_to_ri_cyclograms(qint16, QStringList);
+    void send_frames_cyclograms(qint16, qint16);
 private:
     std::shared_ptr<Kia_settings> m_kia_settings;
     QSettings m_settings;

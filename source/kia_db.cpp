@@ -57,18 +57,19 @@ void Kia_db::get_data_from_db_for_graph_slot(QString begin, QString end)
             qDebug() <<"Unable to execute query";
         }
         QSqlRecord rec = m_query->record();
-        QDateTime date_time;
+        QString date_time;
         QString data_to_view;
         double y_val;
         double x_val;
         while(m_query->next())
         {
-            date_time = m_query->value(rec.indexOf("datetime")).toDateTime();
+            date_time = m_query->value(rec.indexOf("datetime")).toString();
             y_val = m_query->value(rec.indexOf(m_query_param[QP_Y])).toDouble();
             x_val = m_query->value(rec.indexOf(m_query_param[QP_X])).toDouble();
             if (!data_get.isEmpty())
                 data_to_view = m_query->value(rec.indexOf(data_get)).value<QString>();
-            m_kias_data_from_db->m_date_time_val.push_back(date_time.time());
+            QDateTime dateTime = QDateTime::fromString(date_time, "yyyy-MM-ddThh:mm:ss.zzz");
+            m_kias_data_from_db->m_date_time_val.push_back(dateTime.time());
             m_kias_data_from_db->m_y_value.push_back(y_val);
             m_kias_data_from_db->m_x_value.push_back(x_val);
             m_kias_data_from_db->m_data_to_view.push_back(data_to_view);
@@ -195,6 +196,24 @@ QString Kia_db::get_columns_description(QString type_dev, QString name_table, QS
     {
         description = m_query->value(rec.indexOf("description")).toString();
     }
+    return description;
+}
+
+QString Kia_db::get_columns_units_of_measurement(QString type_dev, QString name_table, QString id)
+{
+    QString description;
+    if (!m_query->exec("SELECT base_unit FROM meta_device.field WHERE devtype_id = '" + type_dev + "' AND struct_id   = '" + name_table + "' AND id = '" + id + "';"))
+    {
+        qDebug() <<"Unable to execute query";
+    }
+    QSqlRecord rec = m_query->record();
+    while(m_query->next())
+    {
+        description = m_query->value(rec.indexOf("base_unit")).toString();
+    }
+    std::cout << description.toStdString() << std::endl;
+    if (description == "-")
+        description.clear();
     return description;
 }
 

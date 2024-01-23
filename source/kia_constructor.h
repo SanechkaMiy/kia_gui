@@ -60,6 +60,8 @@ private:
     QString m_y_val;
     QString m_x_desc;
     QString m_y_desc;
+    QString m_x_um;
+    QString m_y_um;
     QString m_type_widget;
     QStringList m_data_table;
     QListWidgetItem * m_cur_graph;

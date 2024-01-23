@@ -110,8 +110,8 @@ void Kia_graph_manager::create_plot_slot(QStringList query_param)
     m_kia_db.push_back(std::make_shared<Kia_db>("con_graph_" + QString::number(m_num_graph), m_kia_settings, m_kias_data_from_db[m_num_graph]));
     m_kia_db[m_num_graph]->set_query(query_param);
     m_kia_graph.push_back(new Kia_graph(m_kia_db[m_num_graph], m_kia_settings, m_kias_data_from_db[m_num_graph]));
-    m_kia_graph[m_num_graph]->xAxis->setLabel(query_param[QP_X_DESC]);
-    m_kia_graph[m_num_graph]->yAxis->setLabel(query_param[QP_Y_DESC]);
+    m_kia_graph[m_num_graph]->xAxis->setLabel(query_param[QP_X_DESC] + " " + query_param[QP_X_UM]);
+    m_kia_graph[m_num_graph]->yAxis->setLabel(query_param[QP_Y_DESC] + " " + query_param[QP_Y_UM]);
     if (query_param[QP_TYPE_WIDGET] == "datetime")
     {
         m_kias_data_from_db[m_num_graph]->m_graph_type = Kia_graph::TIMESTAMP_GRAPH;
@@ -287,21 +287,6 @@ void Kia_graph_manager::plots_interactions()
             {
                 auto orient = (e->modifiers() != Qt::ControlModifier) ? Qt::Horizontal : Qt::Vertical;
                 plot->axisRect()->setRangeZoom(orient);
-                //                if (!(e->modifiers() == Qt::ControlModifier))
-                //                {
-                //                    if((e->angleDelta().y()) > 0)
-                //                    {
-                //                        if (m_kia_settings->m_kias_view_data->m_x_size > 1)
-                //                            m_kia_settings->m_kias_view_data->m_x_size = m_kia_settings->m_kias_view_data->m_x_size - 0.5;
-
-                //                    }
-                //                    else
-                //                    {
-                //                        m_kia_settings->m_kias_view_data->m_x_size = m_kia_settings->m_kias_view_data->m_x_size + 0.5;
-                //                    }
-                //                }
-
-                //plot->wheelEvent(e);
                 e->accept();
             });
         }

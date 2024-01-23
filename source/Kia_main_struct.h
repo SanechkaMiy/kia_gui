@@ -68,13 +68,17 @@ struct Kia_data_to_server
     std::array<uint16_t, constants::max_count_relay_command> m_param_relay_command;
     std::vector<int> m_num_used_bi;
     std::vector<int> m_num_used_channel;
+
+
+    uint16_t m_frame_type_recieve;
+    uint16_t m_frame_type;
 };
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 struct Kia_bi_settings
 {
-    std::array<QString, constants::count_type_bi> m_bi_type = {"БКПИК", "БИУ"};//0 - БКПИК; 1 - БИ; 2 - БИУ; 3 - БИНК; 4 - БКПИКМ.
+    std::array<QString, constants::count_type_bi> m_bi_type = {"БКПИК", "БИ-У"};//0 - БКПИК; 1 - БИ; 2 - БИУ; 3 - БИНК; 4 - БКПИКМ.
     std::array<int, constants::count_type_bi> m_bi_count_channel = {3, 2};//0 - БКПИК; 1 - БИ; 2 - БИУ; 3 - БИНК; 4 - БКПИКМ.
     int m_count_bi;//0 - БКПИК; 1 - БИ; 2 - БИУ; 3 - БИНК; 4 - БКПИКМ.
     std::array<QStringList, constants::count_type_bi> m_bi_row_name;
@@ -104,6 +108,7 @@ struct Kia_bokz_settings
     std::vector<int> m_epsilon;
     std::vector<float> m_focus;
     std::vector<int> m_texp;
+
 };
 #pragma pack(pop)
 
@@ -118,6 +123,7 @@ struct Kia_gui_settings
     QVector<std::pair<QString, uint16_t>> m_cyclogram_ai_name;
     QVector<std::pair<QString, uint16_t>> m_cyclogram_tp_name;
     QVector<std::pair<QString, uint16_t>> m_cyclogram_ri_name;
+    std::vector<std::tuple<QString, QString, uint16_t, uint16_t>> m_commands_to_pn;
     std::vector<QVector<std::pair<QString, uint16_t>>> m_cyclogram_do_name;
     std::vector<QStringList> m_list_profile;
     uint16_t m_count_profile = 0;
@@ -142,6 +148,7 @@ struct Kias_view_data
     double m_x_size = 8;
     double m_y_size = 1;
     std::atomic_bool m_is_change_range{true};
+    std::atomic_bool m_is_stop_graph{true};
     std::vector<QStringList> m_data_graph;
     std::vector<QStringList> m_data_table;
     std::vector<QStringList> m_data_table_cols;
@@ -159,6 +166,7 @@ struct Kias_db
     QTime m_begin;
     QTime m_end;
     double m_key = 0;
+    double m_interval_db_exchange = 1.;
 };
 #pragma pack(pop)
 

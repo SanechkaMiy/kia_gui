@@ -35,7 +35,7 @@ signals:
     void send_status_info(QStringList);
     void load_profile();
 
-    void set_read_command(qint16, qint16, qint16, QString);
+    void set_read_command(qint16, qint16, qint16, QStringList);
 private:
     QString m_server_ip;
     int32_t m_port;

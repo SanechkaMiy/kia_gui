@@ -234,12 +234,14 @@ void Kia_main_window::create_main_graph_manager()
         QIcon icon;
         if (m_is_start_or_stop != 0)
         {
+            m_kia_settings->m_kias_view_data->m_is_stop_graph = false;
             m_kia_settings->m_kias_view_data->m_is_change_range = false;
             m_start_or_stop->setIcon(QIcon(":/icon/Icon/play.png"));
             m_start_or_stop->setIconSize(QSize(16, 16));
         }
         else
         {
+            m_kia_settings->m_kias_view_data->m_is_stop_graph = true;
             m_kia_settings->m_kias_view_data->m_is_change_range = true;
             QIcon icon(":/icon/Icon/play.png");
             m_start_or_stop->setIcon(QIcon(":/icon/Icon/pause.png"));

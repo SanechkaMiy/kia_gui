@@ -9,6 +9,7 @@
 #include <QLabel>
 #include "client.h"
 #include <QCheckBox>
+#include <QComboBox>
 #include "Kia_main_struct.h"
 namespace Ui {
 class Kia_options_cyclograms;
@@ -19,13 +20,7 @@ class Kia_options_cyclograms : public QWidget
     Q_OBJECT
 
 public:
-    enum TYPE_REGULAR_CYCLOGRAMS
-    {
-        T_NO = 0,
-        T_TO = 1,
-        T_LOC = 2,
-        T_OO = 3
-    };
+
     explicit Kia_options_cyclograms(std::shared_ptr<Kia_settings> kia_settings,
                                     std::shared_ptr<Client> client,
                                     QWidget *parent = nullptr);
@@ -35,6 +30,7 @@ public slots:
     void set_load_tp_settings(qint16 type_settings, QStringList load_data);
     void set_load_regular_settings_do_command(qint16 type_cyclograms, qint16 type_settings, QStringList load_data);
     void load_for_specific_cyclogram(qint16 type_cyclogram, QStringList load_data);
+    void load_for_cyclogram_do_frames(qint16 type_settings, qint16 data);
 signals:
     void set_mpi_command_for_cyclogram();
 private:
@@ -47,6 +43,7 @@ private:
     void create_ri_cyclogram_settings();
     void cyclogram_settings_if_run_a_lot(QString name_cyclogram, uint16_t type_cyclogram);
     void cyclogram_tp();
+    void cyclogram_do_frames();
     QVBoxLayout* m_layout_for_place_tab_widget;
     std::vector<QVBoxLayout*> m_layout_for_place_cyclogram_tab_widget;
     std::vector<QLineEdit*> m_le_zkr_settings;
@@ -70,6 +67,8 @@ private:
     QCheckBox* m_check_box_continue_if_fails;
     QCheckBox* m_check_box_off_power_for_tp;
 
+    QComboBox* m_cb_type_recieve;
+    QComboBox* m_cb_type_frame;
 
     std::vector<QWidget*> widget_for_ri_cyclogram_settings;
     std::vector<QVBoxLayout*> layout_for_ri_cyclogram_settings;

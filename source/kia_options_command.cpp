@@ -8,6 +8,7 @@ Kia_options_command::Kia_options_command(std::shared_ptr<Kia_settings> kia_setti
   , m_client(client)
 {
     ui->setupUi(this);
+    create_template_for_table();
     m_layout_for_all_widget = new QGridLayout(this);
     m_layout_for_button = new QGridLayout();
     m_layout_for_button->addWidget(ui->load_param, 0, 0);
@@ -42,15 +43,21 @@ Kia_options_command::Kia_options_command(std::shared_ptr<Kia_settings> kia_setti
         m_widgets[num_bokz].push_back(std::make_tuple(m_wgt[num_bokz][IS_TABLE], new QGridLayout(m_wgt[num_bokz][IS_TABLE]), "Таблицы"));
         for (auto& el : m_widgets[num_bokz])
             m_tab_for_type_command[num_bokz]->addTab(std::get<0>(el), std::get<2>(el));
-        add_edit(num_bokz, "Допуск распознования", "epsilon", SET_EPSILON);
-        add_edit(num_bokz, "Фокус", "focus", SET_FOCUS);
-        add_edit(num_bokz, "Время эксопонирования", "texp", SET_TEXP);
-        add_edit(num_bokz, "Координата X", "cord_x", SET_CORD_X);
-        add_edit(num_bokz, "Координата Y", "cord_y", SET_CORD_Y);
-
-        add_table(num_bokz, 3, 3, "Матрица ПСК", "mat_psk", SET_MATRIX_PSK);
-        add_table(num_bokz, 4, 1, "Qo", "qo", SET_QA);
-        add_table(num_bokz, 3, 1, "Wo", "wo", SET_W);
+        for (auto el : m_kia_settings->m_kia_gui_settings->m_commands_to_pn)
+        {
+            switch(std::get<TP_TYPE_VIEW>(el))
+            {
+            case IS_PARAM:
+                add_edit(num_bokz, std::get<TP_NAME>(el), std::get<TP_KEY>(el),
+                         std::get<TP_TYPE_COMMAND>(el));
+                break;
+            case IS_TABLE:
+                add_table(num_bokz, m_dict_for_table_size[std::get<TP_KEY>(el)][0],
+                        m_dict_for_table_size[std::get<TP_KEY>(el)][1],
+                        std::get<TP_NAME>(el), std::get<TP_KEY>(el), std::get<TP_TYPE_COMMAND>(el));
+                break;
+            }
+        }
         for (uint16_t num_edit = 0; num_edit < m_le_edit_command[num_bokz].size(); ++num_edit)
         {
             connect(m_le_edit_command[num_bokz][num_edit], &QLineEdit::textChanged, [this, num_edit, num_bokz](const QString & is_changed)
@@ -98,9 +105,9 @@ void Kia_options_command::on_set_param_clicked()
             {
                 m_le_edit_command[num_bokz][num_edit]->setPalette(palette);
                 QStringList param_list;
-                param_list.push_back(QString::number(num_bokz));
+                param_list.push_back(QString::number(m_status_changed_edit[num_bokz][num_edit].second));
                 param_list.push_back(m_le_edit_command[num_bokz][num_edit]->text());
-                m_client->send_data_to_server(m_status_changed_edit[num_bokz][num_edit].second, param_list);
+                m_client->send_data_to_server(SET_UPN, param_list);
                 m_status_changed_edit[num_bokz][num_edit].first = IS_DEFAULT;
             }
         }
@@ -111,7 +118,7 @@ void Kia_options_command::on_set_param_clicked()
             {
                 m_tables[num_bokz][num_table]->setPalette(palette);
                 QStringList param_list;
-                param_list.push_back(QString::number(num_bokz));
+                param_list.push_back(QString::number(m_status_changed_table[num_bokz][num_table].second));
                 for (uint16_t row = 0; row < m_tables[num_bokz][num_table]->rowCount(); ++row)
                 {
                     for (uint16_t col = 0; col < m_tables[num_bokz][num_table]->columnCount(); ++col)
@@ -119,7 +126,7 @@ void Kia_options_command::on_set_param_clicked()
                         param_list.push_back(m_tables[num_bokz][num_table]->item(row, col)->text());
                     }
                 }
-                m_client->send_data_to_server(m_status_changed_table[num_bokz][num_table].second, param_list);
+                m_client->send_data_to_server(SET_UPN, param_list);
                 m_status_changed_table[num_bokz][num_table].first = IS_DEFAULT;
             }
         }
@@ -130,27 +137,36 @@ void Kia_options_command::on_set_param_clicked()
 void Kia_options_command::on_get_param_clicked()
 {
     QStringList param_list;
-    m_client->send_data_to_server(GET_EPSILON, param_list);
-    m_client->send_data_to_server(GET_FOCUS, param_list);
-    m_client->send_data_to_server(GET_TEXP, param_list);
+    for (auto el : m_kia_settings->m_kia_gui_settings->m_commands_to_pn)
+    {
+        param_list.push_back(QString::number(std::get<TP_TYPE_COMMAND>(el)));
+    }
+    m_client->send_data_to_server(GET_CHPN, param_list);
 }
 
-void Kia_options_command::set_read_command(qint16 num_bokz, qint16 type_data, qint16 type_command, QString data)
+void Kia_options_command::set_read_command(qint16 num_bokz, qint16 type_data, qint16 type_command, QStringList data)
 {
     QPalette palette;
     palette.setColor(QPalette::Base, Qt::white);
+
     switch(type_data)
     {
     case IS_PARAM:
-        m_le_edit_command[num_bokz][type_command]->setText(data);
+        for (auto el : data)
+            m_le_edit_command[num_bokz][type_command]->setText(el);
         m_le_edit_command[num_bokz][type_command]->setPalette(palette);
         m_status_changed_edit[num_bokz][type_command].first = IS_DEFAULT;
         break;
     case IS_TABLE:
-        //m_le_edit_command[num_bokz][type_command]->setText(data);
+        for (uint16_t row = 0; row < m_tables[num_bokz][type_command]->rowCount(); row++)
+        {
+            for (uint16_t coll = 0; coll < m_tables[num_bokz][type_command]->columnCount(); coll++)
+            {
+                m_tables[num_bokz][type_command]->setItem(row, coll, new QTableWidgetItem(data[coll + row * m_tables[num_bokz][type_data]->columnCount()]));
+            }
+        }
         break;
     }
-
 
 }
 
@@ -189,6 +205,21 @@ void Kia_options_command::add_table(uint16_t num_bokz, uint16_t row, uint16_t co
     std::get<1>(m_widgets[num_bokz][IS_TABLE])->addWidget(m_tables[num_bokz][m_table_count[num_bokz]], m_table_count[num_bokz], 1);
     m_edit_count[num_bokz]++;
     m_table_count[num_bokz]++;
+}
+
+void Kia_options_command::create_template_for_table()
+{
+    std::array<uint16_t, 2> mat = {3, 3};
+    m_dict_for_table_size["mat_psk"] = mat;
+
+    std::array<uint16_t, 2> qa = {4, 1};
+    m_dict_for_table_size["qo"] = qa;
+
+    std::array<uint16_t, 2> w = {3, 1};
+    m_dict_for_table_size["w0"] = w;
+
+    std::array<uint16_t, 2> kd = {2, 14};
+    m_dict_for_table_size["kd"] = kd;
 }
 
 

@@ -18,7 +18,9 @@ Kia_options_cyclograms::Kia_options_cyclograms(std::shared_ptr<Kia_settings> kia
         m_layout_for_place_cyclogram_tab_widget.push_back(new QVBoxLayout(m_tab_cyclograms[num_cyclograms]));
     }
     ai_settings();
+
     regular_settings();
+
     create_ri_cyclogram_settings();
 }
 
@@ -94,6 +96,23 @@ void Kia_options_cyclograms::load_for_specific_cyclogram(qint16 type_cyclogram, 
     else
         for (uint16_t ind_param = 0; ind_param < constants::max_count_param; ++ind_param)
             m_le_if_run_a_lot[type_cyclogram][ind_param]->setText("0");
+}
+
+void Kia_options_cyclograms::load_for_cyclogram_do_frames(qint16 type_settings, qint16 data)
+{
+    switch(type_settings)
+    {
+    case FS_TYPE_RECEIVE:
+        m_cb_type_recieve->setCurrentIndex(data);
+        m_kia_settings->m_kia_data_to_server->m_frame_type_recieve = data;
+        m_client->send_data_to_server(SET_TYPE_FRAME_RECIEVE, QStringList(QString::number(m_kia_settings->m_kia_data_to_server->m_frame_type_recieve)));
+        break;
+    case FS_TYPE_FRAME:
+        m_cb_type_frame->setCurrentIndex(data);
+        m_kia_settings->m_kia_data_to_server->m_frame_type = data;
+        m_client->send_data_to_server(SET_TYPE_FRAME, QStringList(QString::number(m_kia_settings->m_kia_data_to_server->m_frame_type)));
+        break;
+    }
 }
 
 void Kia_options_cyclograms::set_load_tp_settings(qint16 type_settings, QStringList load_data)
@@ -260,8 +279,9 @@ void Kia_options_cyclograms::create_regular_cyclogram_settings(QTabWidget* tab_r
 {
     std::vector<QWidget*> widget_for_cyclogram_settings;
     std::vector<QGridLayout*> layout_for_cyclogram_settings;
+    std::cout << m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size() << std::endl;
     m_cb_for_change_do_cyclogram.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size());
-    m_le_for_change_do_cyclogram.resize(m_kia_settings->m_kia_bokz_settings->m_max_cyclograms_in_tp);
+    m_le_for_change_do_cyclogram.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size());
     m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size());
     m_kia_settings->m_kia_data_to_server->m_pause_to_do_cyclogram_in_do.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size());
     for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size(); ++num_cyclogram)
@@ -323,10 +343,13 @@ void Kia_options_cyclograms::create_ri_cyclogram_settings()
         cyclogram_settings_if_run_a_lot(m_kia_settings->m_kia_gui_settings->m_cyclogram_ri_name[num_cyclogram].first, num_cyclogram);
     }
     cyclogram_tp();
+    cyclogram_do_frames();
 }
 
 void Kia_options_cyclograms::cyclogram_settings_if_run_a_lot(QString name_cyclogram, uint16_t type_cyclogram)
 {
+    m_map_key_cyclogram_ri[m_kia_settings->m_kia_gui_settings->m_cyclogram_ri_name[type_cyclogram].second] = type_cyclogram;
+
     widget_for_ri_cyclogram_settings.push_back(new QWidget(this));
     layout_for_ri_cyclogram_settings.push_back(new QVBoxLayout(widget_for_ri_cyclogram_settings[type_cyclogram]));
     m_cyclogram_settings->addTab(widget_for_ri_cyclogram_settings[type_cyclogram], name_cyclogram);
@@ -415,9 +438,9 @@ void Kia_options_cyclograms::cyclogram_tp()
     m_check_box_off_power_for_tp = new QCheckBox("Выключить питание после завершения", this);
     if (m_kia_settings->m_kia_gui_settings->m_cyclogram_ri_name.size() != 0)
     {
-        layout_for_ri_cyclogram_settings[TR_TP]->addWidget(label_name_settings);
-        layout_for_ri_cyclogram_settings[TR_TP]->addLayout(lay);
-        layout_for_ri_cyclogram_settings[TR_TP]->addWidget(m_check_box_off_power_for_tp);
+        layout_for_ri_cyclogram_settings[m_map_key_cyclogram_ri[CYCLOGRAM_TECH_RUN]]->addWidget(label_name_settings);
+        layout_for_ri_cyclogram_settings[m_map_key_cyclogram_ri[CYCLOGRAM_TECH_RUN]]->addLayout(lay);
+        layout_for_ri_cyclogram_settings[m_map_key_cyclogram_ri[CYCLOGRAM_TECH_RUN]]->addWidget(m_check_box_off_power_for_tp);
 
     }
     else
@@ -435,6 +458,50 @@ void Kia_options_cyclograms::cyclogram_tp()
         m_kia_settings->m_kia_data_to_server->m_off_power_for_tp = state;
         m_client->send_data_to_server(SET_IS_OFF_POWER_IN_TP, QStringList(QString::number(state)));
     });
+}
+
+void Kia_options_cyclograms::cyclogram_do_frames()
+{
+    QLabel* label_frame_type_recive_settings =  new QLabel("Тип приема кадра:", this);
+    m_cb_type_recieve = new QComboBox(this);
+    m_cb_type_recieve->setEditable(true);
+    QStringList type_recieve = {"Прием по МКО", "Прием по FTID-(USB)"};
+    for (auto el : type_recieve)
+        m_cb_type_recieve->addItem(el);
+    m_cb_type_recieve->setMaxVisibleItems(type_recieve.size());
+    QLabel* label_frame_type_settings =  new QLabel("Тип кадра:", this);
+    m_cb_type_frame = new QComboBox(this);
+    m_cb_type_frame->setEditable(true);
+    QStringList type_frame = {"Полный кадр", "Бинированный кадр"};
+    for (auto el : type_frame)
+        m_cb_type_frame->addItem(el);
+    m_cb_type_frame->setMaxVisibleItems(type_frame.size());
+
+    connect(m_cb_type_recieve, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index)
+    {
+        m_kia_settings->m_kia_data_to_server->m_frame_type_recieve = index;
+        m_client->send_data_to_server(SET_TYPE_FRAME_RECIEVE, QStringList(QString::number(m_kia_settings->m_kia_data_to_server->m_frame_type_recieve)));
+    });
+
+    connect(m_cb_type_frame, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index)
+    {
+        m_kia_settings->m_kia_data_to_server->m_frame_type = index;
+        m_client->send_data_to_server(SET_TYPE_FRAME, QStringList(QString::number(m_kia_settings->m_kia_data_to_server->m_frame_type_recieve)));
+    });
+    if (m_kia_settings->m_kia_gui_settings->m_cyclogram_ri_name.size() != 0)
+    {
+        layout_for_ri_cyclogram_settings[m_map_key_cyclogram_ri[CYCL_FULL_FRAMES]]->addWidget(label_frame_type_recive_settings);
+        layout_for_ri_cyclogram_settings[m_map_key_cyclogram_ri[CYCL_FULL_FRAMES]]->addWidget(m_cb_type_recieve);
+        layout_for_ri_cyclogram_settings[m_map_key_cyclogram_ri[CYCL_FULL_FRAMES]]->addWidget(label_frame_type_settings);
+        layout_for_ri_cyclogram_settings[m_map_key_cyclogram_ri[CYCL_FULL_FRAMES]]->addWidget(m_cb_type_frame);
+    }
+    else
+    {
+        label_frame_type_recive_settings->setVisible(false);
+        label_frame_type_settings->setVisible(false);
+        m_cb_type_recieve->setVisible(false);
+        m_cb_type_frame->setVisible(false);
+    }
 }
 
 

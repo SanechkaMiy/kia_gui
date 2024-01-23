@@ -28,7 +28,7 @@ public:
                                  std::shared_ptr<Client> client, QWidget *parent = nullptr);
     ~Kia_options_command();
 public slots:
-    void set_read_command(qint16 num_bokz, qint16 type_data, qint16 type_command, QString data);
+    void set_read_command(qint16 num_bokz, qint16 type_data, qint16 type_command, QStringList data);
 
 private slots:
     void on_set_param_clicked();
@@ -62,6 +62,9 @@ private:
     std::vector<int16_t> m_table_count;
 
     std::map<QString, uint16_t> m_dict_type_command_for_load;
+
+    std::map<QString, std::array<uint16_t, 2>> m_dict_for_table_size;
+    void create_template_for_table();
 };
 
 #endif // KIA_OPTIONS_COMMAND_H

@@ -326,9 +326,6 @@ void KiaCore::set_kia_gui_settings_slot()
             m_kia_settings->m_kia_gui_settings->m_widget_is_hide[m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]] = m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]->isVisible();
         });
         correct_save_state_window(m_kia_custom_dialog[WINDOW_AI_PROTOCOL][num_bokz]);
-        //        m_keys_for_dock_widget["window_ai_info_" + QString::number(num_bokz)].push_back(m_kia_main_window->set_to_dock_widget_window_info(m_kia_window_info_ai_protocol[num_bokz], "Автономные испытания "
-        //                                                                                                                                          + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-        //                                                                                        + " " + QString::number(num_bokz + 1)));
 
 
 
@@ -390,8 +387,9 @@ void KiaCore::create_kia_options_for_cyclogram()
     m_kia_options_list.push_back(pair);
     connect(m_save_read_settings.get(), SIGNAL(send_to_kia_options(qint16, QStringList)), m_kia_options_cyclograms, SLOT(set_load_settings(qint16, QStringList)));
     connect(m_save_read_settings.get(), SIGNAL(send_to_tp_cyclogram_settings(qint16, QStringList)), m_kia_options_cyclograms, SLOT(set_load_tp_settings(qint16, QStringList)));
-        connect(m_save_read_settings.get(), SIGNAL(send_to_ri_cyclograms(qint16, QStringList)), m_kia_options_cyclograms, SLOT(load_for_specific_cyclogram(qint16, QStringList)));
+    connect(m_save_read_settings.get(), SIGNAL(send_to_ri_cyclograms(qint16, QStringList)), m_kia_options_cyclograms, SLOT(load_for_specific_cyclogram(qint16, QStringList)));
     connect(m_save_read_settings.get(), SIGNAL(send_to_regular_cyclogram_do_command(qint16, qint16, QStringList)), m_kia_options_cyclograms, SLOT(set_load_regular_settings_do_command(qint16, qint16, QStringList)));
+    connect(m_save_read_settings.get(), SIGNAL(send_frames_cyclograms(qint16, qint16)), m_kia_options_cyclograms, SLOT(load_for_cyclogram_do_frames(qint16, qint16)));
 }
 
 void KiaCore::create_kia_options_for_command()

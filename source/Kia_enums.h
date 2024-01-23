@@ -51,8 +51,9 @@ enum Kia_command
     SET_USED_ADDRESS = 28,
     SET_TD = 29,
     SET_NUM_MPI = 30,
-    SET_QA = 31,
-    SET_W = 32,
+
+    SET_TYPE_FRAME_RECIEVE = 31,
+    SET_TYPE_FRAME = 32,
     SET_BSHV = 33,
 
     CYCLOGRAM_OPERATION = 34,
@@ -80,20 +81,21 @@ enum Kia_command
     CONROL_COMMAND_ON = 56,
     CONROL_COMMAND_OFF = 57,
     SET_USED_CHANNEL = 58,
-    SET_EPSILON = 59,
-    GET_EPSILON = 60,
-    SET_FOCUS = 61,
-    GET_FOCUS = 62,
-    SET_TEXP = 63,
-    GET_TEXP = 64,
-    SET_CORD_X = 65,
-    SET_CORD_Y = 66,
-    SET_MATRIX_PSK = 67,
+
+    SET_UPN = 59,
+    GET_CHPN = 60,
+    // 62 is free,
+    //63 is free,
+    //64 is free
+    //65 is free,
+    // is free 66,
+    // is free 67,
     CYCLOGRAM_SYNCHRO = 68,
     CYCLOGRAM_TEST_ADRESS = 69,
     SET_AI_SKIP_OR_STOP = 70,
     DEBUGGING_COMMAND = 71,
     COMMAND_ZKR = 72,
+    COMMAND_OTKR = 61,
     SET_IS_OFF_POWER_IN_TP = 73,
     SET_DO_CYCLOGRAM_IN_TP = 74,
     SET_COUNT_TO_DO_CYCLOGRAM_IN_TP = 75,
@@ -125,7 +127,8 @@ enum KIA_GUI_COMMAND
     SET_INFO_TO_AI_WINDOW = 13,
     SEND_COMMAND = 14,
     SEND_STATUS_INFO = 15,
-    LOAD_PROFILE = 16
+    LOAD_PROFILE = 16,
+    SEND_PN_COMMAND = 20
 };
 
 enum NUM_MPI_COMMAND_M60
@@ -297,11 +300,13 @@ enum QUERY_PARM
     QP_TYPE_ARR = 3,
     QP_X_DESC = 4,
     QP_Y_DESC = 5,
-    QP_NUM_BOKZ = 6,
-    QP_NUM_BOKZ_FOR_ANGLES = 7,
-    QP_NUM_WIDGET = 8,
-    QP_TYPE_WIDGET = 9,
-    QP_NUM_MAIN_TAB_WIDGET = 10,
+    QP_X_UM = 6,
+    QP_Y_UM = 7,
+    QP_NUM_BOKZ = 8,
+    QP_NUM_BOKZ_FOR_ANGLES = 9,
+    QP_NUM_WIDGET = 10,
+    QP_TYPE_WIDGET = 11,
+    QP_NUM_MAIN_TAB_WIDGET = 12,
 };
 
 enum TYPE_COMMAND
@@ -322,15 +327,6 @@ enum COMMAND_PARAM
     IS_TABLE = 1,
 };
 
-enum TYPE_PARAM
-{
-    TP_EPS = 0,
-    TP_FOCUS = 1,
-    TP_TEXP = 2,
-    TP_CORD_X = 3,
-    TP_CORD_Y = 4,
-
-};
 
 enum TYPE_TABLE
 {
@@ -441,10 +437,19 @@ enum TYPE_COMMAND_TO_SEND
     CYCL_TYPE_TO_SEND = 2
 };
 
-enum TYPE_RI
+
+enum TYPE_PN_TO_SEND
 {
-    TR_TP = 0,
-    TR_ZKR = 1,
-    TR_FULL_FRAMES = 2
+    TP_NAME = 0,
+    TP_KEY = 1,
+    TP_TYPE_VIEW = 2,
+    TP_TYPE_COMMAND = 3,
 };
+
+enum FRAME_SETTINGS
+{
+    FS_TYPE_RECEIVE = 0,
+    FS_TYPE_FRAME = 1
+};
+
 #endif // KIA_ENUMS_H

@@ -14,8 +14,11 @@ Kia_graph::Kia_graph(std::shared_ptr<Kia_db> kia_db,
     {
         if (m_query_param[QP_TYPE_ARR] == "frames")
         {
-            QString text = QString("%1").arg(m_kias_graph_data->m_data_to_view[dataIndex]);
-            QToolTip::showText(event->globalPos(), text);
+            if (dataIndex < m_kias_graph_data->m_data_to_view.size())
+            {
+                QString text = QString("%1").arg(m_kias_graph_data->m_data_to_view[dataIndex]);
+                QToolTip::showText(event->globalPos(), text);
+            }
         }
     });
     auto func_for_timestamp_graph = [this]()
@@ -25,7 +28,7 @@ Kia_graph::Kia_graph(std::shared_ptr<Kia_db> kia_db,
             double y_value = 0;
             switch(m_is_value_or_nothing)
             {
-            case NOTHING:
+            case DEFAULT:
                 y_value = m_kias_graph_data->m_y_value[ind].toDouble();
                 break;
             case DEGREEZ:
@@ -43,7 +46,8 @@ Kia_graph::Kia_graph(std::shared_ptr<Kia_db> kia_db,
 
             }
             QTime timeStart = m_kias_graph_data->m_date_time_val[ind].toTime();
-            double key = QTime(0, 0, 0).secsTo(timeStart);
+            double millisec = static_cast<double>(timeStart.msec()) / 1000;
+            double key = QTime(0, 0, 0, 0).secsTo(timeStart) + millisec;
             m_xData.push_back(key);
             m_yData.push_back(y_value);
         }
@@ -208,7 +212,7 @@ void Kia_graph::get_data_from_db_slot()
     {
         if (m_kia_settings->m_kias_db->m_key <= last_point_key)
             last_point_key = m_kia_settings->m_kias_db->m_key;
-        if (m_kia_settings->m_kias_db->m_key - last_point_key >= 1)
+        if (m_kia_settings->m_kias_db->m_key - last_point_key >= m_kia_settings->m_kias_db->m_interval_db_exchange)
         {
             if (m_kias_graph_data->m_graph_type != DEFAULT_GRAPH)
             {
@@ -256,7 +260,6 @@ void Kia_graph::set_data_on_plot_slot()
         {
             sko = sko + ((el - mean) * (el - mean));
         }
-
         auto skoo = sqrt(sko / m_buffer_for_auto_scale.size());
         xAxis2->setLabel("Среднее: " + QString::number(mean) + " СКО: " + QString::number(skoo));
     }
@@ -266,7 +269,7 @@ void Kia_graph::set_data_on_plot_slot()
 
 void Kia_graph::change_range_slot()
 {
-    if (m_kia_settings->m_kias_view_data->m_is_change_range)
+    if (m_kia_settings->m_kias_view_data->m_is_change_range &&  m_kia_settings->m_kias_view_data->m_is_stop_graph)
     {
         auto interface = plottable();
 
@@ -393,12 +396,25 @@ void Kia_graph::create_context_menu()
         {
             m_is_value_or_nothing = DEGREEZ;
             auto y_label = yAxis->label();
+            std::vector<std::string> y_label_list;
+            split(y_label.toStdString(), y_label_list, ' ');
+
             auto x_label = xAxis->label();
+            std::vector<std::string> x_label_list;
+            split(x_label.toStdString(), x_label_list, ' ');
+
+            y_label.clear();
+            for (uint16_t ind = 0; ind < y_label_list.size() - 1; ind++)
+                y_label = y_label + " " + QString::fromStdString(y_label_list[ind]);
+
             yAxis->setLabel(y_label + " °");
             for (auto el : m_do_convert_for_angle)
             {
                 if (m_query_param[QP_X] == el)
                 {
+                    x_label.clear();
+                    for (uint16_t ind = 0; ind < x_label_list.size() - 1; ind++)
+                        x_label = x_label + " " + QString::fromStdString(x_label_list[ind]);
                     xAxis->setLabel(x_label + " °");
                 }
             }
@@ -436,7 +452,6 @@ void Kia_graph::create_context_menu()
                     }
                 }
             });
-
             m_context_menu->addAction(m_action_to_change_dimensions);
 
         };
@@ -446,12 +461,24 @@ void Kia_graph::create_context_menu()
         {
             m_is_value_or_nothing = DEGREEZ_IN_SEC;
             auto y_label = yAxis->label();
+            std::vector<std::string> y_label_list;
+            split(y_label.toStdString(), y_label_list, ' ');
+
             auto x_label = xAxis->label();
+            std::vector<std::string> x_label_list;
+            split(x_label.toStdString(), x_label_list, ' ');
+
+            y_label.clear();
+            for (uint16_t ind = 0; ind < y_label_list.size() - 1; ind++)
+                y_label = y_label + " " + QString::fromStdString(y_label_list[ind]);
             yAxis->setLabel(y_label + " °/с");
             for (auto el : m_do_convert_for_speed)
             {
                 if (m_query_param[QP_X] == el)
                 {
+                    x_label.clear();
+                    for (uint16_t ind = 0; ind < x_label_list.size() - 1; ind++)
+                        x_label = x_label + " " + QString::fromStdString(x_label_list[ind]);
                     xAxis->setLabel(x_label + " °");
                 }
             }
@@ -496,14 +523,6 @@ void Kia_graph::create_context_menu()
         };
         m_func_for_data_type.push_back(func_speed);
 
-        auto func_tmpt = [this]()
-        {
-            auto y_label = yAxis->label();
-            auto x_label = xAxis->label();
-            yAxis->setLabel(y_label + " °C/с");
-        };
-
-        m_func_for_data_type.push_back(func_tmpt);
         check_data();
 
         QAction* show_mean_action = new QAction("Показать среднее", this);
@@ -578,15 +597,8 @@ void Kia_graph::check_data()
             m_data_type = SPEED;
         }
     }
-
-    for (auto el : m_do_conver_if_tmprt)
-    {
-        if (m_query_param[QP_Y] == el)
-        {
-            m_data_type = TMPT;
-        }
-    }
-    m_func_for_data_type[m_data_type]();
+    if (m_data_type != NOTHING)
+        m_func_for_data_type[m_data_type]();
 }
 
 double Kia_graph::get_degreze(QVariant &value)

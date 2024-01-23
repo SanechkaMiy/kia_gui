@@ -21,6 +21,7 @@ SOURCES += \
     kia_options_bi.cpp \
     kia_options_command.cpp \
     kia_options_cyclograms.cpp \
+    kia_options_frame.cpp \
     kia_options_interface.cpp \
     kia_plot/kia_graph.cpp \
     kia_plot/kia_graph_manager.cpp \
@@ -52,6 +53,7 @@ HEADERS += \
     kia_options_bi.h \
     kia_options_command.h \
     kia_options_cyclograms.h \
+    kia_options_frame.h \
     kia_options_interface.h \
     kia_plot/kia_graph.h \
     kia_plot/kia_graph_manager.h \
@@ -75,6 +77,7 @@ FORMS += \
     kia_options_bi.ui \
     kia_options_command.ui \
     kia_options_cyclograms.ui \
+    kia_options_frame.ui \
     kia_options_interface.ui \
     kia_profile.ui \
     kiamenubar.ui \

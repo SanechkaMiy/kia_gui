@@ -25,6 +25,7 @@ Kia_menu::Kia_menu(std::shared_ptr<Client> client, std::shared_ptr<Kia_settings>
     map_key_cyclogram_tp[CYCLOGRAM_NO] = QKeySequence(Qt::CTRL + Qt::Key_N);
     map_key_cyclogram_tp[CYCLOGRAM_TO] = QKeySequence(Qt::CTRL + Qt::Key_T);
     map_key_cyclogram_tp[CYCLOGRAM_LOC] = QKeySequence(Qt::CTRL + Qt::Key_L);
+    map_key_cyclogram_tp[CYCLOGRAM_OO] = QKeySequence(Qt::CTRL + Qt::Key_O);
 
     map_key_cyclogram_ai[CYCLOGRAM_STATE_ON] = QKeySequence();
     map_key_cyclogram_ai[CYCLOGRAM_TEST_ADRESS] = QKeySequence();
@@ -120,22 +121,7 @@ void Kia_menu::create_action_commands(QMenu *menu)
         commands_action.push_back(std::make_tuple(el.first, map_key_command[el.second], el.second));
     }
 
-//    commands_action.push_back(std::make_tuple("СМТИ", QKeySequence(), SMTI));
-//    commands_action.push_back(std::make_tuple("ВМТИ", QKeySequence(), VMTI));
-//    commands_action.push_back(std::make_tuple("separator", QKeySequence(), VMTI));
-//    commands_action.push_back(std::make_tuple("Команда СИНХРО", QKeySequence(Qt::Key_F7), SYNCHRO));
-//    commands_action.push_back(std::make_tuple("Команда СКОР", QKeySequence(), SKOR));
-//    commands_action.push_back(std::make_tuple("Команда НО", QKeySequence(), COMMAND_NO));
-//    commands_action.push_back(std::make_tuple("Команда ТО", QKeySequence(), COMMAND_TO));
-//    commands_action.push_back(std::make_tuple("Команда ЛОК", QKeySequence(), COMMAND_LOC));
-//    commands_action.push_back(std::make_tuple("Команда ОТКЛ Р", QKeySequence(), COMMAND_OTCLP));
-//    commands_action.push_back(std::make_tuple("separator", QKeySequence(), VMTI));
-//    commands_action.push_back(std::make_tuple("Команда ОС", QKeySequence(), COMMAND_OS));
-//    commands_action.push_back(std::make_tuple("Команда ВСКОУ", QKeySequence(), COMMAND_VSKOU));
-//    commands_action.push_back(std::make_tuple("Команда ЗКР", QKeySequence(), COMMAND_ZKR));
-//    commands_action.push_back(std::make_tuple("separator", QKeySequence(), VMTI));
-//    commands_action.push_back(std::make_tuple("Полная экспозиция", QKeySequence(), COMMAND_FULL_EXP));
-//    commands_action.push_back(std::make_tuple("separator", QKeySequence(), VMTI));
+
     for (auto& el : commands_action)
     {
         if (std::get<NAME_ACTION>(el) == "separator")

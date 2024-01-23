@@ -176,7 +176,7 @@ void KiaWindowSettings::set_data_table_settings(QStringList data_from_server)
                 {
                     for (int ind_data = 1; ind_data < data_from_server.size(); ++ind_data)
                     {
-                        m_cob_used_bi[coll]->addItem(m_kia_settings->m_kia_bi_settings->m_bi_type[m_kia_settings->m_type_bi] + data_from_server[ind_data]);
+                        m_cob_used_bi[coll]->addItem(m_kia_settings->m_kia_bi_settings->m_bi_type[m_kia_settings->m_type_bi] + " " + data_from_server[ind_data]);
                     }
                 }
                 break;

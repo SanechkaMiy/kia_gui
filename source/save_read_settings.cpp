@@ -69,6 +69,8 @@ void Save_read_settings::save_settings()
     m_settings.setValue("/mode_1s", QVariant::fromValue(m_kia_settings->m_kia_bi_settings->m_mode_1s));
     m_settings.setValue("/list_used_bi", QVariant::fromValue(list_used_bi));
     m_settings.setValue("/list_used_channel", QVariant::fromValue(list_used_channel));
+    m_settings.setValue("/frame_type_receive", QVariant::fromValue(m_kia_settings->m_kia_data_to_server->m_frame_type_recieve));
+    m_settings.setValue("/frame_type", QVariant::fromValue(m_kia_settings->m_kia_data_to_server->m_frame_type));
 
     for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do.size(); num_cyclogram++)
     {
@@ -190,6 +192,12 @@ void Save_read_settings::load_settings()
         emit send_to_tp_cyclogram_settings(USED_CYCLOGRAM, list_do_cyclogram);
         emit send_to_tp_cyclogram_settings(COUNT_TO_DO_CYCLOGRAM, list_do_count_cyclogram);
         emit send_to_tp_cyclogram_settings(OFF_POWER, list_power_after_tp);
+
+        auto frame_type_recieve = m_settings.value("/frame_type_receive").value<quint16>();
+        emit send_frames_cyclograms(FS_TYPE_RECEIVE, frame_type_recieve);
+
+        auto frame_type = m_settings.value("/frame_type").value<quint16>();
+        emit send_frames_cyclograms(FS_TYPE_FRAME, frame_type);
 
         for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do.size(); num_cyclogram++)
         {

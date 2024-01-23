@@ -69,6 +69,7 @@ void Client::slot_read_server()
             break;
         }
         QStringList data_from_server;
+        QStringList data;
         qint16 num;
         qint16 type_bokz;
         qint16 type_bi;
@@ -164,13 +165,24 @@ void Client::slot_read_server()
             emit set_window_info_ai_window(data_from_server[0].toInt(), data_from_server[1]);
             break;
         case SEND_COMMAND:
-            emit set_read_command(data_from_server[0].toInt(), data_from_server[1].toInt(), data_from_server[2].toInt(), data_from_server[3]);
+            for (uint16_t ind = 3; ind < data_from_server.size(); ind++)
+            {
+                data.push_back(data_from_server[ind]);
+            }
+            emit set_read_command(data_from_server[0].toInt(), data_from_server[1].toInt(), data_from_server[2].toInt(), data);
             break;
         case SEND_STATUS_INFO:
             emit send_status_info(data_from_server);
             break;
         case LOAD_PROFILE:
             emit load_profile();
+            break;
+        case SEND_PN_COMMAND:
+            for (uint16_t ind = 0; ind < data_from_server.size(); ind += 4)
+            {
+                m_kia_settings->m_kia_gui_settings->m_commands_to_pn.push_back(std::make_tuple(data_from_server[ind + TP_NAME], data_from_server[ind + TP_KEY],
+                        data_from_server[ind + TP_TYPE_VIEW].toInt(), data_from_server[ind + TP_TYPE_COMMAND].toInt()));
+            }
             break;
         }
         m_nNextBlockSize = 0;
