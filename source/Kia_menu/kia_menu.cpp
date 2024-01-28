@@ -38,6 +38,27 @@ Kia_menu::Kia_menu(std::shared_ptr<Client> client, std::shared_ptr<Kia_settings>
     map_key_cyclogram_ri[CYCLOGRAM_TECH_RUN] = QKeySequence();
     map_key_cyclogram_ri[CYCLOGRAM_ZKR] = QKeySequence();
     map_key_cyclogram_ri[CYCL_FULL_FRAMES] = QKeySequence();
+
+    map_key_cyclogram_power[CYCLOGRAM_STATE_ON] = QKeySequence();
+    map_key_cyclogram_power[CYCLOGRAM_STATE_OFF] = QKeySequence();
+}
+
+void Kia_menu::create_action_state_power(QMenu *menu)
+{
+    std::vector<std::tuple<QString, QKeySequence, uint16_t>> stated_work_action;
+    for (auto el : m_kia_settings->m_kia_gui_settings->m_cyclogram_power_name)
+    {
+        stated_work_action.push_back(std::make_tuple(el.first, map_key_cyclogram_power[el.second], el.second));
+    }
+    for (auto& el : stated_work_action)
+    {
+        auto action = menu->addAction(std::get<NAME_ACTION>(el), menu, [this, el]()
+        {
+            QStringList data_for_server;
+            m_client->send_data_to_server(std::get<NUM_COMMAND>(el), data_for_server);
+        });
+        action->setShortcut(std::get<HOT_KEY>(el));
+    }
 }
 
 void Kia_menu::create_action_state_work(QMenu *menu)

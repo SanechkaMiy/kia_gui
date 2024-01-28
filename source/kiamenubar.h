@@ -52,8 +52,6 @@ private slots:
     void on_power_off_triggered();
     void on_second_mark_on_triggered();
     void on_second_mark_off_triggered();
-    void on_state_on_triggered();
-    void on_state_off_triggered();
     void on_set_auto_exp_triggered();
     void on_set_to_define_address_dev_triggered();
 

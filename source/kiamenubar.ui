@@ -77,8 +77,6 @@
    <property name="title">
     <string>Питание</string>
    </property>
-   <addaction name="state_on"/>
-   <addaction name="state_off"/>
   </widget>
   <widget class="QMenu" name="menu_stated_work">
    <property name="title">
@@ -176,16 +174,6 @@
    </property>
    <property name="shortcut">
     <string>Alt+S</string>
-   </property>
-  </action>
-  <action name="state_on">
-   <property name="text">
-    <string>Участок включения</string>
-   </property>
-  </action>
-  <action name="state_off">
-   <property name="text">
-    <string>Участок выключения</string>
    </property>
   </action>
   <action name="set_auto_exp">

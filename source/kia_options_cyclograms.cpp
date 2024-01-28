@@ -21,6 +21,7 @@ Kia_options_cyclograms::Kia_options_cyclograms(std::shared_ptr<Kia_settings> kia
 
     regular_settings();
 
+    power_cyclograms_settings();
     create_ri_cyclogram_settings();
 }
 
@@ -103,6 +104,7 @@ void Kia_options_cyclograms::load_for_cyclogram_do_frames(qint16 type_settings, 
     switch(type_settings)
     {
     case FS_TYPE_RECEIVE:
+
         m_cb_type_recieve->setCurrentIndex(data);
         m_kia_settings->m_kia_data_to_server->m_frame_type_recieve = data;
         m_client->send_data_to_server(SET_TYPE_FRAME_RECIEVE, QStringList(QString::number(m_kia_settings->m_kia_data_to_server->m_frame_type_recieve)));
@@ -203,6 +205,40 @@ void Kia_options_cyclograms::set_load_regular_settings_do_command(qint16 type_cy
     }
 }
 
+void Kia_options_cyclograms::set_load_power_settings_do_command(qint16 type_cyclograms, qint16 type_settings, QStringList load_data)
+{
+    if (m_cb_for_change_do_cyclogram_power[type_cyclograms].size() != 0)
+    {
+        for (uint16_t num_command = 0; num_command < load_data.size(); num_command++)
+        {
+            QStringList data_for_client;
+            switch(type_settings)
+            {
+            case USED_COMMAND:
+                if (load_data[num_command].toInt() == KiaS_SUCCESS)
+                {
+                    m_cb_for_change_do_cyclogram_power[type_cyclograms][num_command]->setCheckState(Qt::CheckState::Checked);
+                }
+                else
+                {
+                    m_cb_for_change_do_cyclogram_power[type_cyclograms][num_command]->setCheckState(Qt::CheckState::Unchecked);
+                }
+                m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do[type_cyclograms][num_command] = load_data[num_command].toInt();
+                data_for_client.push_back(QString::number(type_cyclograms));
+                for(uint16_t i = 0; i < m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do[type_cyclograms].size(); ++i)
+                {
+                    data_for_client.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do[type_cyclograms][i]));
+                }
+                m_client->send_data_to_server(SET_DO_CYCLOGRAM_POWER_IN_DO, data_for_client);
+                break;
+            case PAUSE_COMMAND:
+
+                break;
+            }
+        }
+    }
+}
+
 void Kia_options_cyclograms::ai_settings()
 {
     m_check_box_continue_if_fails = new QCheckBox("Продолжить, если ошибка", this);
@@ -243,7 +279,6 @@ void Kia_options_cyclograms::regular_settings()
     m_layout_for_place_cyclogram_tab_widget[KNCycl_REGULAR]->addWidget(tab_regular_cyclograms);
 
     create_regular_cyclogram_settings(tab_regular_cyclograms);
-
     QLabel* label_name_settings =  new QLabel("Съем телеметрических массивов:", this);
     main_layout_settings->addWidget(label_name_settings);
     for (uint16_t num_check_box = 0; num_check_box < m_kia_settings->m_kia_bokz_settings->m_max_mpi_command; ++num_check_box)
@@ -275,11 +310,53 @@ void Kia_options_cyclograms::regular_settings()
     });
 }
 
+void Kia_options_cyclograms::power_cyclograms_settings()
+{
+    std::vector<QWidget*> widget_for_cyclogram_settings;
+    std::vector<QVBoxLayout*> layout_for_cyclogram_settings;
+    QTabWidget* tab_cyclograms= new QTabWidget(this);
+    m_layout_for_place_cyclogram_tab_widget[KNCycl_POWER]->addWidget(tab_cyclograms);
+    m_cb_for_change_do_cyclogram_power.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_power_name.size());
+    m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_power_name.size());
+    for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_gui_settings->m_cyclogram_power_name.size(); ++num_cyclogram)
+    {
+        m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do[num_cyclogram].resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_power_do_name[num_cyclogram].size());
+        widget_for_cyclogram_settings.push_back(new QWidget(this));
+        layout_for_cyclogram_settings.push_back(new QVBoxLayout(widget_for_cyclogram_settings[num_cyclogram]));
+        tab_cyclograms->addTab(widget_for_cyclogram_settings[num_cyclogram], m_kia_settings->m_kia_gui_settings->m_cyclogram_power_name[num_cyclogram].first);
+        QLabel* m_le_name_settings = new QLabel("Выполнение команд", this);
+        layout_for_cyclogram_settings[num_cyclogram]->addWidget(m_le_name_settings);
+        for (uint16_t num_command = 0; num_command < m_kia_settings->m_kia_gui_settings->m_cyclogram_power_do_name[num_cyclogram].size(); num_command++)
+        {
+            m_cb_for_change_do_cyclogram_power[num_cyclogram].push_back(new QCheckBox(m_kia_settings->m_kia_gui_settings->m_cyclogram_power_do_name[num_cyclogram][num_command].first,
+                                                                                      widget_for_cyclogram_settings[num_cyclogram]));
+            layout_for_cyclogram_settings[num_cyclogram]->addWidget(m_cb_for_change_do_cyclogram_power[num_cyclogram][num_command]);
+            connect(m_cb_for_change_do_cyclogram_power[num_cyclogram][num_command], &QCheckBox::stateChanged, this, [this, num_cyclogram, num_command](int state)
+            {
+                if (state > 0)
+                    m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do[num_cyclogram][num_command] = KiaS_SUCCESS;
+                else
+                    m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do[num_cyclogram][num_command] = KiaS_FAIL;
+
+                QStringList data_for_client;
+                data_for_client.push_back(QString::number(num_cyclogram));
+                for(uint16_t i = 0; i < m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do[num_cyclogram].size(); ++i)
+                {
+                    data_for_client.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do[num_cyclogram][i]));
+                }
+                m_client->send_data_to_server(SET_DO_CYCLOGRAM_POWER_IN_DO, data_for_client);
+
+            });
+            m_cb_for_change_do_cyclogram_power[num_cyclogram][num_command]->setCheckState(Qt::CheckState::Checked);
+        }
+
+    }
+}
+
 void Kia_options_cyclograms::create_regular_cyclogram_settings(QTabWidget* tab_regular_cyclogram)
 {
     std::vector<QWidget*> widget_for_cyclogram_settings;
     std::vector<QGridLayout*> layout_for_cyclogram_settings;
-    std::cout << m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size() << std::endl;
     m_cb_for_change_do_cyclogram.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size());
     m_le_for_change_do_cyclogram.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size());
     m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size());
@@ -309,7 +386,7 @@ void Kia_options_cyclograms::create_regular_cyclogram_settings(QTabWidget* tab_r
 
                 QStringList data_for_client;
                 data_for_client.push_back(QString::number(num_cyclogram));
-                for(int i = 0; i < m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do[num_cyclogram].size(); ++i)
+                for(uint16_t i = 0; i < m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do[num_cyclogram].size(); ++i)
                 {
                     data_for_client.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do[num_cyclogram][i]));
                 }
@@ -323,7 +400,7 @@ void Kia_options_cyclograms::create_regular_cyclogram_settings(QTabWidget* tab_r
                 m_kia_settings->m_kia_data_to_server->m_pause_to_do_cyclogram_in_do[num_cyclogram][num_command] = m_le_for_change_do_cyclogram[num_cyclogram][num_command]->text().toInt();
                 QStringList data_for_client;
                 data_for_client.push_back(QString::number(num_cyclogram));
-                for(int i = 0; i < m_kia_settings->m_kia_data_to_server->m_pause_to_do_cyclogram_in_do[num_cyclogram].size(); ++i)
+                for(uint16_t i = 0; i < m_kia_settings->m_kia_data_to_server->m_pause_to_do_cyclogram_in_do[num_cyclogram].size(); ++i)
                 {
                     data_for_client.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_pause_to_do_cyclogram_in_do[num_cyclogram][i]));
                 }
@@ -436,7 +513,7 @@ void Kia_options_cyclograms::cyclogram_tp()
             m_check_box_select_cyclograms_tp[num_cyclogram]->setCheckState(Qt::CheckState::Checked);
     }
     m_check_box_off_power_for_tp = new QCheckBox("Выключить питание после завершения", this);
-    if (m_kia_settings->m_kia_gui_settings->m_cyclogram_ri_name.size() != 0)
+    if (m_map_key_cyclogram_ri.find(CYCLOGRAM_TECH_RUN) != m_map_key_cyclogram_ri.end())
     {
         layout_for_ri_cyclogram_settings[m_map_key_cyclogram_ri[CYCLOGRAM_TECH_RUN]]->addWidget(label_name_settings);
         layout_for_ri_cyclogram_settings[m_map_key_cyclogram_ri[CYCLOGRAM_TECH_RUN]]->addLayout(lay);
@@ -453,6 +530,7 @@ void Kia_options_cyclograms::cyclogram_tp()
         }
         m_check_box_off_power_for_tp->setVisible(false);
     }
+
     connect(m_check_box_off_power_for_tp, &QCheckBox::stateChanged, this, [this](int state)
     {
         m_kia_settings->m_kia_data_to_server->m_off_power_for_tp = state;
@@ -465,7 +543,7 @@ void Kia_options_cyclograms::cyclogram_do_frames()
     QLabel* label_frame_type_recive_settings =  new QLabel("Тип приема кадра:", this);
     m_cb_type_recieve = new QComboBox(this);
     m_cb_type_recieve->setEditable(true);
-    QStringList type_recieve = {"Прием по МКО", "Прием по FTID-(USB)"};
+    QStringList type_recieve = {"Прием по МКО", "Прием по FTDI-(USB)"};
     for (auto el : type_recieve)
         m_cb_type_recieve->addItem(el);
     m_cb_type_recieve->setMaxVisibleItems(type_recieve.size());
@@ -488,7 +566,7 @@ void Kia_options_cyclograms::cyclogram_do_frames()
         m_kia_settings->m_kia_data_to_server->m_frame_type = index;
         m_client->send_data_to_server(SET_TYPE_FRAME, QStringList(QString::number(m_kia_settings->m_kia_data_to_server->m_frame_type_recieve)));
     });
-    if (m_kia_settings->m_kia_gui_settings->m_cyclogram_ri_name.size() != 0)
+    if (m_map_key_cyclogram_ri.find(CYCL_FULL_FRAMES) != m_map_key_cyclogram_ri.end())
     {
         layout_for_ri_cyclogram_settings[m_map_key_cyclogram_ri[CYCL_FULL_FRAMES]]->addWidget(label_frame_type_recive_settings);
         layout_for_ri_cyclogram_settings[m_map_key_cyclogram_ri[CYCL_FULL_FRAMES]]->addWidget(m_cb_type_recieve);

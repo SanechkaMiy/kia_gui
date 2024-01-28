@@ -29,6 +29,7 @@ public slots:
     void set_load_settings(qint16 type_load, QStringList load_data);
     void set_load_tp_settings(qint16 type_settings, QStringList load_data);
     void set_load_regular_settings_do_command(qint16 type_cyclograms, qint16 type_settings, QStringList load_data);
+    void set_load_power_settings_do_command(qint16 type_cyclograms, qint16 type_settings, QStringList load_data);
     void load_for_specific_cyclogram(qint16 type_cyclogram, QStringList load_data);
     void load_for_cyclogram_do_frames(qint16 type_settings, qint16 data);
 signals:
@@ -39,6 +40,7 @@ private:
     void set_data_for_server(qint16 num, Arr& data_arr);
     void ai_settings();
     void regular_settings();
+    void power_cyclograms_settings();
     void create_regular_cyclogram_settings(QTabWidget *tab_regular_cyclogram);
     void create_ri_cyclogram_settings();
     void cyclogram_settings_if_run_a_lot(QString name_cyclogram, uint16_t type_cyclogram);
@@ -74,6 +76,9 @@ private:
     std::vector<QVBoxLayout*> layout_for_ri_cyclogram_settings;
     QMap<uint16_t, uint16_t> m_map_key_cyclogram;
     QMap<uint16_t, uint16_t> m_map_key_cyclogram_ri;
+
+
+    std::vector<std::vector<QCheckBox*>> m_cb_for_change_do_cyclogram_power;
 
 };
 

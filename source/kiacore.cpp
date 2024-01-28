@@ -12,6 +12,7 @@ KiaCore::KiaCore(QWidget *wgt, QObject *parent)
     connect(m_client.get(), &Client::load_profile, this, [this]()
     {
         load_profile_settings();
+
     });
     connect(m_kia_menubar, SIGNAL(show_kia_profile()), this, SLOT(show_kia_profile_slot()));
     connect(m_save_read_settings.get(), SIGNAL(send_current_main_tab_widget(uint16_t)), m_kia_main_window, SLOT(set_current_index_tab_widget(uint16_t)));
@@ -385,11 +386,25 @@ void KiaCore::create_kia_options_for_cyclogram()
     m_kia_options_cyclograms = new Kia_options_cyclograms(m_kia_settings, m_client, m_kia_main_window);
     auto pair = std::make_pair(m_kia_options_cyclograms, "Циклограммы");
     m_kia_options_list.push_back(pair);
-    connect(m_save_read_settings.get(), SIGNAL(send_to_kia_options(qint16, QStringList)), m_kia_options_cyclograms, SLOT(set_load_settings(qint16, QStringList)));
-    connect(m_save_read_settings.get(), SIGNAL(send_to_tp_cyclogram_settings(qint16, QStringList)), m_kia_options_cyclograms, SLOT(set_load_tp_settings(qint16, QStringList)));
-    connect(m_save_read_settings.get(), SIGNAL(send_to_ri_cyclograms(qint16, QStringList)), m_kia_options_cyclograms, SLOT(load_for_specific_cyclogram(qint16, QStringList)));
-    connect(m_save_read_settings.get(), SIGNAL(send_to_regular_cyclogram_do_command(qint16, qint16, QStringList)), m_kia_options_cyclograms, SLOT(set_load_regular_settings_do_command(qint16, qint16, QStringList)));
-    connect(m_save_read_settings.get(), SIGNAL(send_frames_cyclograms(qint16, qint16)), m_kia_options_cyclograms, SLOT(load_for_cyclogram_do_frames(qint16, qint16)));
+
+    connect(m_save_read_settings.get(), SIGNAL(send_to_kia_options(qint16, QStringList)),
+            m_kia_options_cyclograms, SLOT(set_load_settings(qint16, QStringList)));
+
+    connect(m_save_read_settings.get(), SIGNAL(send_to_tp_cyclogram_settings(qint16, QStringList)),
+            m_kia_options_cyclograms, SLOT(set_load_tp_settings(qint16, QStringList)));
+
+    connect(m_save_read_settings.get(), SIGNAL(send_to_ri_cyclograms(qint16, QStringList)),
+            m_kia_options_cyclograms, SLOT(load_for_specific_cyclogram(qint16, QStringList)));
+
+    connect(m_save_read_settings.get(), SIGNAL(send_to_regular_cyclogram_do_command(qint16, qint16, QStringList)),
+            m_kia_options_cyclograms, SLOT(set_load_regular_settings_do_command(qint16, qint16, QStringList)));
+
+    connect(m_save_read_settings.get(), SIGNAL(send_frames_cyclograms(qint16, qint16)),
+            m_kia_options_cyclograms, SLOT(load_for_cyclogram_do_frames(qint16, qint16)));
+
+    connect(m_save_read_settings.get(), SIGNAL(send_to_power_cyclogram_do_command(qint16, qint16, QStringList)),
+            m_kia_options_cyclograms, SLOT(set_load_power_settings_do_command(qint16, qint16, QStringList)));
+
 }
 
 void KiaCore::create_kia_options_for_command()
@@ -800,6 +815,7 @@ void KiaCore::load_profile_settings()
     reset_before_load_profile();
     m_save_read_settings->load_pos_and_size_widgets("m_kia_main_window", m_kia_main_window);
     m_save_read_settings->load_settings();
+
     m_kia_menubar->load_mode_menu_bi();
     m_save_read_settings->load_pos_and_size_widgets("window_is_work", m_kia_window_is_work);
 

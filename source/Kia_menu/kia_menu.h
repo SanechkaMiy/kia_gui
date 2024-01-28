@@ -7,6 +7,7 @@ class Kia_menu
 {
 public:
     Kia_menu(std::shared_ptr<Client> client, std::shared_ptr<Kia_settings> kia_settings);
+    void create_action_state_power(QMenu* menu);
     void create_action_state_work(QMenu* menu);
     void create_action_pci(QMenu* menu);
     void create_action_res(QMenu* menu);
@@ -25,6 +26,7 @@ private:
     QMap<uint16_t, QKeySequence> map_key_cyclogram_tp;
     QMap<uint16_t, QKeySequence> map_key_cyclogram_ai;
     QMap<uint16_t, QKeySequence> map_key_cyclogram_ri;
+    QMap<uint16_t, QKeySequence> map_key_cyclogram_power;
 };
 
 #endif // KIA_MENU_H

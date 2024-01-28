@@ -65,7 +65,7 @@ void KiaMenuBar::create_actions()
 
 
     m_kia_menu.reset(new Kia_menu(m_client, m_kia_settings));
-
+    m_kia_menu->create_action_state_power(ui->menu_state_power);
     m_kia_menu->create_action_state_work(ui->menu_stated_work);
     m_kia_menu->create_action_pci(ui->menu_pci);
     m_kia_menu->create_action_res(ui->menu_res);
@@ -143,18 +143,6 @@ void KiaMenuBar::set_mode_menu_bi(QAction* main, QAction* rezerv, uint16_t mode)
         rezerv->setChecked(false);
         break;
     }
-}
-
-void KiaMenuBar::on_state_on_triggered()
-{
-    QStringList data_for_server;
-    m_client->send_data_to_server(CYCLOGRAM_STATE_ON, data_for_server);
-}
-
-void KiaMenuBar::on_state_off_triggered()
-{
-    QStringList data_for_server;
-    m_client->send_data_to_server(CYCLOGRAM_STATE_OFF, data_for_server);
 }
 
 void KiaMenuBar::on_power_on_triggered()

@@ -22,8 +22,10 @@ enum Kia_command
     CYCLOGRAM_TO = 9,
     CYCLOGRAM_LOC = 10,
     CYCLOGRAM_OO = 39,
+
     CYCLOGRAM_STATE_ON = 11,
     CYCLOGRAM_STATE_OFF = 12,
+    DO_RESTART = 62,
 
     COMMAND_FULL_EXP = 13,
     COMMAND_BIN_EXP = 40,
@@ -84,8 +86,6 @@ enum Kia_command
 
     SET_UPN = 59,
     GET_CHPN = 60,
-    // 62 is free,
-    //63 is free,
     //64 is free
     //65 is free,
     // is free 66,
@@ -104,6 +104,8 @@ enum Kia_command
 
     SET_DO_CYCLOGRAM_IN_DO = 81,
     SET_PAUSE_DO_CYCLOGRAM_IN_DO = 82,
+
+    SET_DO_CYCLOGRAM_POWER_IN_DO = 63
 };
 
 enum KIA_GUI_COMMAND
@@ -128,7 +130,9 @@ enum KIA_GUI_COMMAND
     SEND_COMMAND = 14,
     SEND_STATUS_INFO = 15,
     LOAD_PROFILE = 16,
-    SEND_PN_COMMAND = 20
+    SEND_PN_COMMAND = 20,
+    SEND_CYCLOGRAMS_POWER = 21,
+    SEND_CYCLOGRAMS_POWER_DO = 22,
 };
 
 enum NUM_MPI_COMMAND_M60
@@ -187,9 +191,14 @@ enum TYPE_KLED
 enum KIA_STATUS
 {
     KiaS_SUCCESS = 0x0000,
-    KiaS_FAIL = 0x0001,
+    KiaS_FAIL = 0x0001
 };
 
+enum KIA_CYCLOGRAM_STATUS
+{
+    KCS_SUCCES = 0x0000,
+    KCS_CNT_FIND_OR = 0x0001
+};
 enum DO_IT
 {
     EP_NOEXCHANGE = 0x0001,
@@ -210,7 +219,8 @@ enum KIA_NAME_CYCLOGRAMS
 {
     KNCycl_AI = 0,
     KNCycl_REGULAR = 1,
-    KNCycl_AI_USED_CYCL = 2
+    KNCycl_POWER = 2,
+    KNCycl_AI_USED_CYCL = 3
 };
 
 enum SET_PARAM_CYCLOGRAM
@@ -452,4 +462,11 @@ enum FRAME_SETTINGS
     FS_TYPE_FRAME = 1
 };
 
+enum PIO_ARR_DESCR
+{
+    PAD_NAME = 0,
+    PAD_VALUE = 1,
+    PAD_LOW_INTERVAL = 2,
+    PAD_HIGH_INTERVAL = 3
+};
 #endif // KIA_ENUMS_H

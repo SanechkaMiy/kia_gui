@@ -85,6 +85,16 @@ void Save_read_settings::save_settings()
         m_settings.setValue("/used_pause_command_in_cyclogram_" + QString::number(num_cyclogram), QVariant::fromValue(pause_command_in_cyclograms));
     }
 
+    for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do.size(); num_cyclogram++)
+    {
+        QStringList command_in_cyclograms;
+        for (uint16_t num_command = 0; num_command < m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do[num_cyclogram].size(); num_command++)
+        {
+            command_in_cyclograms.push_back(QString::number(m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do[num_cyclogram][num_command]));
+        }
+        m_settings.setValue("/used_command_in_cyclogram_power_" + QString::number(num_cyclogram), QVariant::fromValue(command_in_cyclograms));
+    }
+
     for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_gui_settings->m_cyclogram_ri_name.size(); num_cyclogram++)
     {
         QStringList param;
@@ -207,6 +217,12 @@ void Save_read_settings::load_settings()
             pause_command_in_cyclograms = m_settings.value("/used_pause_command_in_cyclogram_" + QString::number(num_cyclogram)).value<QStringList>();
             emit send_to_regular_cyclogram_do_command(num_cyclogram, USED_COMMAND, command_in_cyclograms);
             emit send_to_regular_cyclogram_do_command(num_cyclogram, PAUSE_COMMAND, pause_command_in_cyclograms);
+        }
+        for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do.size(); num_cyclogram++)
+        {
+            QStringList command_in_cyclograms;
+            command_in_cyclograms = m_settings.value("/used_command_in_cyclogram_power_" + QString::number(num_cyclogram)).value<QStringList>();
+            emit send_to_power_cyclogram_do_command(num_cyclogram, USED_COMMAND, command_in_cyclograms);
         }
 
         for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_gui_settings->m_cyclogram_ri_name.size(); num_cyclogram++)
