@@ -363,6 +363,7 @@ void KiaCore::set_kia_gui_settings_slot()
     create_menu_action();
 
     create_kia_options();
+
 }
 
 void KiaCore::create_kia_options_for_bi_command()

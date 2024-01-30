@@ -43,6 +43,7 @@ void Kia_custom_title_bar::mousePressEvent(QMouseEvent *event)
 {
     if(m_is_movable && event->button() == Qt::LeftButton)
     {
+        emit set_active_window();
         m_moving = true;
         m_last_pos = event->globalPos();
     }

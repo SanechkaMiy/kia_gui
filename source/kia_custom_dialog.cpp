@@ -12,6 +12,11 @@ Kia_custom_dialog::Kia_custom_dialog(QWidget *parent) :
     connect(m_custom_title_bar, SIGNAL(moved_if_release()), this, SLOT(moved_if_release()));
     connect(m_custom_title_bar, SIGNAL(set_default_pos()), this, SLOT(set_default_pos_slot()));
     connect(m_custom_title_bar, SIGNAL(hide_window()), this, SLOT(hide_widget()));
+    connect(m_custom_title_bar, &Kia_custom_title_bar::set_active_window, this, [this]()
+    {
+        raise();
+        activateWindow();
+    });
     setMouseTracking(true);
     setWindowFlags(Qt::FramelessWindowHint);
     move(0, 0);
@@ -60,6 +65,7 @@ void Kia_custom_dialog::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
+
         dragStartPosition = event->pos();
         dragStartGeometry = geometry();
     }

@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QBoxLayout>
 #include <QLabel>
+#include <iostream>
 class Kia_custom_title_bar : public QDialog
 {
     Q_OBJECT
@@ -30,6 +31,7 @@ signals:
     void moved_if_release();
     void set_default_pos();
     void hide_window();
+    void set_active_window();
 };
 
 #endif // KIA_CUSTOM_TITLE_BAR_H

@@ -27,7 +27,7 @@ void KiaWindowState::table_setup(qint16 type_bi)
     m_set_table->setColumnCount(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
     m_set_table->setRowCount(m_kia_settings->m_kia_bi_settings->m_bi_row_name[type_bi].size());
     m_line_edit_data_into_table.resize(m_kia_settings->m_kia_bi_settings->m_bi_row_name[type_bi].size());
-    m_true_color.resize( m_kia_settings->m_kia_bokz_settings->m_count_bokz);
+    m_true_color.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
     m_count_for_change_color.resize( m_kia_settings->m_kia_bokz_settings->m_count_bokz);
     m_is_color.resize(m_kia_settings->m_kia_bi_settings->m_bi_row_name[type_bi].size());
     for (int i = 0; i < m_kia_settings->m_kia_bi_settings->m_bi_row_name[type_bi].size(); ++i)
@@ -163,14 +163,17 @@ void KiaWindowState::set_status_bi_1s_mark(qint16 num_bi)
 {
     if (!m_is_color[Biu_1C])
     {
+        auto current_color = Qt::white;
         for (int coll = 0; coll < m_kia_settings->m_kia_bi_settings->m_bi_count_channel[m_kia_settings->m_type_bi]; ++coll)
         {
             auto cur_col = coll + num_bi * m_kia_settings->m_kia_bi_settings->m_bi_count_channel[m_kia_settings->m_type_bi];
             m_count_for_change_color[cur_col] = (m_count_for_change_color[cur_col] + 1)  % 2;
             if (m_count_for_change_color[cur_col]  == CS_IS_ON)
-                m_true_color[cur_col] = Qt::white;
+                current_color = Qt::white;
+            else
+                current_color = m_true_color[cur_col];
             QPalette *palette = new QPalette();
-            palette->setColor(QPalette::Base, m_true_color[cur_col]);
+            palette->setColor(QPalette::Base, current_color);
             m_line_edit_data_into_table[cur_col][Biu_1C]->setPalette(*palette);
         }
     }

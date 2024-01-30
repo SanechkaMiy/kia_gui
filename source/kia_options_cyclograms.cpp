@@ -316,9 +316,13 @@ void Kia_options_cyclograms::power_cyclograms_settings()
     std::vector<QVBoxLayout*> layout_for_cyclogram_settings;
     QTabWidget* tab_cyclograms= new QTabWidget(this);
     m_layout_for_place_cyclogram_tab_widget[KNCycl_POWER]->addWidget(tab_cyclograms);
-    m_cb_for_change_do_cyclogram_power.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_power_name.size());
-    m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_power_name.size());
-    for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_gui_settings->m_cyclogram_power_name.size(); ++num_cyclogram)
+
+    std::vector<int32_t> check_min_size = {m_kia_settings->m_kia_gui_settings->m_cyclogram_power_name.size(),
+                                           static_cast<int>(m_kia_settings->m_kia_gui_settings->m_cyclogram_power_do_name.size())};
+    auto min_size = std::min_element(check_min_size.begin(), check_min_size.end());
+    m_cb_for_change_do_cyclogram_power.resize(*min_size);
+    m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do.resize(*min_size);
+    for (uint16_t num_cyclogram = 0; num_cyclogram < *min_size; ++num_cyclogram)
     {
         m_kia_settings->m_kia_data_to_server->m_do_cyclograms_power_in_do[num_cyclogram].resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_power_do_name[num_cyclogram].size());
         widget_for_cyclogram_settings.push_back(new QWidget(this));
@@ -357,11 +361,14 @@ void Kia_options_cyclograms::create_regular_cyclogram_settings(QTabWidget* tab_r
 {
     std::vector<QWidget*> widget_for_cyclogram_settings;
     std::vector<QGridLayout*> layout_for_cyclogram_settings;
-    m_cb_for_change_do_cyclogram.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size());
-    m_le_for_change_do_cyclogram.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size());
-    m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size());
-    m_kia_settings->m_kia_data_to_server->m_pause_to_do_cyclogram_in_do.resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size());
-    for (uint16_t num_cyclogram = 0; num_cyclogram < m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size(); ++num_cyclogram)
+    std::vector<int32_t> check_min_size = {static_cast<int>(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name.size()),
+                                           m_kia_settings->m_kia_gui_settings->m_cyclogram_tp_name.size()};
+    auto min_size = std::min_element(check_min_size.begin(), check_min_size.end());
+    m_cb_for_change_do_cyclogram.resize(*min_size);
+    m_le_for_change_do_cyclogram.resize(*min_size);
+    m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do.resize(*min_size);
+    m_kia_settings->m_kia_data_to_server->m_pause_to_do_cyclogram_in_do.resize(*min_size);
+    for (uint16_t num_cyclogram = 0; num_cyclogram < *min_size; ++num_cyclogram)
     {
         m_kia_settings->m_kia_data_to_server->m_do_cyclograms_in_do[num_cyclogram].resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name[num_cyclogram].size());
         m_kia_settings->m_kia_data_to_server->m_pause_to_do_cyclogram_in_do[num_cyclogram].resize(m_kia_settings->m_kia_gui_settings->m_cyclogram_do_name[num_cyclogram].size());
