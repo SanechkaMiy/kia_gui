@@ -24,8 +24,6 @@ Kia_options_command::Kia_options_command(std::shared_ptr<Kia_settings> kia_setti
     m_lb_name_command.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
     m_le_edit_command.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
     m_tables.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
-    m_edit_count.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
-    m_table_count.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
     for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
     {
         m_tab_for_type_command.push_back(new QTabWidget(this));
@@ -58,28 +56,28 @@ Kia_options_command::Kia_options_command(std::shared_ptr<Kia_settings> kia_setti
                 break;
             }
         }
-        for (uint16_t num_edit = 0; num_edit < m_le_edit_command[num_bokz].size(); ++num_edit)
+        for (uint16_t num_edit = 0; num_edit < m_status_changed_edit[num_bokz].size(); ++num_edit)
         {
-            connect(m_le_edit_command[num_bokz][num_edit], &QLineEdit::textChanged, [this, num_edit, num_bokz](const QString & is_changed)
+            connect(m_le_edit_command[num_bokz][m_status_changed_edit[num_bokz][num_edit].second], &QLineEdit::textChanged, [this, num_edit, num_bokz](const QString & is_changed)
             {
                 Q_UNUSED(is_changed)
                 m_status_changed_edit[num_bokz][num_edit].first = IS_CHANGED;
                 QPalette palette;
                 palette.setColor(QPalette::Base, Qt::red);
-                m_le_edit_command[num_bokz][num_edit]->setPalette(palette);
+                m_le_edit_command[num_bokz][m_status_changed_edit[num_bokz][num_edit].second]->setPalette(palette);
 
             });
         }
 
-        for (uint16_t num_table = 0; num_table < m_tables[num_bokz].size(); ++num_table)
+        for (uint16_t num_table = 0; num_table < m_status_changed_table[num_bokz].size(); ++num_table)
         {
-            connect(m_tables[num_bokz][num_table], &QTableWidget::itemChanged, [this, num_table, num_bokz](QTableWidgetItem *item)
+            connect(m_tables[num_bokz][m_status_changed_table[num_bokz][num_table].second], &QTableWidget::itemChanged, [this, num_table, num_bokz](QTableWidgetItem *item)
             {
                 Q_UNUSED(item)
                 m_status_changed_table[num_bokz][num_table].first = IS_CHANGED;
                 QPalette palette;
                 palette.setColor(QPalette::Base, Qt::red);
-                m_tables[num_bokz][num_table]->setPalette(palette);
+                m_tables[num_bokz][m_status_changed_table[num_bokz][num_table].second]->setPalette(palette);
 
             });
         }
@@ -99,37 +97,38 @@ void Kia_options_command::on_set_param_clicked()
     palette.setColor(QPalette::Base, Qt::white);
     for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; ++num_bokz)
     {
-        for (uint16_t num_edit = 0; num_edit < m_le_edit_command[num_bokz].size(); ++num_edit)
+        for (uint16_t num_edit = 0; num_edit < m_status_changed_edit[num_bokz].size(); ++num_edit)
         {
             if (m_status_changed_edit[num_bokz][num_edit].first == IS_CHANGED)
             {
-                m_le_edit_command[num_bokz][num_edit]->setPalette(palette);
+                m_le_edit_command[num_bokz][m_status_changed_edit[num_bokz][num_edit].second]->setPalette(palette);
                 QStringList param_list;
                 param_list.push_back(QString::number(m_status_changed_edit[num_bokz][num_edit].second));
-                param_list.push_back(m_le_edit_command[num_bokz][num_edit]->text());
+                param_list.push_back(m_le_edit_command[num_bokz][m_status_changed_edit[num_bokz][num_edit].second]->text());
                 m_client->send_data_to_server(SET_UPN, param_list);
                 m_status_changed_edit[num_bokz][num_edit].first = IS_DEFAULT;
             }
         }
 
-        for (uint16_t num_table = 0; num_table < m_tables[num_bokz].size(); ++num_table)
+        for (uint16_t num_table = 0; num_table < m_status_changed_table[num_bokz].size(); ++num_table)
         {
             if (m_status_changed_table[num_bokz][num_table].first == IS_CHANGED)
             {
-                m_tables[num_bokz][num_table]->setPalette(palette);
+                m_tables[num_bokz][m_status_changed_table[num_bokz][num_table].second]->setPalette(palette);
                 QStringList param_list;
                 param_list.push_back(QString::number(m_status_changed_table[num_bokz][num_table].second));
-                for (uint16_t row = 0; row < m_tables[num_bokz][num_table]->rowCount(); ++row)
+                for (uint16_t row = 0; row < m_tables[num_bokz][m_status_changed_table[num_bokz][num_table].second]->rowCount(); ++row)
                 {
-                    for (uint16_t col = 0; col < m_tables[num_bokz][num_table]->columnCount(); ++col)
+                    for (uint16_t col = 0; col < m_tables[num_bokz][m_status_changed_table[num_bokz][num_table].second]->columnCount(); ++col)
                     {
-                        param_list.push_back(m_tables[num_bokz][num_table]->item(row, col)->text());
+                        param_list.push_back(m_tables[num_bokz][m_status_changed_table[num_bokz][num_table].second]->item(row, col)->text());
                     }
                 }
                 m_client->send_data_to_server(SET_UPN, param_list);
                 m_status_changed_table[num_bokz][num_table].first = IS_DEFAULT;
             }
         }
+
     }
 }
 
@@ -162,7 +161,7 @@ void Kia_options_command::set_read_command(qint16 num_bokz, qint16 type_data, qi
         {
             for (uint16_t coll = 0; coll < m_tables[num_bokz][type_command]->columnCount(); coll++)
             {
-                m_tables[num_bokz][type_command]->setItem(row, coll, new QTableWidgetItem(data[coll + row * m_tables[num_bokz][type_data]->columnCount()]));
+                m_tables[num_bokz][type_command]->setItem(row, coll, new QTableWidgetItem(data[coll + row * m_tables[num_bokz][type_command]->columnCount()]));
             }
         }
         break;
@@ -174,37 +173,35 @@ void Kia_options_command::add_edit(uint16_t num_bokz, const QString &name_param,
 {
     auto pair = std::make_pair(IS_DEFAULT, name_to_send);
     m_status_changed_edit[num_bokz].push_back(pair);
-    m_lb_name_command[num_bokz].push_back(new QLabel(name_param, this));
-    m_le_edit_command[num_bokz].push_back(new QLineEdit(this));
-    m_dict_type_command_for_load[key + "_" + QString::number(num_bokz)] = m_edit_count[num_bokz];
-    std::get<1>(m_widgets[num_bokz][IS_PARAM])->addWidget(m_lb_name_command[num_bokz][m_edit_count[num_bokz]], m_edit_count[num_bokz], 0);
-    std::get<1>(m_widgets[num_bokz][IS_PARAM])->addWidget(m_le_edit_command[num_bokz][m_edit_count[num_bokz]], m_edit_count[num_bokz], 1);
-    m_edit_count[num_bokz]++;
+    m_lb_name_command[num_bokz][name_to_send] = new QLabel(name_param, this);
+    m_le_edit_command[num_bokz][name_to_send] = new QLineEdit(this);
+    m_dict_type_command_for_load[key + "_" + QString::number(num_bokz)] = name_to_send;
+    std::get<1>(m_widgets[num_bokz][IS_PARAM])->addWidget(m_lb_name_command[num_bokz][name_to_send], name_to_send, 0);
+    std::get<1>(m_widgets[num_bokz][IS_PARAM])->addWidget(m_le_edit_command[num_bokz][name_to_send], name_to_send, 1);
 }
 
 void Kia_options_command::add_table(uint16_t num_bokz, uint16_t row, uint16_t collumn, const QString &name_param, const QString &key, const uint16_t &name_to_send)
 {
     auto pair = std::make_pair(IS_DEFAULT, name_to_send);
     m_status_changed_table[num_bokz].push_back(pair);
-    m_lb_name_command[num_bokz].push_back(new QLabel(name_param, this));
-    m_tables[num_bokz].push_back(new QTableWidget(row, collumn, this));
-    m_tables[num_bokz][m_table_count[num_bokz]]->horizontalHeader()->setHidden(true);
-    m_tables[num_bokz][m_table_count[num_bokz]]->verticalHeader()->setHidden(true);
-    m_tables[num_bokz][m_table_count[num_bokz]]->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    m_tables[num_bokz][m_table_count[num_bokz]]->horizontalHeader()->setStretchLastSection(true);
-    m_tables[num_bokz][m_table_count[num_bokz]]->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    m_tables[num_bokz][m_table_count[num_bokz]]->verticalHeader()->setStretchLastSection(true);
-    //m_tables[num_bokz][m_table_count[num_bokz]]->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-    m_dict_type_command_for_load[key + "_" + QString::number(num_bokz)] = m_table_count[num_bokz];
-    for (uint16_t row = 0; row < m_tables[num_bokz][m_table_count[num_bokz]]->rowCount(); ++row)
-        for (uint16_t col = 0; col < m_tables[num_bokz][m_table_count[num_bokz]]->columnCount(); ++col)
+    m_lb_name_command[num_bokz][name_to_send] = new QLabel(name_param, this);
+    m_tables[num_bokz][name_to_send] = new QTableWidget(row, collumn, this);
+    m_tables[num_bokz][name_to_send]->horizontalHeader()->setHidden(true);
+    m_tables[num_bokz][name_to_send]->verticalHeader()->setHidden(true);
+    m_tables[num_bokz][name_to_send]->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    m_tables[num_bokz][name_to_send]->horizontalHeader()->setStretchLastSection(true);
+    m_tables[num_bokz][name_to_send]->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    m_tables[num_bokz][name_to_send]->verticalHeader()->setStretchLastSection(true);
+    //m_tables[num_bokz][name_to_send]->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+    m_dict_type_command_for_load[key + "_" + QString::number(num_bokz)] = name_to_send;
+    for (uint16_t row = 0; row < m_tables[num_bokz][name_to_send]->rowCount(); ++row)
+        for (uint16_t col = 0; col < m_tables[num_bokz][name_to_send]->columnCount(); ++col)
         {
-            m_tables[num_bokz][m_table_count[num_bokz]]->setItem(row, col, new QTableWidgetItem("0"));
+            m_tables[num_bokz][name_to_send]->setItem(row, col, new QTableWidgetItem("0"));
         }
-    std::get<1>(m_widgets[num_bokz][IS_TABLE])->addWidget(m_lb_name_command[num_bokz][m_edit_count[num_bokz]], m_table_count[num_bokz], 0);
-    std::get<1>(m_widgets[num_bokz][IS_TABLE])->addWidget(m_tables[num_bokz][m_table_count[num_bokz]], m_table_count[num_bokz], 1);
-    m_edit_count[num_bokz]++;
-    m_table_count[num_bokz]++;
+    std::get<1>(m_widgets[num_bokz][IS_TABLE])->addWidget(m_lb_name_command[num_bokz][name_to_send], name_to_send, 0);
+    std::get<1>(m_widgets[num_bokz][IS_TABLE])->addWidget(m_tables[num_bokz][name_to_send], name_to_send, 1);
+
 }
 
 void Kia_options_command::create_template_for_table()
@@ -216,7 +213,7 @@ void Kia_options_command::create_template_for_table()
     m_dict_for_table_size["qo"] = qa;
 
     std::array<uint16_t, 2> w = {3, 1};
-    m_dict_for_table_size["w0"] = w;
+    m_dict_for_table_size["wo"] = w;
 
     std::array<uint16_t, 2> kd = {2, 14};
     m_dict_for_table_size["kd"] = kd;

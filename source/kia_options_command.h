@@ -50,16 +50,14 @@ private:
     std::vector<std::vector<std::tuple<QWidget*, QGridLayout*, QString>>> m_widgets;
     std::vector<std::vector<std::pair<uint16_t, uint16_t>>> m_status_changed_edit;
     std::vector<std::vector<std::pair<uint16_t, uint16_t>>> m_status_changed_table;
-    std::vector<std::vector<QLabel*>> m_lb_name_command;
-    std::vector<std::vector<QLineEdit*>> m_le_edit_command;
+    std::vector<std::map<uint16_t, QLabel*>> m_lb_name_command;
+    std::vector<std::map<uint16_t, QLineEdit*>> m_le_edit_command;
     void add_edit(uint16_t num_bokz, const QString& name_param,
                   const QString& key, const uint16_t& name_to_send);
 
-    std::vector<std::vector<QTableWidget*>> m_tables;
+    std::vector<std::map<uint16_t, QTableWidget*>> m_tables;
     void add_table(uint16_t num_bokz, uint16_t row, uint16_t collumn,
                    const QString& name_param, const QString& key, const uint16_t& name_to_send);
-    std::vector<int16_t> m_edit_count;
-    std::vector<int16_t> m_table_count;
 
     std::map<QString, uint16_t> m_dict_type_command_for_load;
 

@@ -22,6 +22,7 @@ Kia_options_cyclograms::Kia_options_cyclograms(std::shared_ptr<Kia_settings> kia
     regular_settings();
 
     power_cyclograms_settings();
+
     create_ri_cyclogram_settings();
 }
 
