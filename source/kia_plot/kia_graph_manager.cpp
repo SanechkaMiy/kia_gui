@@ -54,46 +54,6 @@ Kia_graph_manager::~Kia_graph_manager()
 }
 
 
-//void Kia_graph_manager::create_plot_slot(QStringList query_param)
-//{
-
-//    m_num_graph++;
-//    m_dialog.push_back(new QDialog(m_parent));
-//    m_l_for_plots.push_back(new QVBoxLayout(m_dialog[m_num_graph]));
-//    m_kias_data_from_db.push_back(std::make_shared<Kias_data_from_db>());
-//    m_kia_db.push_back(std::make_shared<Kia_db>("con_graph_" + QString::number(m_num_graph), m_kia_settings, m_kias_data_from_db[m_num_graph]));
-//    m_kia_db[m_num_graph]->set_query(query_param);
-//    m_kia_graph.push_back(new Kia_graph(m_kia_db[m_num_graph], m_kia_settings, m_kias_data_from_db[m_num_graph], m_dialog[m_num_graph]));
-//    if (query_param[QP_TYPE_WIDGET] == "datetime")
-//    {
-//        m_kias_data_from_db[m_num_graph]->m_is_default_graph = false;
-//        m_kia_graph[m_num_graph]->init_timestamp_plot();
-//        start_data_timer(m_kia_graph[m_num_graph]);
-//    }
-//    else
-//    {
-//        m_kias_data_from_db[m_num_graph]->m_is_default_graph = true;
-//        m_kia_graph[m_num_graph]->init_default_plot();
-//        start_data_timer_for_default_plot(m_kia_graph[m_num_graph]);
-//    }
-//    m_kia_graph[m_num_graph]->xAxis->setLabel(query_param[QP_X_DESC]);
-//    m_kia_graph[m_num_graph]->yAxis->setLabel(query_param[QP_Y_DESC]);
-//    m_l_for_plots[m_num_graph]->addWidget(m_kia_graph[m_num_graph]);
-//    plots_interactions();
-//    m_kia_constructor->add_graph_to_list(query_param);
-//    m_dialog[m_num_graph]->setWindowTitle("График " + query_param[QP_Y_DESC]
-//                                          + " от " + query_param[QP_X_DESC]
-//                                          + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-
-//            + " " + QString::number(query_param[QP_NUM_BOKZ].toInt() + 1));
-//    emit create_action("График " + query_param[QP_Y_DESC]
-//                       + " от " + query_param[QP_X_DESC]
-//                       + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
-//            + " " + QString::number(query_param[QP_NUM_BOKZ].toInt() + 1), m_num_graph);
-
-//}
-
-
 void Kia_graph_manager::create_plot_slot(QStringList query_param)
 {
     m_num_graph++;
@@ -110,8 +70,8 @@ void Kia_graph_manager::create_plot_slot(QStringList query_param)
     m_kia_db.push_back(std::make_shared<Kia_db>("con_graph_" + QString::number(m_num_graph), m_kia_settings, m_kias_data_from_db[m_num_graph]));
     m_kia_db[m_num_graph]->set_query(query_param);
     m_kia_graph.push_back(new Kia_graph(m_kia_db[m_num_graph], m_kia_settings, m_kias_data_from_db[m_num_graph]));
-    m_kia_graph[m_num_graph]->xAxis->setLabel(query_param[QP_X_DESC] + " " + query_param[QP_X_UM]);
-    m_kia_graph[m_num_graph]->yAxis->setLabel(query_param[QP_Y_DESC] + " " + query_param[QP_Y_UM]);
+    m_kia_graph[m_num_graph]->xAxis->setLabel(query_param[QP_X_DESC] + "(" + query_param[QP_X]  + query_param[QP_ARR_X] + ") " + query_param[QP_X_UM]);
+    m_kia_graph[m_num_graph]->yAxis->setLabel(query_param[QP_Y_DESC] + "(" + query_param[QP_Y] + query_param[QP_ARR_Y] + ") " + query_param[QP_Y_UM]);
     if (query_param[QP_TYPE_WIDGET] == "datetime")
     {
         m_kias_data_from_db[m_num_graph]->m_graph_type = Kia_graph::TIMESTAMP_GRAPH;
@@ -130,9 +90,9 @@ void Kia_graph_manager::create_plot_slot(QStringList query_param)
     m_kia_constructor->add_graph_to_list(query_param);
 
 
-    QString title = "График " + query_param[QP_Y_DESC]
-            + " от " + query_param[QP_X_DESC]
-            + " " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
+    QString title = "График " + query_param[QP_Y_DESC] + "(" + query_param[QP_Y] + query_param[QP_ARR_Y]
+            + ") от " + query_param[QP_X_DESC] + "(" + query_param[QP_X] + query_param[QP_ARR_X]
+            + ") " + m_kia_settings->m_kia_bokz_settings->m_bokz_type[m_kia_settings->m_type_bokz]
             + " " + QString::number(query_param[QP_NUM_BOKZ].toInt() + 1);
     if (!query_param[QP_NUM_BOKZ_FOR_ANGLES].isEmpty())
     {

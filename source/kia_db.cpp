@@ -49,7 +49,7 @@ void Kia_db::get_data_from_db_for_graph_slot(QString begin, QString end)
             data_get = "frame_name";
             data_get_db = ", " + data_get;
         }
-        if (!m_query->exec("SELECT datetime, "+ m_query_param[QP_X] + ", " + m_query_param[QP_Y] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
+        if (!m_query->exec("SELECT datetime, " + m_query_param[QP_X] + m_query_param[QP_ARR_X] + ", " + m_query_param[QP_Y] + m_query_param[QP_ARR_Y] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
                            "WHERE host_id='04:92:26:d0:ef:d6'::macaddr "
                            "AND experiment_id='" + m_kia_settings->m_kias_db->m_experiment_id + "' AND serial_num=" + m_query_param[QP_NUM_BOKZ] + " "
                            "AND datetime >= '" + QDate::currentDate().toString("yyyy-MM-dd") + " " + begin + "' AND datetime <='" + QDate::currentDate().toString("yyyy-MM-dd") + " " + end + "';"))
@@ -79,7 +79,7 @@ void Kia_db::get_data_from_db_for_graph_slot(QString begin, QString end)
     else
     {
         auto query_bokz_x = new QSqlQuery(m_db);
-        if (!query_bokz_x->exec("SELECT datetime, "+ m_query_param[QP_X] + ", " + m_query_param[QP_Y] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
+        if (!query_bokz_x->exec("SELECT datetime, " + m_query_param[QP_X] + m_query_param[QP_ARR_X] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
                                 "WHERE host_id='04:92:26:d0:ef:d6'::macaddr "
                                 "AND experiment_id='" + m_kia_settings->m_kias_db->m_experiment_id + "' AND serial_num=" + m_query_param[QP_NUM_BOKZ] + " "
                                 "AND datetime >= '" + QDate::currentDate().toString("yyyy-MM-dd") + " " + begin + "' AND datetime <='" + QDate::currentDate().toString("yyyy-MM-dd") + " " + end + "';"))
@@ -95,7 +95,7 @@ void Kia_db::get_data_from_db_for_graph_slot(QString begin, QString end)
         }
 
         auto query_bokz_y = new QSqlQuery(m_db);
-        if (!query_bokz_y->exec("SELECT datetime, "+ m_query_param[QP_X] + ", " + m_query_param[QP_Y] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
+        if (!query_bokz_y->exec("SELECT datetime, " + m_query_param[QP_Y] + m_query_param[QP_ARR_Y] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
                                 "WHERE host_id='04:92:26:d0:ef:d6'::macaddr "
                                 "AND experiment_id='" + m_kia_settings->m_kias_db->m_experiment_id + "' AND serial_num=" + m_query_param[QP_NUM_BOKZ_FOR_ANGLES] + " "
                                 "AND datetime >= '" + QDate::currentDate().toString("yyyy-MM-dd") + " " + begin + "' AND datetime <='" + QDate::currentDate().toString("yyyy-MM-dd") + " " + end + "';"))
@@ -197,6 +197,21 @@ QString Kia_db::get_columns_description(QString type_dev, QString name_table, QS
         description = m_query->value(rec.indexOf("description")).toString();
     }
     return description;
+}
+
+uint16_t Kia_db::is_array(QString type_dev, QString name_table, QString id)
+{
+    uint16_t count = 0;
+    if (!m_query->exec("SELECT cardinality(" + id + ") FROM " + type_dev + "." + name_table + " LIMIT 1"))
+    {
+        return count;
+    }
+    QSqlRecord rec = m_query->record();
+    while(m_query->next())
+    {
+        count = m_query->value(rec.indexOf("cardinality")).toInt();
+    }
+    return count;
 }
 
 QString Kia_db::get_columns_units_of_measurement(QString type_dev, QString name_table, QString id)

@@ -875,6 +875,7 @@ void KiaCore::load_profile_settings()
         m_save_read_settings->load_state_widgets("table_" + QString::number(num_widget), table_widget_list[num_widget]);
         m_save_read_settings->load_pos_and_size_widgets("table_" + QString::number(num_widget), table_widget_list[num_widget]);
     }
+
     m_save_read_settings->load_state_dock_manager(m_dock_manager);
 
 }

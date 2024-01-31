@@ -20,6 +20,7 @@ public:
     QStringList get_tables(QString type_dev);
     QStringList get_columns(QString type_dev, QString name_table);
     QString get_columns_description(QString type_dev, QString name_table, QString id);
+    uint16_t is_array(QString type_dev, QString name_table, QString id);
     QString get_columns_units_of_measurement(QString type_dev, QString name_table, QString id);
     QStringList get_query_param();
     void set_query(QStringList data_to_query, QStringList data = QStringList());

@@ -13,6 +13,12 @@ class Kia_constructor;
 class Kia_constructor : public QDialog
 {
     Q_OBJECT
+    enum TYPE_AXIS
+    {
+        IS_NOT_SELECT =  -1,
+        IS_X = 0,
+        IS_Y = 1
+    };
 
 public:
     explicit Kia_constructor(std::shared_ptr<Kia_settings> kia_settings,
@@ -47,7 +53,7 @@ private slots:
 
     void on_pb_show_graph_clicked();
 
-    void on_pb_graph_angles_clicked();
+    void on_select_arr_graph_currentIndexChanged(const QString &arg1);
 
 private:
     void start_thread();
@@ -58,6 +64,8 @@ private:
     QString m_type_arr;
     QString m_x_val;
     QString m_y_val;
+    QString m_x_arr_val;
+    QString m_y_arr_val;
     QString m_x_desc;
     QString m_y_desc;
     QString m_x_um;
@@ -68,9 +76,7 @@ private:
     std::vector<QCheckBox*> m_cb_for_data;
     std::future<void> m_thread_change_range;
     std::atomic_bool m_stop_change_range{false};
-
-    QDialog* m_select_dev_for_plot;
-    std::vector<uint16_t> m_selected_bokz;
+    int16_t m_type_axis = IS_NOT_SELECT;
 };
 
 #endif // KIA_CONSTRUCTOR_H

@@ -9,24 +9,7 @@ Kia_constructor::Kia_constructor(std::shared_ptr<Kia_settings> kia_settings, QWi
 {
     ui->setupUi(this);
     start_thread();
-
-    m_select_dev_for_plot = new QDialog(this);
-    auto layout_dev_for_plot = new QVBoxLayout(m_select_dev_for_plot);
-    QListWidget* lw_for_dev = new QListWidget(m_select_dev_for_plot);
-    layout_dev_for_plot->addWidget(lw_for_dev);
-    std::vector<QCheckBox*> m_cb_dev;
-    m_selected_bokz.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
-    for (uint16_t num_bokz = 0; num_bokz < m_kia_settings->m_kia_bokz_settings->m_count_bokz; num_bokz++)
-    {
-        m_cb_dev.push_back(new QCheckBox("БОКЗ №" + QString::number(num_bokz),m_select_dev_for_plot));
-        lw_for_dev->setItemWidget(new QListWidgetItem(lw_for_dev), m_cb_dev[num_bokz]);
-
-        connect(m_cb_dev[num_bokz], &QCheckBox::toggled,  ([this, num_bokz](bool is_toggled)
-        {
-            m_selected_bokz[num_bokz] = is_toggled;
-        }));
-    }
-
+    ui->select_arr_graph->setVisible(false);
 }
 
 Kia_constructor::~Kia_constructor()
@@ -81,17 +64,50 @@ void Kia_constructor::set_type_dev(uint16_t type_bokz, uint16_t type_bi)
 
     connect(ui->lw_x, &QListWidget::itemClicked, this, [this](QListWidgetItem *x_val)
     {
+        m_x_arr_val.clear();
+        m_type_axis = IS_NOT_SELECT;
+        ui->select_arr_graph->clear();
         m_x_val = x_val->text();
         m_x_desc = m_kia_db->get_columns_description(m_type_dev, m_type_arr, m_x_val);
         m_x_um = m_kia_db->get_columns_units_of_measurement(m_type_dev, m_type_arr, m_x_val);
-
+        auto count = m_kia_db->is_array(m_type_dev, m_type_arr, m_x_val);
+        if(count > 0)
+        {
+            ui->select_arr_graph->setVisible(true);
+            m_type_axis = IS_X;
+        }
+        else
+        {
+            ui->select_arr_graph->setVisible(false);
+        }
+        for (uint16_t ind = 0; ind < count; ind++)
+        {
+            ui->select_arr_graph->addItem("[" + QString::number(ind + 1) + "]");
+        }
     });
 
     connect(ui->lw_y, &QListWidget::itemClicked, this, [this](QListWidgetItem *y_val)
     {
+        m_y_arr_val.clear();
+        m_type_axis = IS_NOT_SELECT;
         m_y_val = y_val->text();
+        ui->select_arr_graph->clear();
         m_y_desc = m_kia_db->get_columns_description(m_type_dev, m_type_arr, m_y_val);
         m_y_um = m_kia_db->get_columns_units_of_measurement(m_type_dev, m_type_arr, m_y_val);
+        auto count = m_kia_db->is_array(m_type_dev, m_type_arr, m_y_val);
+        if(count > 0)
+        {
+            ui->select_arr_graph->setVisible(true);
+            m_type_axis = IS_Y;
+        }
+        else
+        {
+            ui->select_arr_graph->setVisible(false);
+        }
+        for (uint16_t ind = 0; ind < count; ind++)
+        {
+            ui->select_arr_graph->addItem("[" + QString::number(ind + 1) + "]");
+        }
     });
 
 
@@ -146,12 +162,13 @@ void Kia_constructor::set_type_dev(uint16_t type_bokz, uint16_t type_bi)
 }
 void Kia_constructor::add_graph()
 {
-
     QString type_dev = "bokz";
     bool is_bi = false;
     QStringList query_param;
     query_param.push_back(m_x_val);
     query_param.push_back(m_y_val);
+    query_param.push_back(m_x_arr_val);
+    query_param.push_back(m_y_arr_val);
     query_param.push_back(m_type_dev);
     query_param.push_back(m_type_arr);
     query_param.push_back(m_x_desc);
@@ -207,6 +224,8 @@ void Kia_constructor::add_table()
         if (m_kia_settings->m_kia_data_to_server->m_is_used_bokz[num_bokz] == CS_IS_ON)
         {
             QStringList query_param;
+            query_param.push_back("");
+            query_param.push_back("");
             query_param.push_back("");
             query_param.push_back("");
             query_param.push_back(m_type_dev);
@@ -367,8 +386,16 @@ void Kia_constructor::start_thread()
 }
 
 
-void Kia_constructor::on_pb_graph_angles_clicked()
+void Kia_constructor::on_select_arr_graph_currentIndexChanged(const QString &arg1)
 {
-    m_select_dev_for_plot->show();
+    switch(m_type_axis)
+    {
+    case IS_X:
+        m_x_arr_val = arg1;
+        break;
+    case IS_Y:
+        m_y_arr_val = arg1;
+        break;
+    }
 }
 
