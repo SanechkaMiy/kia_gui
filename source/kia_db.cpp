@@ -54,6 +54,7 @@ void Kia_db::get_data_from_db_for_graph_slot(QString begin, QString end)
                            "AND experiment_id='" + m_kia_settings->m_kias_db->m_experiment_id + "' AND serial_num=" + m_query_param[QP_NUM_BOKZ] + " "
                            "AND datetime >= '" + QDate::currentDate().toString("yyyy-MM-dd") + " " + begin + "' AND datetime <='" + QDate::currentDate().toString("yyyy-MM-dd") + " " + end + "';"))
         {
+
             qDebug() <<"Unable to execute query";
         }
         QSqlRecord rec = m_query->record();

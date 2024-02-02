@@ -25,14 +25,14 @@ void KiaWindowState::table_setup(qint16 type_bi)
     m_set_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     m_set_table->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     m_set_table->setColumnCount(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
-    m_set_table->setRowCount(m_kia_settings->m_kia_bi_settings->m_bi_row_name[type_bi].size());
-    m_line_edit_data_into_table.resize(m_kia_settings->m_kia_bi_settings->m_bi_row_name[type_bi].size());
+    m_set_table->setRowCount(m_kia_settings->m_kia_bi_settings->m_bi_data.size());
+    m_line_edit_data_into_table.resize(m_kia_settings->m_kia_bi_settings->m_bi_data.size());
     m_true_color.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
     m_count_for_change_color.resize( m_kia_settings->m_kia_bokz_settings->m_count_bokz);
-    m_is_color.resize(m_kia_settings->m_kia_bi_settings->m_bi_row_name[type_bi].size());
-    for (int i = 0; i < m_kia_settings->m_kia_bi_settings->m_bi_row_name[type_bi].size(); ++i)
+    m_is_color.resize(m_kia_settings->m_kia_bi_settings->m_bi_data.size());
+    for (int i = 0; i < m_kia_settings->m_kia_bi_settings->m_bi_data.size(); ++i)
     {
-        auto item_vertical_header = new QTableWidgetItem(m_kia_settings->m_kia_bi_settings->m_bi_row_name[type_bi][i]);
+        auto item_vertical_header = new QTableWidgetItem(m_kia_settings->m_kia_bi_settings->m_bi_data[i]);
         m_set_table->setVerticalHeaderItem(i, item_vertical_header);
         item_vertical_header->setTextAlignment(Qt::AlignCenter);
     }
@@ -40,7 +40,7 @@ void KiaWindowState::table_setup(qint16 type_bi)
     {
         auto num_dev = QString::number((coll % 2) + 1);
         m_set_table->setHorizontalHeaderItem(coll, new QTableWidgetItem("Прибор " + num_dev));
-        for (int row = 0; row < m_kia_settings->m_kia_bi_settings->m_bi_row_name[type_bi].size(); ++row)
+        for (int row = 0; row < m_kia_settings->m_kia_bi_settings->m_bi_data.size(); ++row)
         {
             m_line_edit_data_into_table[coll].push_back(new QLineEdit());
             m_line_edit_data_into_table[coll][row]->setReadOnly(true);
@@ -99,7 +99,7 @@ void KiaWindowState::set_data_to_table_state(qint16 type_bi, QStringList data_fr
     QPalette pallete_status_default;
     pallete_status_default.setColor(QPalette::Base, Qt::white);
 
-    for (int row = 0; row < m_kia_settings->m_kia_bi_settings->m_bi_row_name[type_bi].size(); ++row)
+    for (int row = 0; row < m_kia_settings->m_kia_bi_settings->m_bi_data.size(); ++row)
     {
         auto col = data_from_server[1].toInt() + data_from_server[0].toInt() * m_kia_settings->m_kia_bi_settings->m_bi_count_channel[m_kia_settings->m_type_bi];
 

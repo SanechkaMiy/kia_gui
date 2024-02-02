@@ -199,6 +199,9 @@ void Client::slot_read_server()
                         data_from_server[ind + TP_TYPE_VIEW].toInt(), data_from_server[ind + TP_TYPE_COMMAND].toInt()));
             }
             break;
+        case SEND_BI_PARAM_FOR_TABLE:
+            m_kia_settings->m_kia_bi_settings->m_bi_data = data_from_server;
+            break;
         }
         m_nNextBlockSize = 0;
     }
