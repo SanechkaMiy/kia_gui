@@ -145,6 +145,19 @@ void Client::slot_read_server()
             }
             m_kia_settings->m_kia_gui_settings->m_cyclogram_power_do_name.push_back(do_cyclogram_name);
             break;
+        case SEND_TYPE_FRAME:
+            for (uint16_t num_type = 0; num_type < data_from_server.size(); num_type++)
+            {
+                if (num_type % 2 == 0)
+                    m_kia_settings->m_kia_gui_settings->m_func_type_frames.push_back(std::make_pair(data_from_server[num_type], data_from_server[num_type + 1].toInt()));
+            }
+            break;
+        case SEND_TYPE_FRAME_RECIEVE:
+            for (uint16_t num_type = 0; num_type < data_from_server.size(); num_type++)
+            {
+                m_kia_settings->m_kia_gui_settings->m_func_type_frame_recieve.push_back(data_from_server[num_type]);
+            }
+            break;
         case CONNECT_TO_CORE:
             m_kia_settings->m_kias_db->m_experiment_id = data_from_server[0];
             emit set_kia_gui_settings();

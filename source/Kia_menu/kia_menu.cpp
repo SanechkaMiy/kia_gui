@@ -14,6 +14,7 @@ Kia_menu::Kia_menu(std::shared_ptr<Client> client, std::shared_ptr<Kia_settings>
     map_key_command[SYNCHRO] = QKeySequence(Qt::Key_F7);
     map_key_command[SKOR] = QKeySequence();
     map_key_command[COMMAND_NO] = QKeySequence();
+    map_key_command[COMMAND_OO] = QKeySequence(Qt::ALT + Qt::Key_O);
     map_key_command[COMMAND_TO] = QKeySequence();
     map_key_command[COMMAND_LOC] = QKeySequence();
     map_key_command[COMMAND_OTCLP] = QKeySequence();
@@ -21,6 +22,7 @@ Kia_menu::Kia_menu(std::shared_ptr<Client> client, std::shared_ptr<Kia_settings>
     map_key_command[COMMAND_VSKOU] = QKeySequence();
     map_key_command[COMMAND_ZKR] = QKeySequence();
     map_key_command[COMMAND_FULL_EXP] = QKeySequence();
+    map_key_command[COMMAND_BSHV] = QKeySequence(Qt::Key_F7);
 
     map_key_cyclogram_tp[CYCLOGRAM_NO] = QKeySequence(Qt::CTRL + Qt::Key_N);
     map_key_cyclogram_tp[CYCLOGRAM_TO] = QKeySequence(Qt::CTRL + Qt::Key_T);
@@ -164,8 +166,10 @@ void Kia_menu::create_action_commands(QMenu *menu)
 void Kia_menu::create_action_get_frames(QMenu *menu)
 {
     std::vector<std::tuple<QString, QKeySequence, uint16_t>> frames_action;
-    frames_action.push_back(std::make_tuple("Полный кадр", QKeySequence(), DO_FULL_FRAME));
-    frames_action.push_back(std::make_tuple("Бинированный кадр", QKeySequence(), DO_BIN_FRAME));
+    for (auto el : m_kia_settings->m_kia_gui_settings->m_func_type_frames)
+    {
+        frames_action.push_back(std::make_tuple(el.first, map_key_command[el.second], el.second));
+    }
     for (auto& el : frames_action)
     {
         auto action = menu->addAction(std::get<NAME_ACTION>(el), menu, [this, el]()

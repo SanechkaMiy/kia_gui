@@ -19,7 +19,7 @@ Kia_db::~Kia_db()
 bool Kia_db::create_connection(const QString& name_connection)
 {
     m_db = QSqlDatabase::addDatabase("QPSQL", name_connection);
-    m_db.setHostName("127.0.0.1");
+    m_db.setHostName("localhost");
     m_db.setPort(5432);
     m_db.setDatabaseName("kia_bokzm60");
     m_db.setUserName("postgres");

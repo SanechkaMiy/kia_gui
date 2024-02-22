@@ -23,6 +23,13 @@ class KiaWindowIsWork;
 class KiaWindowIsWork : public QDialog
 {
     Q_OBJECT
+    enum STATUS_ORIENT
+    {
+        SO_NO = 0,
+        SO_TO = 1,
+        SO_WAIT = 2,
+        SO_NO_ORIENT = 2
+    };
 
 public:
     explicit KiaWindowIsWork(std::shared_ptr<Kia_settings> kia_settings,

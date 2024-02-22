@@ -6,6 +6,7 @@
 #include "Kia_main_struct.h"
 #include <QCheckBox>
 #include <QListWidgetItem>
+#include <thread>
 namespace Ui {
 class Kia_constructor;
 }

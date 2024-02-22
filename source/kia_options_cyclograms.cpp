@@ -551,17 +551,15 @@ void Kia_options_cyclograms::cyclogram_do_frames()
     QLabel* label_frame_type_recive_settings =  new QLabel("Тип приема кадра:", this);
     m_cb_type_recieve = new QComboBox(this);
     m_cb_type_recieve->setEditable(true);
-    QStringList type_recieve = {"Прием по МКО", "Прием по FTDI-(USB)"};
-    for (auto el : type_recieve)
+    for (auto el : m_kia_settings->m_kia_gui_settings->m_func_type_frame_recieve)
         m_cb_type_recieve->addItem(el);
-    m_cb_type_recieve->setMaxVisibleItems(type_recieve.size());
+    m_cb_type_recieve->setMaxVisibleItems(m_kia_settings->m_kia_gui_settings->m_func_type_frame_recieve.size());
     QLabel* label_frame_type_settings =  new QLabel("Тип кадра:", this);
     m_cb_type_frame = new QComboBox(this);
     m_cb_type_frame->setEditable(true);
-    QStringList type_frame = {"Полный кадр", "Бинированный кадр"};
-    for (auto el : type_frame)
-        m_cb_type_frame->addItem(el);
-    m_cb_type_frame->setMaxVisibleItems(type_frame.size());
+    for (auto el : m_kia_settings->m_kia_gui_settings->m_func_type_frames)
+        m_cb_type_frame->addItem(el.first);
+    m_cb_type_frame->setMaxVisibleItems(m_kia_settings->m_kia_gui_settings->m_func_type_frames.size());
 
     connect(m_cb_type_recieve, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index)
     {

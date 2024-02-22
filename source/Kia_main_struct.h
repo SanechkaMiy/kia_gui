@@ -125,13 +125,20 @@ struct Kia_gui_settings
     QMap<QWidget*, bool> m_widget_is_hide;
     QVector<std::pair<QString, uint16_t>> m_mpi_command_name;
     QVector<std::pair<QString, uint16_t>> m_mpi_other_command_name;
+
     QVector<std::pair<QString, uint16_t>> m_cyclogram_ai_name;
     QVector<std::pair<QString, uint16_t>> m_cyclogram_tp_name;
     QVector<std::pair<QString, uint16_t>> m_cyclogram_ri_name;
     QVector<std::pair<QString, uint16_t>> m_cyclogram_power_name;
+
+    QVector<std::pair<QString, uint16_t>> m_func_type_frames;
+    QVector<QString> m_func_type_frame_recieve;
+
     std::vector<std::tuple<QString, QString, uint16_t, uint16_t>> m_commands_to_pn;
+
     std::vector<QVector<std::pair<QString, uint16_t>>> m_cyclogram_do_name;
     std::vector<QVector<std::pair<QString, uint16_t>>> m_cyclogram_power_do_name;
+
     std::vector<QStringList> m_list_profile;
     uint16_t m_count_profile = 0;
     uint16_t m_current_main_tab_widget = 0;
@@ -146,6 +153,7 @@ struct Kia_gui_settings
     std::vector<QWidget*> m_main_tabs_widgets;
     std::vector<QStringList> m_data_tabs;
     uint16_t m_count_tab_bar;
+
 };
 #pragma pack(pop)
 
@@ -173,7 +181,7 @@ struct Kias_db
     QTime m_begin;
     QTime m_end;
     double m_key = 0;
-    double m_interval_db_exchange = 1.;
+    double m_interval_db_exchange = 0.5;
 };
 #pragma pack(pop)
 

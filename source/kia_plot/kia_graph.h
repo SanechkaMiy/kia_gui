@@ -69,9 +69,9 @@ private slots:
 private:
     QClipboard* m_clipboard;
     void check_data();
-    double get_degreze(QVariant& value);
-    double get_seconds(QVariant& value);
-    double get_radians(QVariant& value);
+    double get_degreze(QVariant value);
+    double get_seconds(QVariant value);
+    double get_radians(QVariant value);
     void auto_scale();
     QAction* m_action_to_change_dimensions;
     QMenu* m_context_menu;

@@ -601,23 +601,23 @@ void Kia_graph::check_data()
         m_func_for_data_type[m_data_type]();
 }
 
-double Kia_graph::get_degreze(QVariant &value)
+double Kia_graph::get_degreze(QVariant value)
 {
     auto ret = value.toDouble() * 180 / PI;
     return ret;
 }
 
-double Kia_graph::get_seconds(QVariant &value)
+double Kia_graph::get_seconds(QVariant value)
 {
     auto ret = value.toDouble() * 180 / PI;
     auto minutes = ret - (int)ret;
     minutes = 60 * minutes;
     auto seconds = minutes - (int)minutes;
-    seconds = 60 * seconds;
-    return seconds;
+    seconds = 60 * seconds + minutes * 60 * 60;
+    return ret * 3600;
 }
 
-double Kia_graph::get_radians(QVariant &value)
+double Kia_graph::get_radians(QVariant value)
 {
     auto ret = value.toDouble() * PI / 180;
     return ret;

@@ -38,6 +38,7 @@ KiaWindowIsWork::KiaWindowIsWork(std::shared_ptr<Kia_settings> kia_settings,
         m_is_otclp = state;
     });
 
+
 }
 KiaWindowIsWork::~KiaWindowIsWork()
 {
@@ -128,42 +129,51 @@ void KiaWindowIsWork::check_connect(qint16 type_kled, qint16 is_con_to_core)
 void KiaWindowIsWork::set_data_to_table(QStringList data)
 {
     QString str_status;
-    QPalette pallete_status_on;
-    pallete_status_on.setColor(QPalette::Base, Qt::green);
+    QPalette pallete_status_to;
+    pallete_status_to.setColor(QPalette::Base, Qt::green);
 
-    QPalette pallete_status_cold;
-    pallete_status_cold.setColor(QPalette::Base, Qt::blue);
+    QPalette pallete_status_no;
+    pallete_status_no.setColor(QPalette::Base, Qt::blue);
 
-    QPalette pallete_status_off;
-    pallete_status_off.setColor(QPalette::Base, Qt::red);
+    QPalette pallete_status_wait;
+    pallete_status_wait.setColor(QPalette::Base, Qt::yellow);
+
+    QPalette pallete_status_no_orient;
+    pallete_status_no_orient.setColor(QPalette::Base, Qt::red);
 
     QPalette pallete_status_default;
     pallete_status_default.setColor(QPalette::Base, Qt::white);
 
-    if (data[0].toInt() == ST_BSHV && m_is_set_data_bshv)
+    if (data[STD_NAME_TABLE].toInt() == ST_BSHV && m_is_set_data_bshv)
     {
-        m_line_edit_bshv[data[1].toInt()]->setText(data[2]);
+        m_line_edit_bshv[data[STD_NUM_BOKZ].toInt()]->setText(data[STD_VALUE]);
     }
 
-    if (data[0].toInt() == ST_ST1 && m_is_set_data_bshv)
+    if (data[STD_NAME_TABLE].toInt() == ST_ST1 && m_is_set_data_bshv)
     {
-        if (!data[2].isEmpty())
+        if (!data[STD_VALUE].isEmpty())
         {
-            if (data[2][2] == "e")
-                m_line_edit_st1[data[1].toInt()]->setPalette(pallete_status_on);
-            else if(data[2][2] == "2")
-                m_line_edit_st1[data[1].toInt()]->setPalette(pallete_status_cold);
-            else
-                m_line_edit_st1[data[1].toInt()]->setPalette(pallete_status_off);
+            switch(data[STD_ORIENT].toInt())
+            {
+            case SO_NO:
+                m_line_edit_st1[data[STD_NUM_BOKZ].toInt()]->setPalette(pallete_status_to);
+                break;
+            case SO_TO:
+                m_line_edit_st1[data[STD_NUM_BOKZ].toInt()]->setPalette(pallete_status_no);
+                break;
+            case SO_NO_ORIENT:
+                m_line_edit_st1[data[STD_NUM_BOKZ].toInt()]->setPalette(pallete_status_no_orient);
+                break;
+            }
         }
         else
-            m_line_edit_st1[data[1].toInt()]->setPalette(pallete_status_default);
-        m_line_edit_st1[data[1].toInt()]->setText(data[2]);
+            m_line_edit_st1[data[STD_NUM_BOKZ].toInt()]->setPalette(pallete_status_default);
+        m_line_edit_st1[data[STD_NUM_BOKZ].toInt()]->setText(data[STD_VALUE]);
     }
 
-    if (data[0].toInt() == ST_ST2 && m_is_set_data_bshv)
+    if (data[STD_NAME_TABLE].toInt() == ST_ST2 && m_is_set_data_bshv)
     {
-        m_line_edit_st2[data[1].toInt()]->setText(data[2]);
+        m_line_edit_st2[data[STD_NUM_BOKZ].toInt()]->setText(data[STD_VALUE]);
     }
 }
 
