@@ -156,10 +156,10 @@ void KiaWindowIsWork::set_data_to_table(QStringList data)
             switch(data[STD_ORIENT].toInt())
             {
             case SO_NO:
-                m_line_edit_st1[data[STD_NUM_BOKZ].toInt()]->setPalette(pallete_status_to);
+                m_line_edit_st1[data[STD_NUM_BOKZ].toInt()]->setPalette(pallete_status_no);
                 break;
             case SO_TO:
-                m_line_edit_st1[data[STD_NUM_BOKZ].toInt()]->setPalette(pallete_status_no);
+                m_line_edit_st1[data[STD_NUM_BOKZ].toInt()]->setPalette(pallete_status_to);
                 break;
             case SO_NO_ORIENT:
                 m_line_edit_st1[data[STD_NUM_BOKZ].toInt()]->setPalette(pallete_status_no_orient);
