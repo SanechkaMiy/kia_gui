@@ -32,7 +32,7 @@ void Kia_graph_manager::create_main_graph()
     auto l_for_plot = new QHBoxLayout(m_main_dialog);
     auto kias_data_from_db = std::make_shared<Kias_data_from_db>();
     kias_data_from_db->m_graph_type = Kia_graph::MAIN_GRAPH;
-    auto kia_db = std::make_shared<Kia_db>("con_main_graph", m_kia_settings, kias_data_from_db);
+    auto kia_db = std::make_shared<Kia_db>("con_main_graph", kias_data_from_db);
     m_main_graph = new Kia_graph(kia_db, m_kia_settings, kias_data_from_db, m_main_dialog);
     m_main_graph->init_timestamp_plot();
     l_for_plot->addWidget(m_main_graph);
@@ -67,7 +67,7 @@ void Kia_graph_manager::create_plot_slot(QStringList query_param)
     m_dialog.push_back(new QDialog());
     m_l_for_plots.push_back(new QVBoxLayout(m_dialog[m_num_graph]));
     m_kias_data_from_db.push_back(std::make_shared<Kias_data_from_db>());
-    m_kia_db.push_back(std::make_shared<Kia_db>("con_graph_" + QString::number(m_num_graph), m_kia_settings, m_kias_data_from_db[m_num_graph]));
+    m_kia_db.push_back(std::make_shared<Kia_db>("con_graph_" + QString::number(m_num_graph), m_kias_data_from_db[m_num_graph]));
     m_kia_db[m_num_graph]->set_query(query_param);
     m_kia_graph.push_back(new Kia_graph(m_kia_db[m_num_graph], m_kia_settings, m_kias_data_from_db[m_num_graph]));
     m_kia_graph[m_num_graph]->xAxis->setLabel(query_param[QP_X_DESC] + "(" + query_param[QP_X]  + query_param[QP_ARR_X] + ") " + query_param[QP_X_UM]);

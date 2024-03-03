@@ -13,7 +13,6 @@ class Kia_db : public QObject
     Q_OBJECT
 public:
     Kia_db(const QString &name_connection,
-           std::shared_ptr<Kia_settings> kia_settings,
            std::shared_ptr<Kias_data_from_db> kias_data_from_db = nullptr);
     ~Kia_db();
     bool create_connection(const QString &name_connection);
@@ -29,7 +28,6 @@ private slots:
     void get_data_from_db_for_graph_slot(QString begin, QString end);
     void get_data_from_db_for_table_slot(QString begin, QString end);
 private:
-    std::shared_ptr<Kia_settings> m_kia_settings;
     std::shared_ptr<Kias_data_from_db> m_kias_data_from_db;
     QSqlQuery* m_query;
     QStringList m_query_param;

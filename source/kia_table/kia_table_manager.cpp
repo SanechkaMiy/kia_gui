@@ -44,7 +44,7 @@ void Kia_table_manager::create_table_slot(QStringList query_param, QStringList d
     m_dialog.push_back(new QDialog());
     m_l_for_tables.push_back(new QVBoxLayout(m_dialog[m_num_table]));
     m_kias_data_from_db.push_back(std::make_shared<Kias_data_from_db>());
-    m_kia_db.push_back(std::make_shared<Kia_db>("con_table_" + QString::number(m_num_table), m_kia_settings, m_kias_data_from_db[m_num_table]));
+    m_kia_db.push_back(std::make_shared<Kia_db>("con_table_" + QString::number(m_num_table), m_kias_data_from_db[m_num_table]));
     m_kia_db[m_num_table]->set_query(query_param, data);
     m_kia_tables.push_back(new Kia_tables(m_kia_db[m_num_table], m_kia_settings, m_kias_data_from_db[m_num_table]));
     connect(m_kia_tables[m_num_table], SIGNAL(set_default_pos()), m_kia_custom_dialog[m_num_table], SLOT(set_default_pos_slot()));

@@ -1,8 +1,7 @@
 #include "kia_db.h"
 #include <QDebug>
-Kia_db::Kia_db(const QString &name_connection, std::shared_ptr<Kia_settings> kia_settings,
+Kia_db::Kia_db(const QString &name_connection,
                std::shared_ptr<Kias_data_from_db> kias_data_from_db):
-    m_kia_settings(kia_settings),
     m_kias_data_from_db(kias_data_from_db),
     m_name_connection(name_connection)
 {
@@ -41,21 +40,29 @@ void Kia_db::get_data_from_db_for_graph_slot(QString begin, QString end)
     m_kias_data_from_db->m_data_to_view.clear();
     QString data_get_db;
     QString data_get;
+
+    begin = QDate::currentDate().toString("yyyy-MM-dd") + " " + begin;
+    end = QDate::currentDate().toString("yyyy-MM-dd") + " " + end;
+
+    QString query;
     if (m_query_param[QP_NUM_BOKZ_FOR_ANGLES].isEmpty())
     {
-
         if (m_query_param[QP_TYPE_ARR] == "frames")
         {
             data_get = "frame_name";
             data_get_db = ", " + data_get;
         }
-        if (!m_query->exec("SELECT datetime, " + m_query_param[QP_X] + m_query_param[QP_ARR_X] + ", " + m_query_param[QP_Y] + m_query_param[QP_ARR_Y] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
-                           "WHERE host_id='04:92:26:d0:ef:d6'::macaddr "
-                           "AND experiment_id='" + m_kia_settings->m_kias_db->m_experiment_id + "' AND serial_num=" + m_query_param[QP_NUM_BOKZ] + " "
-                           "AND datetime >= '" + QDate::currentDate().toString("yyyy-MM-dd") + " " + begin + "' AND datetime <='" + QDate::currentDate().toString("yyyy-MM-dd") + " " + end + "';"))
+
+        query = "SELECT datetime, " + m_query_param[QP_X] + m_query_param[QP_ARR_X]
+                + ", " + m_query_param[QP_Y] + m_query_param[QP_ARR_Y] + data_get_db
+                + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR]
+                + " " "WHERE serial_num=" + m_query_param[QP_NUM_BOKZ]
+                + " " "AND datetime >= '" + begin + "' AND datetime <='" + end + "';";
+
+        if (!m_query->exec(query))
         {
 
-            qDebug() <<"Unable to execute query";
+            std::cout <<"Unable to execute query" << std::endl;
         }
         QSqlRecord rec = m_query->record();
         QString date_time;
@@ -79,13 +86,14 @@ void Kia_db::get_data_from_db_for_graph_slot(QString begin, QString end)
     }
     else
     {
+        auto query_x = "SELECT datetime, " + m_query_param[QP_X] + m_query_param[QP_ARR_X]
+                + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR]
+                + " " "WHERE serial_num=" + m_query_param[QP_NUM_BOKZ]
+                + " " "AND datetime >= '" + begin + "' AND datetime <='" + end + "';";
         auto query_bokz_x = new QSqlQuery(m_db);
-        if (!query_bokz_x->exec("SELECT datetime, " + m_query_param[QP_X] + m_query_param[QP_ARR_X] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
-                                "WHERE host_id='04:92:26:d0:ef:d6'::macaddr "
-                                "AND experiment_id='" + m_kia_settings->m_kias_db->m_experiment_id + "' AND serial_num=" + m_query_param[QP_NUM_BOKZ] + " "
-                                "AND datetime >= '" + QDate::currentDate().toString("yyyy-MM-dd") + " " + begin + "' AND datetime <='" + QDate::currentDate().toString("yyyy-MM-dd") + " " + end + "';"))
+        if (!query_bokz_x->exec(query_x))
         {
-            qDebug() <<"Unable to execute query";
+            std::cout << "Unable to execute query" << std::endl;
         }
         QSqlRecord rec_x = query_bokz_x->record();
         double x_val;
@@ -95,13 +103,14 @@ void Kia_db::get_data_from_db_for_graph_slot(QString begin, QString end)
             m_kias_data_from_db->m_x_value.push_back(x_val);
         }
 
+        auto query_y = "SELECT datetime, " + m_query_param[QP_Y] + m_query_param[QP_ARR_Y]
+                + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR]
+                + " " "WHERE serial_num=" + m_query_param[QP_NUM_BOKZ_FOR_ANGLES]
+                + " " "AND datetime >= '" + begin + "' AND datetime <='" + end + "';";
         auto query_bokz_y = new QSqlQuery(m_db);
-        if (!query_bokz_y->exec("SELECT datetime, " + m_query_param[QP_Y] + m_query_param[QP_ARR_Y] + data_get_db + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR] + " "
-                                "WHERE host_id='04:92:26:d0:ef:d6'::macaddr "
-                                "AND experiment_id='" + m_kia_settings->m_kias_db->m_experiment_id + "' AND serial_num=" + m_query_param[QP_NUM_BOKZ_FOR_ANGLES] + " "
-                                "AND datetime >= '" + QDate::currentDate().toString("yyyy-MM-dd") + " " + begin + "' AND datetime <='" + QDate::currentDate().toString("yyyy-MM-dd") + " " + end + "';"))
+        if (!query_bokz_y->exec(query_y))
         {
-            qDebug() <<"Unable to execute query";
+            std::cout << "Unable to execute query" << std::endl;
         }
         QSqlRecord rec_y = query_bokz_y->record();
         double y_val;
@@ -117,6 +126,10 @@ void Kia_db::get_data_from_db_for_table_slot(QString begin, QString end)
 {
     QSqlQueryModel* model = new QSqlQueryModel;
     QString data;
+
+    begin = QDate::currentDate().toString("yyyy-MM-dd") + " " + begin;
+    end = QDate::currentDate().toString("yyyy-MM-dd") + " " + end;
+
     for (auto& el : m_data)
     {
         //std::cout << el.toStdString() << std::endl;
@@ -143,12 +156,12 @@ void Kia_db::get_data_from_db_for_table_slot(QString begin, QString end)
 
     }
     data.remove(data.size() - 2, data.size() - 1);
-    model->setQuery("SELECT " + data + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR]
-                    + " "
-                      "WHERE host_id='04:92:26:d0:ef:d6'::macaddr "
-                      "AND experiment_id='" + m_kia_settings->m_kias_db->m_experiment_id + "' AND serial_num=" + m_query_param[QP_NUM_BOKZ]
-                    + " AND datetime >= '" + QDate::currentDate().toString("yyyy-MM-dd") + " "
-                    + begin + "' AND datetime <='" + QDate::currentDate().toString("yyyy-MM-dd") + " " + end + "';", m_db);
+    auto query = "SELECT " + data + " FROM " + m_query_param[QP_TYPE_DEV] + "." + m_query_param[QP_TYPE_ARR]
+            + " " "WHERE serial_num=" + m_query_param[QP_NUM_BOKZ]
+            + " AND datetime >= '" + begin + "' AND datetime <='" + end + "';";
+
+    model->setQuery(query, m_db);
+
     if (model->lastError().isValid())
         std::cout <<  model->lastError().text().toStdString() << std::endl;
     m_kias_data_from_db->m_model.push(model);

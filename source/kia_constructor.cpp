@@ -5,7 +5,7 @@ Kia_constructor::Kia_constructor(std::shared_ptr<Kia_settings> kia_settings, QWi
     QDialog(parent),
     ui(new Ui::Kia_constructor),
     m_kia_settings(kia_settings),
-    m_kia_db(new Kia_db("constructor", m_kia_settings))
+    m_kia_db(new Kia_db("constructor"))
 {
     ui->setupUi(this);
     start_thread();
