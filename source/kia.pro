@@ -102,18 +102,3 @@ unix:!macx: LIBS += -L$$PWD/../../QtAdvancedDocking/lib/ -lqtadvanceddocking
 
 INCLUDEPATH += $$PWD/../../QtAdvancedDocking/src
 DEPENDPATH += $$PWD/../../QtAdvancedDocking/src
-
-unix:!macx: LIBS += -L$$PWD/../../../../../usr/local/lib/ -lpqxx
-
-INCLUDEPATH += $$PWD/../../../../../usr/local/include
-DEPENDPATH += $$PWD/../../../../../usr/local/include
-
-unix:!macx: PRE_TARGETDEPS += $$PWD/../../../../../usr/local/lib/libpqxx.a
-ssss
-
-unix:!macx: LIBS += -L$$PWD/../../../../../usr/pgsql-13/lib/ -lpq
-
-INCLUDEPATH += $$PWD/../../../../../usr/pgsql-13/include
-DEPENDPATH += $$PWD/../../../../../usr/pgsql-13/include
-
-unix:!macx: PRE_TARGETDEPS += $$PWD/../../../../../usr/pgsql-13/lib/libpq.a
