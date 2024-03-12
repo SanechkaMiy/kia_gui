@@ -1,2 +1,8 @@
 
-build/
+build/*.o
+build/*.cpp
+build/*.h
+build/*.stash
+build/Makefile
+build/kia
+*.user
