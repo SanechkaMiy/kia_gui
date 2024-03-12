@@ -21,7 +21,6 @@ void KiaWindowSettings::create_table_settings(qint16 type_bokz)
 {
     m_set_table->setColumnCount(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
     m_set_table->setRowCount(m_kia_settings->m_kia_bokz_settings->m_bokz_row_name[type_bokz].size());
-
     m_kia_settings->m_kia_data_to_server->m_qa.resize(constants::size_qa + 1);
     m_kia_settings->m_kia_data_to_server->m_w.resize(constants::size_w + 1);
     m_mpi_num.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
@@ -35,6 +34,7 @@ void KiaWindowSettings::create_table_settings(qint16 type_bokz)
     {
         m_set_table->setHorizontalHeaderItem(coll, new QTableWidgetItem(m_kia_settings->m_kia_bokz_settings->m_bokz_type[type_bokz]));
         m_check_box_used.push_back(new QCheckBox());
+        m_check_box_used[coll]->setStyleSheet("margin-left:5%;");
         m_combo_box_address.push_back(new QComboBox());
         m_combo_box_address[coll]->setEditable(true);
 
@@ -112,6 +112,7 @@ void KiaWindowSettings::create_table_settings(qint16 type_bokz)
         {
             m_cob_num_used_channel[coll]->addItem(QString::number(num_ch + 1));
         }
+
         m_set_table->setCellWidget(TS_USED_BOKZ, coll, m_check_box_used[coll]);
         m_set_table->setCellWidget(TS_ADDRESS, coll, m_combo_box_address[coll]);
         m_set_table->setCellWidget(TS_MPI, coll, m_combo_box_mpi[coll]);
