@@ -94,6 +94,9 @@ DEPENDPATH += $$PWD/../../kia_gui/source/kia_plot
 INCLUDEPATH += $$PWD/../../kia_gui/source/kia_table
 DEPENDPATH += $$PWD/../../kia_gui/source/kia_table
 
+INCLUDEPATH += $$PWD/../../json-develop/include
+DEPENDPATH += $$PWD/../../json-develop/include
+
 RESOURCES += \
     fonts.qrc \
     image.qrc
