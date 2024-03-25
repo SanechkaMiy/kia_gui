@@ -222,7 +222,7 @@ void Kia_options_command::create_template_for_table()
 
 void Kia_options_command::on_load_param_clicked()
 {
-    std::ifstream f("kia_load_command_param.json", std::ifstream::in);
+    std::ifstream f("../source/Kia_resources/kia_load_command_param.json", std::ifstream::in);
     json j;
     f >> j;
     uint16_t ind = 0;

@@ -98,8 +98,8 @@ INCLUDEPATH += $$PWD/../../json-develop/include
 DEPENDPATH += $$PWD/../../json-develop/include
 
 RESOURCES += \
-    fonts.qrc \
-    image.qrc
+    Kia_resources/fonts.qrc \
+    Kia_resources/image.qrc
 
 unix:!macx: LIBS += -L$$PWD/../../QtAdvancedDocking/lib/ -lqtadvanceddocking
 
