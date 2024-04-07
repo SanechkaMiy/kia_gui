@@ -33,7 +33,7 @@ KiaCore::KiaCore(QWidget *wgt, QObject *parent)
         m_kia_settings->m_kia_gui_settings->m_widget_is_hide[wgt] = wgt->isVisible();
         std::cout << "set default parent" << std::endl;
     });
-    m_kia_main_window->setWindowTitle("СПО КИА БОКЗ-М60");
+    m_kia_main_window->setWindowTitle(m_kia_settings->m_kia_bokz_settings->m_kia_title_type[m_kia_settings->m_type_bokz]);
     m_dock_manager = m_kia_main_window->create_dock_widget(m_kia_main_window);
     m_kia_main_window->set_menu_bar(m_kia_menubar);
 

@@ -98,6 +98,7 @@ struct Kia_bokz_settings
 {
     int m_freq_bokz;
     std::array<QString, constants::count_type_bokz> m_bokz_type = {"БОКЗМ60", "БОКЗМФ"};
+    std::array<QString, constants::count_type_bokz> m_kia_title_type = {"СПО КИА БОКЗ-М60", "БОКЗМФ"};
     int m_count_bokz;//0 - БОКЗМ60; 1 - БОКЗМ60/1000; 2 - БОКЗМР; 3 - АИС-2К; 4 - БОКЗНК.
     uint16_t m_max_mpi_command;
     uint16_t m_max_other_mpi_command;
