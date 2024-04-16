@@ -33,7 +33,6 @@ KiaCore::KiaCore(QWidget *wgt, QObject *parent)
         m_kia_settings->m_kia_gui_settings->m_widget_is_hide[wgt] = wgt->isVisible();
         std::cout << "set default parent" << std::endl;
     });
-    m_kia_main_window->setWindowTitle(m_kia_settings->m_kia_bokz_settings->m_kia_title_type[m_kia_settings->m_type_bokz]);
     m_dock_manager = m_kia_main_window->create_dock_widget(m_kia_main_window);
     m_kia_main_window->set_menu_bar(m_kia_menubar);
 
@@ -205,6 +204,8 @@ void KiaCore::create_kia_options()
 
 void KiaCore::set_kia_gui_settings_slot()
 {
+    m_kia_main_window->setWindowTitle(m_kia_settings->m_kia_bokz_settings->m_kia_title_type[m_kia_settings->m_type_bokz]);
+
     m_kia_settings->m_kia_bokz_settings->m_count_bokz = m_kia_settings->m_kia_bi_settings->m_bi_count_channel[m_kia_settings->m_type_bi] * m_kia_settings->m_kia_bi_settings->m_count_bi;
     m_kia_settings->m_kia_data_to_server->m_is_used_bokz.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
     m_kia_settings->m_kia_data_to_server->m_td_change.resize(m_kia_settings->m_kia_bokz_settings->m_count_bokz);
