@@ -25,6 +25,7 @@
 #include "kia_options.h"
 #include "kia_options_interface.h"
 #include "kia_debug_commands.h"
+#include "kia_ui/kia_info_about_bi.h"
 #include <vector>
 #include <array>
 #include <utility>
@@ -68,6 +69,7 @@ private:
     KiaWindowIsWork* m_kia_window_is_work;
     std::map<uint16_t, QVector<Kia_custom_dialog*>> m_kia_custom_dialog;
 
+    Kia_info_about_bi* m_kia_info_about_bi;
     void create_menubar();
 
     void set_dock_actions(const std::pair<QString, QAction*>& action);

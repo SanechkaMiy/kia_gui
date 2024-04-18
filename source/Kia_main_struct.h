@@ -83,6 +83,7 @@ struct Kia_data_to_server
 #pragma pack(push, 1)
 struct Kia_bi_settings
 {
+    uint16_t m_bi_is_used {CS_IS_OFF};
     std::array<QString, constants::count_type_bi> m_bi_type = {"БКПИК", "БИ-У"};//0 - БКПИК; 1 - БИ; 2 - БИУ; 3 - БИНК; 4 - БКПИКМ.
     std::array<int, constants::count_type_bi> m_bi_count_channel = {3, 2};//0 - БКПИК; 1 - БИ; 2 - БИУ; 3 - БИНК; 4 - БКПИКМ.
     int m_count_bi;//0 - БКПИК; 1 - БИ; 2 - БИУ; 3 - БИНК; 4 - БКПИКМ.
@@ -209,7 +210,7 @@ struct Kia_settings
         m_kia_data_to_server.reset(new Kia_data_to_server());
         m_kias_db.reset(new Kias_db());
         m_kias_view_data.reset(new Kias_view_data());
-//        m_kia_bi_settings->m_bi_row_name[TYPE_BI_BKPIK] << "КС" << "КП" << "ТД" << "1С";
+        //        m_kia_bi_settings->m_bi_row_name[TYPE_BI_BKPIK] << "КС" << "КП" << "ТД" << "1С";
     }
     std::shared_ptr<Kia_bi_settings> m_kia_bi_settings;
     std::shared_ptr<Kia_bokz_settings> m_kia_bokz_settings;

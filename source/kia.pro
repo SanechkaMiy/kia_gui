@@ -28,6 +28,7 @@ SOURCES += \
     kia_profile.cpp \
     kia_table/kia_table_manager.cpp \
     kia_table/kia_tables.cpp \
+    kia_ui/kia_info_about_bi.cpp \
     kiacore.cpp \
     kiamenubar.cpp \
     kiawindowinfo.cpp \
@@ -59,6 +60,7 @@ HEADERS += \
     kia_profile.h \
     kia_table/kia_table_manager.h \
     kia_table/kia_tables.h \
+    kia_ui/kia_info_about_bi.h \
     kiacore.h \
     kiamenubar.h \
     kiawindowinfo.h \
@@ -77,6 +79,7 @@ FORMS += \
     kia_options_cyclograms.ui \
     kia_options_interface.ui \
     kia_profile.ui \
+    kia_ui/kia_info_about_bi.ui \
     kiamenubar.ui \
     kiawindowinfo.ui \
     kiawindowiswork.ui \

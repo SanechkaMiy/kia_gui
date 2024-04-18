@@ -7,12 +7,12 @@ KiaCore::KiaCore(QWidget *wgt, QObject *parent)
     , m_save_read_settings(new Save_read_settings(m_kia_settings))
     , m_kia_main_window(new Kia_main_window(m_kia_settings, wgt))
     , m_kia_menubar(new KiaMenuBar(m_kia_settings, m_client, m_kia_main_window))
+    , m_kia_info_about_bi(new Kia_info_about_bi(m_kia_main_window))
 {
     connect(m_client.get(), SIGNAL(set_kia_gui_settings()), this, SLOT(set_kia_gui_settings_slot()));
     connect(m_client.get(), &Client::load_profile, this, [this]()
     {
         load_profile_settings();
-
     });
     connect(m_kia_menubar, SIGNAL(show_kia_profile()), this, SLOT(show_kia_profile_slot()));
     connect(m_save_read_settings.get(), SIGNAL(send_current_main_tab_widget(uint16_t)), m_kia_main_window, SLOT(set_current_index_tab_widget(uint16_t)));
@@ -36,11 +36,25 @@ KiaCore::KiaCore(QWidget *wgt, QObject *parent)
     m_dock_manager = m_kia_main_window->create_dock_widget(m_kia_main_window);
     m_kia_main_window->set_menu_bar(m_kia_menubar);
 
+    connect(m_kia_info_about_bi, &Kia_info_about_bi::do_state, this, [this](uint16_t state)
+    {
+        switch(state)
+        {
+        case Kia_info_about_bi::WO_BI:
+            m_kia_info_about_bi->hide();
+            break;
+        case Kia_info_about_bi::RESTART_KIA:
+            m_kia_main_window->close();
+            break;
+        }
+    });
 }
 
 KiaCore::~KiaCore()
 {
-    m_save_read_settings->save_pos_and_size_widgets("m_kia_main_window", m_kia_main_window);
+    std::cout << "delete kia core" << std::endl;
+
+    //m_save_read_settings->save_pos_and_size_widgets("m_kia_main_window", m_kia_main_window);
 
     m_save_read_settings->save_pos_and_size_widgets("m_kia_options", m_kia_options);
 
@@ -225,7 +239,14 @@ void KiaCore::set_kia_gui_settings_slot()
 
     create_menubar();
 
+    if (m_kia_settings->m_kia_bi_settings->m_bi_is_used == CS_IS_OFF)
+    {
+        m_kia_info_about_bi->show();
+    }
+
+
     m_kia_main_window->show();
+    m_kia_main_window->showMaximized();
 
     create_kia_profile();
 
@@ -815,10 +836,12 @@ void KiaCore::reset_before_load_profile()
 void KiaCore::load_profile_settings()
 {
     reset_before_load_profile();
-    m_save_read_settings->load_pos_and_size_widgets("m_kia_main_window", m_kia_main_window);
+
     m_save_read_settings->load_settings();
 
     m_kia_menubar->load_mode_menu_bi();
+    //m_save_read_settings->load_pos_and_size_widgets("m_kia_main_window", m_kia_main_window);
+
     m_save_read_settings->load_pos_and_size_widgets("window_is_work", m_kia_window_is_work);
 
     m_save_read_settings->load_pos_and_size_widgets("table_state", m_kia_window_state_for_all_dev);

@@ -12,6 +12,8 @@
 #include <QKeyEvent>
 #include <functional>
 #include <algorithm>
+#include <thread>
+
 namespace Ui {
 class Kia_graph;
 }
@@ -85,6 +87,7 @@ private:
     uint16_t m_is_value_or_nothing = DEFAULT;
     double m_start_time = 0;
     std::future<void> start_get_data;
+    std::future<void> m_fut_do_auto_scale;
     QTime m_begin;
     QTime m_end;
     std::vector<std::function<void()>> m_func_for_graph_type;
@@ -115,6 +118,7 @@ private:
         return strs.size();
     }
 
+    std::atomic_bool m_do_auto_scale {false};
 protected:
     void keyPressEvent(QKeyEvent *e);
 };
