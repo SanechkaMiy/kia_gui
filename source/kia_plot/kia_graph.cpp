@@ -121,7 +121,8 @@ Kia_graph::Kia_graph(std::shared_ptr<Kia_db> kia_db,
 
 Kia_graph::~Kia_graph()
 {
-
+    m_do_auto_scale = false;
+    std::cout << "delete kia_graph" << std::endl;
 }
 
 void Kia_graph::init_timestamp_plot()
@@ -544,10 +545,20 @@ void Kia_graph::create_context_menu()
 
         QAction* auto_scale_action = new QAction("Автомасштабирование", this);
 
-        connect(auto_scale_action, &QAction::triggered, this, [this]()
+        auto_scale_action->setCheckable(true);
+        connect(auto_scale_action, &QAction::triggered, this, [this, auto_scale_action]()
         {
-            auto_scale();
 
+            m_fut_do_auto_scale = std::async([this, auto_scale_action]()
+            {
+                m_do_auto_scale = true;
+                while(m_do_auto_scale)
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                    if (auto_scale_action->isChecked())
+                        auto_scale();
+                }
+            });
         });
         m_context_menu->addAction(auto_scale_action);
 

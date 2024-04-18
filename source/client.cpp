@@ -81,6 +81,7 @@ void Client::slot_read_server()
             m_kia_settings->m_type_bokz = type_bokz;
             m_kia_settings->m_type_bi = type_bi;
             m_kia_settings->m_kia_bi_settings->m_count_bi = data_from_server[0].toInt();
+            m_kia_settings->m_kia_bi_settings->m_bi_is_used = data_from_server[1].toInt();
             break;
         case SEND_MPI_COMMAND:
             for (uint16_t num_comm = 0; num_comm < data_from_server.size(); num_comm++)
